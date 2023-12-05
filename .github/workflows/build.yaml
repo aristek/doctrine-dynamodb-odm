@@ -23,5 +23,7 @@ jobs:
                  port: 8000
                  cors: '*'
             - uses: php-actions/composer@v6
+              with:
+                  php_version: 8.1
             - run: echo "Composer dependencies have been installed"
             - run: vendor/bin/phpunit
