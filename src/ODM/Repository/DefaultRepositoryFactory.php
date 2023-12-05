@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\ODM\Repository;
 
-use Doctrine\Persistence\ObjectRepository;
 use Aristek\Bundle\DynamodbBundle\ODM\DocumentManager;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\ClassMetadata;
+use Doctrine\Persistence\ObjectRepository;
 
 /**
  * This factory is used to create default repository objects for documents at runtime.

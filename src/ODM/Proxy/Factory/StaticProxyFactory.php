@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\ODM\Proxy\Factory;
 
-use Closure;
-use Doctrine\Persistence\NotifyPropertyChanged;
-use ProxyManager\Factory\LazyLoadingGhostFactory;
-use ProxyManager\Proxy\GhostObjectInterface;
-use ReflectionProperty;
 use Aristek\Bundle\DynamodbBundle\ODM\DocumentManager;
 use Aristek\Bundle\DynamodbBundle\ODM\DocumentNotFoundException;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\ClassMetadata;
 use Aristek\Bundle\DynamodbBundle\ODM\Persisters\DocumentPersister;
 use Aristek\Bundle\DynamodbBundle\ODM\UnitOfWork;
 use Aristek\Bundle\DynamodbBundle\ODM\Utility\LifecycleEventManager;
+use Closure;
+use Doctrine\Persistence\NotifyPropertyChanged;
+use ProxyManager\Factory\LazyLoadingGhostFactory;
+use ProxyManager\Proxy\GhostObjectInterface;
+use ReflectionProperty;
 use Throwable;
 use function array_filter;
 use function count;

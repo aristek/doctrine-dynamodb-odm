@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\Tests\Doctrine\ODM\DynamoDb\Action;
 
+use Aristek\Bundle\DynamodbBundle\ODM\Mapping\MappingException;
 use Aristek\Bundle\DynamodbBundle\Tests\Doctrine\ODM\DynamoDb\BaseTestCase;
 use Aristek\Bundle\DynamodbBundle\Tests\Documents\CustomRepository\Game;
 use Aristek\Bundle\DynamodbBundle\Tests\Documents\CustomRepository\GameRepository;
@@ -16,7 +17,6 @@ use Aristek\Bundle\DynamodbBundle\Tests\Documents\Reference\WithMapping\Organiza
 use Doctrine\Common\Collections\Criteria;
 use InvalidArgumentException;
 use LogicException;
-use Aristek\Bundle\DynamodbBundle\ODM\Mapping\MappingException;
 use function array_map;
 
 final class ReadTest extends BaseTestCase

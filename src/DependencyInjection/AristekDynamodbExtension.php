@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\DependencyInjection;
 
-use Exception;
 use Aristek\Bundle\DynamodbBundle\ODM\Configuration as ODMConfiguration;
 use Aristek\Bundle\DynamodbBundle\ODM\DocumentManager;
 use Aristek\Bundle\DynamodbBundle\ODM\Id\UuidGenerator;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Driver\AttributeDriver;
+use Exception;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;

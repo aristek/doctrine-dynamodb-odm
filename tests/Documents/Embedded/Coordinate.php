@@ -8,7 +8,6 @@ use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Document;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\EmbedOne;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Field;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Id;
-use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\ReferenceOne;
 
 #[Document]
 class Coordinate
@@ -16,14 +15,14 @@ class Coordinate
     #[Id]
     private ?string $id = null;
 
+    #[EmbedOne(targetDocument: Location::class)]
+    private Location $location;
+
     #[Field]
     private int $x;
 
     #[Field]
     private int $y;
-
-    #[EmbedOne(targetDocument: Location::class)]
-    private Location $location;
 
     public function getId(): ?string
     {

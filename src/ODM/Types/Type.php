@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\ODM\Types;
 
-use InvalidArgumentException;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\MappingException;
 use Aristek\Bundle\DynamodbBundle\ODM\Types;
+use InvalidArgumentException;
 use function end;
 use function explode;
 use function sprintf;

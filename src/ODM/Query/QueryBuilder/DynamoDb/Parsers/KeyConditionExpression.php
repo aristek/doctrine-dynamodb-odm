@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\DynamoDb\Parsers;
 
-use Illuminate\Support\Arr;
 use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\DynamoDb\ComparisonOperator;
+use Illuminate\Support\Arr;
 
 final class KeyConditionExpression extends ConditionExpression
 {

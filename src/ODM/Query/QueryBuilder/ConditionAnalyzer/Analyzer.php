@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\ConditionAnalyzer;
 
-use Illuminate\Support\Arr;
-use LogicException;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\ClassMetadata;
 use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\DynamoDb\ComparisonOperator;
 use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\Helper;
+use Illuminate\Support\Arr;
+use LogicException;
 use function array_filter;
 use function array_intersect;
 use function array_values;

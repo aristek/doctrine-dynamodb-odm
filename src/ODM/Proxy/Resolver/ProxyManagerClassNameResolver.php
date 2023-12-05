@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\ODM\Proxy\Resolver;
 
+use Aristek\Bundle\DynamodbBundle\ODM\Configuration;
 use Doctrine\Persistence\Mapping\ProxyClassNameResolver;
 use ProxyManager\Inflector\ClassNameInflectorInterface;
-use Aristek\Bundle\DynamodbBundle\ODM\Configuration;
 
 /**
  * @internal

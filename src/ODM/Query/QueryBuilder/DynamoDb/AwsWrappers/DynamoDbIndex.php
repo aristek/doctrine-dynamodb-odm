@@ -7,25 +7,15 @@ namespace Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\DynamoDb\AwsWrapp
 final class DynamoDbIndex
 {
     public const ATTRIBUTE_TYPE_BINARY = 'B';
-
     public const ATTRIBUTE_TYPE_BOOL = 'BOOL';
-
     public const ATTRIBUTE_TYPE_LIST = 'L';
-
     public const ATTRIBUTE_TYPE_MAP = 'M';
-
     public const ATTRIBUTE_TYPE_NULL = 'NULL';
-
     public const ATTRIBUTE_TYPE_NUMBER = 'N';
-
     public const ATTRIBUTE_TYPE_STRING = 'S';
-
     public const PRIMARY_INDEX = true;
-
     public const PROJECTION_TYPE_ALL = "ALL";
-
     public const PROJECTION_TYPE_INCLUDE = "INCLUDE";
-
     public const PROJECTION_TYPE_KEYS_ONLY = "KEYS_ONLY";
 
     protected string $hashKey;

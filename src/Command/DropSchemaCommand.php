@@ -1,11 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\Command;
 
-use GuzzleHttp\Promise\Utils;
 use Aristek\Bundle\DynamodbBundle\ODM\DocumentManager;
 use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\DynamoDb\AwsWrappers\DynamoDbManager;
+use GuzzleHttp\Promise\Utils;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;

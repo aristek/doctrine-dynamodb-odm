@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\DynamoDb;
 
+use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\DynamoDbClientInterface;
+use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\RawDynamoDbQuery;
 use Aws\DynamoDb\DynamoDbClient;
 use BadMethodCallException;
 use Illuminate\Support\Str;
-use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\DynamoDbClientInterface;
-use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\RawDynamoDbQuery;
 use function array_reverse;
 use function current;
 use function explode;

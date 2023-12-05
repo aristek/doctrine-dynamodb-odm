@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\Validator;
 
-use BackedEnum;
-use LogicException;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\ClassMetadata;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\MappingException;
 use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\Validator\Constraints\IsEnum;
+use BackedEnum;
+use LogicException;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\All;
 use Symfony\Component\Validator\Constraints\AtLeastOneOf;

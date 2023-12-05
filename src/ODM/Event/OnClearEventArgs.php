@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\ODM\Event;
 
-use Doctrine\Persistence\Event\OnClearEventArgs as BaseOnClearEventArgs;
 use Aristek\Bundle\DynamodbBundle\ODM\DocumentManager;
+use Doctrine\Persistence\Event\OnClearEventArgs as BaseOnClearEventArgs;
 
 /**
  * Provides event arguments for the onClear event.

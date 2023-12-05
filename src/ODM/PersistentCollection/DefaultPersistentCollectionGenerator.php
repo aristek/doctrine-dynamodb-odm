@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\ODM\PersistentCollection;
 
+use Aristek\Bundle\DynamodbBundle\ODM\Configuration;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionIntersectionType;
@@ -12,7 +13,6 @@ use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionType;
 use ReflectionUnionType;
-use Aristek\Bundle\DynamodbBundle\ODM\Configuration;
 use function array_map;
 use function array_pop;
 use function assert;

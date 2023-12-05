@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\Tests\Documents\Embedded;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\EmbeddedDocument;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\EmbedOne;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Field;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\ReferenceMany;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\ReferenceOne;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 #[EmbeddedDocument]
 class Location

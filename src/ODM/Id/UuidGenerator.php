@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\ODM\Id;
 
-use InvalidArgumentException;
 use Aristek\Bundle\DynamodbBundle\ODM\DocumentManager;
+use InvalidArgumentException;
 use Symfony\Component\Uid\Uuid;
 use function sprintf;
 

@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\ODM\Repository;
 
-use Doctrine\Persistence\ObjectRepository;
-use ReflectionException;
 use Aristek\Bundle\DynamodbBundle\ODM\DocumentManager;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\ClassMetadata;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\MappingException;
+use Doctrine\Persistence\ObjectRepository;
+use ReflectionException;
 use function is_a;
 use function spl_object_hash;
 

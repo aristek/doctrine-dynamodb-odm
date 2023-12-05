@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\ODM\Mapping;
 
+use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\AbstractDocument;
+use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Index;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Persistence\Mapping\MappingException as BaseMappingException;
 use ReflectionException;
 use ReflectionObject;
-use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\AbstractDocument;
-use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Index;
 use function sprintf;
 
 final class MappingException extends BaseMappingException

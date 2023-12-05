@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\ODM\Event;
 
-use InvalidArgumentException;
 use Aristek\Bundle\DynamodbBundle\ODM\DocumentManager;
+use InvalidArgumentException;
 use function get_class;
 use function sprintf;
 

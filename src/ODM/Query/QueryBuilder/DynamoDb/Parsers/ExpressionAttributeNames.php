@@ -55,7 +55,7 @@ final class ExpressionAttributeNames
                 $placeholder = "$this->prefix$item";
 
                 if (isset($this->mapping[$placeholder])) {
-                    $nestedPlaceholder .= $placeholder . ($index === array_key_last($parts) ? '' : '.');
+                    $nestedPlaceholder .= $placeholder.($index === array_key_last($parts) ? '' : '.');
                 }
             }
 
@@ -103,13 +103,13 @@ final class ExpressionAttributeNames
         $this->mapping["$this->prefix$name"] = $name;
     }
 
-    private function isNested($name): bool
-    {
-        return str_contains($name, '.') || (str_contains($name, '[') && str_contains($name, ']'));
-    }
-
     private function explodeNestedField(string $field): array
     {
         return explode('.', $field);
+    }
+
+    private function isNested($name): bool
+    {
+        return str_contains($name, '.') || (str_contains($name, '[') && str_contains($name, ']'));
     }
 }

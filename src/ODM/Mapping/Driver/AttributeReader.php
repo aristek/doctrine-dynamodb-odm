@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\ODM\Mapping\Driver;
 
+use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Annotation;
 use Doctrine\Common\Annotations\Reader;
 use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionProperty;
-use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Annotation;
 use function assert;
 use function is_subclass_of;
 

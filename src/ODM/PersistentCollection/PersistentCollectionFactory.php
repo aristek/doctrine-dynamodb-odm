@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\ODM\PersistentCollection;
 
-use Doctrine\Common\Collections\Collection as BaseCollection;
 use Aristek\Bundle\DynamodbBundle\ODM\DocumentManager;
+use Doctrine\Common\Collections\Collection as BaseCollection;
 
 /**
  * Interface for persistent collection classes factory.

@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\ODM\Mapping\Driver;
 
+use Aristek\Bundle\DynamodbBundle\ODM\Events;
+use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations as ODM;
+use Aristek\Bundle\DynamodbBundle\ODM\Mapping\ClassMetadata;
+use Aristek\Bundle\DynamodbBundle\ODM\Mapping\MappingException;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\Reader;
 use Doctrine\Persistence\Mapping\Driver\ColocatedMappingDriver;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
-use Aristek\Bundle\DynamodbBundle\ODM\Events;
-use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations as ODM;
-use Aristek\Bundle\DynamodbBundle\ODM\Mapping\ClassMetadata;
-use Aristek\Bundle\DynamodbBundle\ODM\Mapping\MappingException;
 use function array_replace;
 use function assert;
 use function interface_exists;

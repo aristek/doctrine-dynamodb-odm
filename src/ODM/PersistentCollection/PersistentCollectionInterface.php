@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\ODM\PersistentCollection;
 
-use Doctrine\Common\Collections\Collection;
-use Doctrine\Persistence\Mapping\ClassMetadata;
 use Aristek\Bundle\DynamodbBundle\ODM\DocumentManager;
 use Aristek\Bundle\DynamodbBundle\ODM\DynamoDBException;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Persistence\Mapping\ClassMetadata;
 
 /**
  * Interface for persistent collection classes.

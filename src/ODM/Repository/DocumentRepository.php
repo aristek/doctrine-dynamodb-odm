@@ -4,6 +4,12 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\ODM\Repository;
 
+use Aristek\Bundle\DynamodbBundle\ODM\DocumentManager;
+use Aristek\Bundle\DynamodbBundle\ODM\DynamoDBException;
+use Aristek\Bundle\DynamodbBundle\ODM\Mapping\ClassMetadata;
+use Aristek\Bundle\DynamodbBundle\ODM\Persisters\DocumentPersister;
+use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder;
+use Aristek\Bundle\DynamodbBundle\ODM\UnitOfWork;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Selectable;
@@ -12,12 +18,6 @@ use Doctrine\Persistence\ObjectRepository;
 use InvalidArgumentException;
 use LogicException;
 use ReflectionException;
-use Aristek\Bundle\DynamodbBundle\ODM\DocumentManager;
-use Aristek\Bundle\DynamodbBundle\ODM\DynamoDBException;
-use Aristek\Bundle\DynamodbBundle\ODM\Mapping\ClassMetadata;
-use Aristek\Bundle\DynamodbBundle\ODM\Persisters\DocumentPersister;
-use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder;
-use Aristek\Bundle\DynamodbBundle\ODM\UnitOfWork;
 use function is_array;
 
 /**

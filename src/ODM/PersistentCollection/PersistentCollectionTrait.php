@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\ODM\PersistentCollection;
 
+use Aristek\Bundle\DynamodbBundle\ODM\DocumentManager;
+use Aristek\Bundle\DynamodbBundle\ODM\DynamoDBException;
+use Aristek\Bundle\DynamodbBundle\ODM\Mapping\ClassMetadata;
+use Aristek\Bundle\DynamodbBundle\ODM\UnitOfWork;
 use BadMethodCallException;
 use Closure;
 use Doctrine\Common\Collections\Collection as BaseCollection;
@@ -11,10 +15,6 @@ use Doctrine\Persistence\Mapping\MappingException;
 use Exception;
 use ReflectionException;
 use ReturnTypeWillChange;
-use Aristek\Bundle\DynamodbBundle\ODM\DocumentManager;
-use Aristek\Bundle\DynamodbBundle\ODM\DynamoDBException;
-use Aristek\Bundle\DynamodbBundle\ODM\Mapping\ClassMetadata;
-use Aristek\Bundle\DynamodbBundle\ODM\UnitOfWork;
 use Traversable;
 use function array_combine;
 use function array_diff_key;

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations;
 
+use Aristek\Bundle\DynamodbBundle\ODM\Mapping\ClassMetadata;
 use Attribute;
 use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
-use Aristek\Bundle\DynamodbBundle\ODM\Mapping\ClassMetadata;
 
 /**
  * Embeds a single document

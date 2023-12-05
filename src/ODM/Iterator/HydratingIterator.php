@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\ODM\Iterator;
 
+use Aristek\Bundle\DynamodbBundle\ODM\Hydrator\HydratorException;
+use Aristek\Bundle\DynamodbBundle\ODM\Mapping\ClassMetadata;
+use Aristek\Bundle\DynamodbBundle\ODM\UnitOfWork;
 use Doctrine\Instantiator\Exception\ExceptionInterface;
 use Doctrine\Persistence\Mapping\MappingException;
 use Generator;
@@ -11,9 +14,6 @@ use Iterator;
 use ReflectionException;
 use ReturnTypeWillChange;
 use RuntimeException;
-use Aristek\Bundle\DynamodbBundle\ODM\Hydrator\HydratorException;
-use Aristek\Bundle\DynamodbBundle\ODM\Mapping\ClassMetadata;
-use Aristek\Bundle\DynamodbBundle\ODM\UnitOfWork;
 use Traversable;
 
 /**

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\Tests\Documents\LifecycleCallbacks;
 
-use DateTimeImmutable;
 use Aristek\Bundle\DynamodbBundle\ODM\Event\LifecycleEventArgs;
 use Aristek\Bundle\DynamodbBundle\ODM\Event\PreFlushEventArgs;
 use Aristek\Bundle\DynamodbBundle\ODM\Event\PreLoadEventArgs;
@@ -19,6 +18,7 @@ use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\PreFlush;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\PreLoad;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\PrePersist;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\PreUpdate;
+use DateTimeImmutable;
 
 #[Document]
 #[HasLifecycleCallbacks]

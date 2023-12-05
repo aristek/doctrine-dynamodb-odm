@@ -4,14 +4,6 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\ODM;
 
-use Doctrine\Common\EventManager;
-use Doctrine\Instantiator\Exception\ExceptionInterface;
-use Doctrine\Persistence\Mapping\ProxyClassNameResolver;
-use Doctrine\Persistence\ObjectManager;
-use Doctrine\Persistence\ObjectRepository;
-use InvalidArgumentException;
-use ReflectionException;
-use RuntimeException;
 use Aristek\Bundle\DynamodbBundle\ODM\Hydrator\HydratorException;
 use Aristek\Bundle\DynamodbBundle\ODM\Hydrator\HydratorFactory;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\ClassMetadata;
@@ -24,6 +16,14 @@ use Aristek\Bundle\DynamodbBundle\ODM\Proxy\Resolver\ProxyManagerClassNameResolv
 use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder;
 use Aristek\Bundle\DynamodbBundle\ODM\Repository\DocumentRepository;
 use Aristek\Bundle\DynamodbBundle\ODM\Repository\RepositoryFactory;
+use Doctrine\Common\EventManager;
+use Doctrine\Instantiator\Exception\ExceptionInterface;
+use Doctrine\Persistence\Mapping\ProxyClassNameResolver;
+use Doctrine\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectRepository;
+use InvalidArgumentException;
+use ReflectionException;
+use RuntimeException;
 use function assert;
 use function gettype;
 use function is_object;
@@ -54,11 +54,6 @@ class DocumentManager implements ObjectManager
     private Configuration $config;
 
     /**
-     * @var QueryBuilder[]
-     */
-    private array $queryBuilders;
-
-    /**
      * The event manager that is the central point of the event system.
      */
     private EventManager $eventManager;
@@ -77,6 +72,11 @@ class DocumentManager implements ObjectManager
      * The Proxy factory instance.
      */
     private ProxyFactory $proxyFactory;
+
+    /**
+     * @var QueryBuilder[]
+     */
+    private array $queryBuilders;
 
     /**
      * The repository factory used to create dynamic repositories.

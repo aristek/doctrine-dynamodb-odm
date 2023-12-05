@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\ODM\Mapping;
 
+use Aristek\Bundle\DynamodbBundle\ODM\Id\IdGenerator;
+use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Index;
+use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\IndexStrategy;
+use Aristek\Bundle\DynamodbBundle\ODM\Types\Type;
 use BadMethodCallException;
 use DateTime;
 use DateTimeImmutable;
@@ -23,10 +27,6 @@ use ReflectionEnum;
 use ReflectionException;
 use ReflectionNamedType;
 use ReflectionProperty;
-use Aristek\Bundle\DynamodbBundle\ODM\Id\IdGenerator;
-use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Index;
-use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\IndexStrategy;
-use Aristek\Bundle\DynamodbBundle\ODM\Types\Type;
 use function array_filter;
 use function array_key_exists;
 use function array_keys;

@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\ODM\Hydrator;
 
-use Doctrine\Common\EventManager;
-use Doctrine\Persistence\Mapping\MappingException;
-use ProxyManager\Proxy\GhostObjectInterface;
-use ReflectionException;
 use Aristek\Bundle\DynamodbBundle\ODM\Configuration;
 use Aristek\Bundle\DynamodbBundle\ODM\DocumentManager;
 use Aristek\Bundle\DynamodbBundle\ODM\Event\LifecycleEventArgs;
@@ -16,6 +12,10 @@ use Aristek\Bundle\DynamodbBundle\ODM\Events;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\ClassMetadata;
 use Aristek\Bundle\DynamodbBundle\ODM\Types\Type;
 use Aristek\Bundle\DynamodbBundle\ODM\UnitOfWork;
+use Doctrine\Common\EventManager;
+use Doctrine\Persistence\Mapping\MappingException;
+use ProxyManager\Proxy\GhostObjectInterface;
+use ReflectionException;
 use function array_key_exists;
 use function chmod;
 use function class_exists;

@@ -4,17 +4,6 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\ODM\Query;
 
-use ArrayIterator;
-use Aws\DynamoDb\Marshaler;
-use Closure;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\Instantiator\Exception\ExceptionInterface;
-use Doctrine\Persistence\Mapping\MappingException;
-use Illuminate\Support\Arr;
-use LimitIterator;
-use LogicException;
-use ReflectionException;
 use Aristek\Bundle\DynamodbBundle\ODM\DocumentManager;
 use Aristek\Bundle\DynamodbBundle\ODM\Hydrator\HydratorException;
 use Aristek\Bundle\DynamodbBundle\ODM\Iterator\UnmarshalIterator;
@@ -26,9 +15,20 @@ use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\DynamoDb\DynamoDbManage
 use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\DynamoDb\HasParsers;
 use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\DynamoDbClientService;
 use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\EmptyAttributeFilter;
-use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\Helper;
 use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\Exception\NotSupportedException;
+use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\Helper;
 use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\RawDynamoDbQuery;
+use ArrayIterator;
+use Aws\DynamoDb\Marshaler;
+use Closure;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Instantiator\Exception\ExceptionInterface;
+use Doctrine\Persistence\Mapping\MappingException;
+use Illuminate\Support\Arr;
+use LimitIterator;
+use LogicException;
+use ReflectionException;
 use function array_keys;
 use function array_map;
 use function array_unique;
@@ -580,9 +580,9 @@ class QueryBuilder
         }
 
         $this->wheres[] = [
-            'column' => $column,
-            'type' => ComparisonOperator::getDynamoDbOperator($operator),
-            'value' => $value,
+            'column'  => $column,
+            'type'    => ComparisonOperator::getDynamoDbOperator($operator),
+            'value'   => $value,
             'boolean' => $boolean,
         ];
 

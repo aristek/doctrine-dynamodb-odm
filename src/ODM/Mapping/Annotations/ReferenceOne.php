@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations;
 
+use Aristek\Bundle\DynamodbBundle\ODM\Mapping\ClassMetadata;
 use Attribute;
 use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
-use Aristek\Bundle\DynamodbBundle\ODM\Mapping\ClassMetadata;
 
 /**
  * Specifies a one-to-one relationship to a different document
@@ -20,8 +20,8 @@ final class ReferenceOne extends AbstractField
     public bool $reference = true;
 
     /**
-     * @param class-string|null                $targetDocument
-     * @param string[]|string|null             $cascade
+     * @param class-string|null    $targetDocument
+     * @param string[]|string|null $cascade
      */
     public function __construct(
         ?string $name = null,

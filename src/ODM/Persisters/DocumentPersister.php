@@ -4,14 +4,6 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\ODM\Persisters;
 
-use BadMethodCallException;
-use Doctrine\Common\Collections\Criteria;
-use Doctrine\Instantiator\Exception\ExceptionInterface;
-use Doctrine\Persistence\Mapping\MappingException;
-use Exception;
-use LogicException;
-use ProxyManager\Proxy\GhostObjectInterface;
-use ReflectionException;
 use Aristek\Bundle\DynamodbBundle\ODM\DocumentManager;
 use Aristek\Bundle\DynamodbBundle\ODM\DynamoDBException;
 use Aristek\Bundle\DynamodbBundle\ODM\Hydrator\HydratorException;
@@ -28,6 +20,14 @@ use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\DynamoDb\ComparisonOper
 use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\DynamoDb\DynamoDbManager;
 use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\Exception\NotSupportedException;
 use Aristek\Bundle\DynamodbBundle\ODM\UnitOfWork;
+use BadMethodCallException;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\Instantiator\Exception\ExceptionInterface;
+use Doctrine\Persistence\Mapping\MappingException;
+use Exception;
+use LogicException;
+use ProxyManager\Proxy\GhostObjectInterface;
+use ReflectionException;
 use Traversable;
 use function assert;
 use function current;

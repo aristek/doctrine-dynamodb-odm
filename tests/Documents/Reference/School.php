@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\Tests\Documents\Reference;
 
+use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Document;
+use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Field;
+use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Id;
+use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\ReferenceOne;
 use Aristek\Bundle\DynamodbBundle\Tests\Documents\Enum\SchoolNonBackedEnum;
 use Aristek\Bundle\DynamodbBundle\Tests\Documents\Enum\SchoolNumberIntEnum;
 use Aristek\Bundle\DynamodbBundle\Tests\Documents\Enum\SchoolTypeEnum;
 use DateTime;
 use DateTimeImmutable;
-use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Document;
-use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Field;
-use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Id;
-use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\ReferenceOne;
 
 #[Document]
 class School

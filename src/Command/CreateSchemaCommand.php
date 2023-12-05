@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\Command;
 
+use Aristek\Bundle\DynamodbBundle\ODM\DocumentManager;
+use Aristek\Bundle\DynamodbBundle\ODM\Mapping\MappingException;
+use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\DynamoDb\AwsWrappers\DynamoDbManager;
 use Aws\DynamoDb\Exception\DynamoDbException;
 use Exception;
 use GuzzleHttp\Promise\Utils;
 use LogicException;
-use Aristek\Bundle\DynamodbBundle\ODM\DocumentManager;
-use Aristek\Bundle\DynamodbBundle\ODM\Mapping\MappingException;
-use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\DynamoDb\AwsWrappers\DynamoDbManager;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -99,7 +99,6 @@ final class CreateSchemaCommand extends AbstractSchemaCommand
                     $tables[$tableName]['gsis'][] = $this->getDynamodbIndex($globalSecondaryIndex);
                 }
             }
-
 
             foreach ($classMetadata->getLocalSecondaryIndexes() as $localSecondaryIndex) {
                 if (!in_array($localSecondaryIndex->name, $tables[$tableName]['lsisName'], true)) {

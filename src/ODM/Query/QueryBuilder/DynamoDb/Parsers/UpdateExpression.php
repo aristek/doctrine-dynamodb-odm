@@ -40,7 +40,9 @@ final class UpdateExpression
             $attributePlaceholder = str_replace('.', '_', $attribute);
             $this->values->set($attributePlaceholder, $this->dbManager->marshalValue($value));
 
-            $expression .= $this->names->placeholder($attribute).' = '.$this->values->placeholder($attributePlaceholder);
+            $expression .= $this->names->placeholder($attribute).' = '.$this->values->placeholder(
+                    $attributePlaceholder
+                );
             $expression .= $attribute === array_key_last($attributes) ? '' : ', ';
         }
 

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\ODM\Repository;
 
-use Doctrine\Persistence\ObjectRepository;
 use Aristek\Bundle\DynamodbBundle\ODM\DocumentManager;
+use Doctrine\Persistence\ObjectRepository;
 
 /**
  * Interface for document repository factory.

@@ -4,12 +4,6 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\ODM\Mapping;
 
-use Doctrine\Common\EventManager;
-use Doctrine\Persistence\Mapping\AbstractClassMetadataFactory;
-use Doctrine\Persistence\Mapping\ClassMetadata as ClassMetadataInterface;
-use Doctrine\Persistence\Mapping\Driver\MappingDriver;
-use Doctrine\Persistence\Mapping\ReflectionService;
-use ReflectionException;
 use Aristek\Bundle\DynamodbBundle\ODM\Configuration;
 use Aristek\Bundle\DynamodbBundle\ODM\ConfigurationException;
 use Aristek\Bundle\DynamodbBundle\ODM\DocumentManager;
@@ -17,6 +11,12 @@ use Aristek\Bundle\DynamodbBundle\ODM\Event\LoadClassMetadataEventArgs;
 use Aristek\Bundle\DynamodbBundle\ODM\Event\OnClassMetadataNotFoundEventArgs;
 use Aristek\Bundle\DynamodbBundle\ODM\Events;
 use Aristek\Bundle\DynamodbBundle\ODM\Id\UuidGenerator;
+use Doctrine\Common\EventManager;
+use Doctrine\Persistence\Mapping\AbstractClassMetadataFactory;
+use Doctrine\Persistence\Mapping\ClassMetadata as ClassMetadataInterface;
+use Doctrine\Persistence\Mapping\Driver\MappingDriver;
+use Doctrine\Persistence\Mapping\ReflectionService;
+use ReflectionException;
 use function assert;
 use function interface_exists;
 

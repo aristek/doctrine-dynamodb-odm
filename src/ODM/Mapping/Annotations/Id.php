@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations;
 
+use Aristek\Bundle\DynamodbBundle\ODM\Id\UuidGenerator;
 use Attribute;
 use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
-use Aristek\Bundle\DynamodbBundle\ODM\Id\UuidGenerator;
 
 /**
  * Special field mapping to map document identifiers

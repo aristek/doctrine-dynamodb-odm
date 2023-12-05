@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\ODM\Proxy\Factory;
 
-use ProxyManager\Proxy\GhostObjectInterface;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\ClassMetadata;
+use ProxyManager\Proxy\GhostObjectInterface;
 
 interface ProxyFactory
 {

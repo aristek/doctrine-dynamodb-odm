@@ -17,7 +17,7 @@ final class TestKernel extends Kernel
     {
         return [
             new FrameworkBundle(),
-            new AristekDynamodbBundle()
+            new AristekDynamodbBundle(),
         ];
     }
 

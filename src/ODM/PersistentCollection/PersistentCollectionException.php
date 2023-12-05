@@ -23,6 +23,11 @@ final class PersistentCollectionException extends DynamoDBException
         return new self('You must configure a PersistentCollection directory. See docs for details.');
     }
 
+    public static function globalSecondaryIndexRequiredToLoadCollection(): self
+    {
+        return new self('Cannot load persistent collection without GSI.');
+    }
+
     public static function invalidParameterTypeHint(
         string $className,
         string $methodName,
@@ -65,11 +70,6 @@ final class PersistentCollectionException extends DynamoDBException
     public static function ownerRequiredToLoadCollection(): self
     {
         return new self('Cannot load persistent collection without an owner.');
-    }
-
-    public static function globalSecondaryIndexRequiredToLoadCollection(): self
-    {
-        return new self('Cannot load persistent collection without GSI.');
     }
 
     public static function parentClassRequired(string $className, string $methodName): self

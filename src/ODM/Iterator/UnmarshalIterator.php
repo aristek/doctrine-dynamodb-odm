@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\ODM\Iterator;
 
-use IteratorIterator;
 use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\DynamoDb\DynamoDbManager;
+use IteratorIterator;
 use Traversable;
 use function array_map;
 use function iterator_to_array;

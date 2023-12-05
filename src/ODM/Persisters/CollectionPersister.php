@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\ODM\Persisters;
 
-use Closure;
-use Doctrine\Persistence\Mapping\MappingException;
-use ReflectionException;
 use Aristek\Bundle\DynamodbBundle\ODM\DocumentManager;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\ClassMetadata;
 use Aristek\Bundle\DynamodbBundle\ODM\PersistentCollection\PersistentCollectionInterface;
 use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\DynamoDb\DynamoDbManager;
 use Aristek\Bundle\DynamodbBundle\ODM\UnitOfWork;
+use Closure;
+use Doctrine\Persistence\Mapping\MappingException;
+use ReflectionException;
 use function array_fill_keys;
 use function array_flip;
 use function array_intersect_key;

@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\ODM\Utility;
 
-use Doctrine\Common\EventArgs;
-use Doctrine\Common\EventManager;
-use Doctrine\Persistence\Mapping\MappingException;
-use ReflectionException;
 use Aristek\Bundle\DynamodbBundle\ODM\DocumentManager;
 use Aristek\Bundle\DynamodbBundle\ODM\Event\DocumentNotFoundEventArgs;
 use Aristek\Bundle\DynamodbBundle\ODM\Event\LifecycleEventArgs;
@@ -17,6 +13,10 @@ use Aristek\Bundle\DynamodbBundle\ODM\Events;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\ClassMetadata;
 use Aristek\Bundle\DynamodbBundle\ODM\PersistentCollection\PersistentCollectionInterface;
 use Aristek\Bundle\DynamodbBundle\ODM\UnitOfWork;
+use Doctrine\Common\EventArgs;
+use Doctrine\Common\EventManager;
+use Doctrine\Persistence\Mapping\MappingException;
+use ReflectionException;
 
 /**
  * @internal

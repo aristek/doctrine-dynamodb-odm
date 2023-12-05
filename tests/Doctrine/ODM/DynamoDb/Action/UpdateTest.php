@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Aristek\Bundle\DynamodbBundle\Tests\Doctrine\ODM\DynamoDb\Action;
 
 use Aristek\Bundle\DynamodbBundle\Tests\Doctrine\ODM\DynamoDb\BaseTestCase;
-use Aristek\Bundle\DynamodbBundle\Tests\Documents\Embedded\Bar;
-use Aristek\Bundle\DynamodbBundle\Tests\Documents\Embedded\Location;
 use Aristek\Bundle\DynamodbBundle\Tests\Documents\ReadOnlyItem;
 use Aristek\Bundle\DynamodbBundle\Tests\Documents\Reference\District;
 use Aristek\Bundle\DynamodbBundle\Tests\Documents\Reference\School;

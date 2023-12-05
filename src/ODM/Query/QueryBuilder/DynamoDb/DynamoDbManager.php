@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\DynamoDb;
 
-use ArrayIterator;
+use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\DynamoDbClientInterface;
 use Aws\DynamoDb\BinaryValue;
 use Aws\DynamoDb\DynamoDbClient;
 use Aws\DynamoDb\Marshaler;
 use Aws\DynamoDb\NumberValue;
 use Aws\DynamoDb\SetValue;
-use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Index;
-use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\DynamoDbClientInterface;
 use stdClass;
 
 final class DynamoDbManager

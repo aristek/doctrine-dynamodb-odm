@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\ODM\Persisters;
 
-use InvalidArgumentException;
-use ReflectionException;
 use Aristek\Bundle\DynamodbBundle\ODM\DocumentManager;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\ClassMetadata;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\MappingException;
 use Aristek\Bundle\DynamodbBundle\ODM\PersistentCollection\PersistentCollectionInterface;
 use Aristek\Bundle\DynamodbBundle\ODM\Types\Type;
 use Aristek\Bundle\DynamodbBundle\ODM\UnitOfWork;
+use InvalidArgumentException;
+use ReflectionException;
 use UnexpectedValueException;
 use function array_merge;
 
