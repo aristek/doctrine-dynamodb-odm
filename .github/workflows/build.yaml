@@ -22,8 +22,6 @@ jobs:
                  optimizeDbBeforeStartup: # undefined by default
                  port: 8000
                  cors: '*'
-            - name: Composer
-              uses: php-actions/composer@v6
-              run: echo "Composer dependencies have been installed"
-            - name: Test
-              run: vendor/bin/phpunit
+            - uses: php-actions/composer@v6
+            - run: echo "Composer dependencies have been installed"
+            - run: vendor/bin/phpunit
