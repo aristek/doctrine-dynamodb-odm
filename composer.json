@@ -1,0 +1,47 @@
+{
+  "name": "aristek/doctrine-dynamodb-odm-bundle",
+  "description": "Aristek Doctrine DynamoDB ODM Bundle",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Aristek",
+      "email": "Aristek@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=8.1",
+    "aws/aws-sdk-php-symfony": "^2.6",
+    "doctrine/annotations": "^2.0",
+    "doctrine/cache": "^2.0",
+    "doctrine/collections": "^2.0",
+    "doctrine/persistence": "^3.0",
+    "doctrine/instantiator": "^2.0",
+    "friendsofphp/proxy-manager-lts": "^1.0",
+    "illuminate/support": "^10.0",
+    "symfony/console": "^5.4|^6.0",
+    "symfony/finder": "^5.4|^6.0",
+    "symfony/validator": "^5.4|^6.0",
+    "symfony/uid": "^5.4|^6.0"
+  },
+  "require-dev": {
+    "dealerdirect/phpcodesniffer-composer-installer": "^0.7",
+    "escapestudios/symfony2-coding-standard": "^3.0",
+    "squizlabs/php_codesniffer": "3.*",
+    "symfony/framework-bundle": "^6.0",
+    "symfony/test-pack": "^1.1",
+    "symfony/yaml": "^6.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Aristek\\Bundle\\DynamodbBundle\\": "src/",
+      "Aristek\\Bundle\\DynamodbBundle\\Tests\\": "tests/"
+    }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
+  }
+}

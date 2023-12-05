@@ -1,0 +1,13 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        bind:
+            $baseTable: '%dynamo_db_api_base_table%'
+            $namespace: '%dynamo_db_item_namespace%'
+            $srcDir: '%dynamo_db_src_dir%'
+            $ttl: '%dynamo_db_ttl%'
+
+    Aristek\Bundle\DynamodbBundle\Command\CreateSchemaCommand: ~
+    Aristek\Bundle\DynamodbBundle\Command\DropSchemaCommand: ~
+    Aristek\Bundle\DynamodbBundle\Command\UpdateSchemaCommand: ~

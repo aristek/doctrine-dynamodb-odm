@@ -1,0 +1,18 @@
+aristek_dynamodb:
+    item_namespace: 'Aristek\Bundle\DynamodbBundle\Tests\Documents'
+    item_dir: '%kernel.project_dir%/tests/Documents'
+    table: '%env(DYNAMODB_TABLE)%'
+    dynamodb_config:
+        endpoint: '%env(AWS_ENDPOINT)%'
+        credentials:
+            key: "%env(AWS_KEY)%"
+            secret: '%env(AWS_SECRET)%'
+        region: '%env(AWS_REGION)%'
+        version: latest
+
+parameters:
+    env(DYNAMODB_TABLE): 'test'
+    env(AWS_REGION): us-east-2
+    env(AWS_ENDPOINT): http://localstack:4566
+    env(AWS_KEY): localstack
+    env(AWS_SECRET): localstack

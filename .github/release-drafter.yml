@@ -1,0 +1,116 @@
+autolabeler:
+  - label: 'bug'
+    branch:
+      - '/^fix\/.+/'
+    title:
+      - '/^fix/i'
+
+  - label: 'chore'
+    branch:
+      - '/^chore\/.+/'
+    title:
+      - '/^chore/i'
+
+  - label: 'documentation'
+    branch:
+      - '/^docs\/.+/'
+    title:
+      - '/^docs/i'
+
+  - label: 'enhancement'
+    branch:
+      - '/^feat\/.+/'
+    title:
+      - '/^feat/i'
+
+  - label: 'perf'
+    branch:
+      - '/^perf\/.+/'
+    title:
+      - '/^perf/i'
+
+  - label: 'refactor'
+    branch:
+      - '/^refactor\/.+/'
+    title:
+      - '/^refactor/i'
+
+  - label: 'revert'
+    branch:
+      - '/^revert\/.+/'
+    title:
+      - '/^revert/i'
+
+  - label: 'style'
+    branch:
+      - '/^style\/.+/'
+    title:
+      - '/^style/i'
+
+  - label: 'test'
+    branch:
+      - '/^test\/.+/'
+    title:
+      - '/^test/i'
+
+version-resolver:
+  major:
+    labels:
+      - 'major'
+# Uncomment when started major version
+#  minor:
+#    labels:
+#      - 'enhancement'
+  patch:
+    labels:
+      - 'documentation'
+      - 'enhancement'
+      - 'bug'
+      - 'patch'
+      - 'perf'
+      - 'refactor'
+      - 'style'
+      - 'test'
+  default: 'patch'
+
+name-template: 'v$RESOLVED_VERSION'
+tag-template: 'v$RESOLVED_VERSION'
+
+change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
+
+categories:
+  - title: '🐛 Bug Fixes'
+    label: 'bug'
+
+  - title: '📖 Documentation'
+    label: 'documentation'
+
+  - title: '🚀 Features'
+    label: 'enhancement'
+
+  - title: '🧰 Maintenance'
+    label: 'chore'
+
+  - title: '⏱️ Performance'
+    label: 'pref'
+
+  - title: '✏️️ Refactor'
+    label: 'refactor'
+
+  - title: '🔁 Revert'
+    label: 'revert'
+
+  - title: '👁️ Style'
+    label: 'style'
+
+  - title: '🧪 Tests'
+    label: 'test'
+
+template: |
+  ## What’s Changed
+  
+  $CHANGES
+  
+  **Full Changelog**: https://github.com/$OWNER/$REPOSITORY/compare/$PREVIOUS_TAG...v$RESOLVED_VERSION
+  
+  $CONTRIBUTORS
