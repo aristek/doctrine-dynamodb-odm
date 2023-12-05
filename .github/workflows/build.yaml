@@ -13,7 +13,17 @@ jobs:
         steps:
             - uses: actions/checkout@v3
             - run: echo "The ${{ github.repository }} repository has been cloned to the runner."
-            - uses: php-actions/composer@v6
-            - run: echo "Composer dependencies have been installed"
-            - run: php bin/console aristek:dynamodb:create-schema
-            - run: vendor/bin/phpunit
+            - name: Setup DynamoDB Local
+              uses: rrainn/dynamodb-action@v2.0.1
+              with:
+                 dbPath: # undefined by default, if this is undefined inMemory will be used
+                 sharedDb: # undefined by default
+                 delayTransientStatuses: # undefined by default
+                 optimizeDbBeforeStartup: # undefined by default
+                 port: 8000
+                 cors: '*'
+            - name: Composer
+              uses: php-actions/composer@v6
+              run: echo "Composer dependencies have been installed"
+            - name: Test
+              run: vendor/bin/phpunit
