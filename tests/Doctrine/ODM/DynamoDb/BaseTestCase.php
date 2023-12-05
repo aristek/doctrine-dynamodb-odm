@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\Tests\Doctrine\ODM\DynamoDb;
 
+use Aristek\Bundle\DynamodbBundle\ODM\DocumentManager;
 use Aristek\Bundle\DynamodbBundle\Tests\Documents\Enum\SchoolNonBackedEnum;
 use Aristek\Bundle\DynamodbBundle\Tests\Documents\Enum\SchoolNumberIntEnum;
 use Aristek\Bundle\DynamodbBundle\Tests\Documents\Enum\SchoolTypeEnum;
@@ -11,11 +12,9 @@ use Aristek\Bundle\DynamodbBundle\Tests\Documents\Reference\School;
 use DateTime;
 use DateTimeImmutable;
 use Exception;
-use Aristek\Bundle\DynamodbBundle\ODM\DocumentManager;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
-use function dump;
 
 class BaseTestCase extends WebTestCase
 {
@@ -65,16 +64,14 @@ class BaseTestCase extends WebTestCase
             $dropCommand = $application->find('aristek:dynamodb:drop-schema');
             $commandTester = new CommandTester($dropCommand);
             $commandTester->execute([]);
-        } catch (Exception $e) {
-            dump($e->getMessage());
+        } catch (Exception) {
         }
 
         try {
             $createCommand = $application->find('aristek:dynamodb:create-schema');
             $commandTester = new CommandTester($createCommand);
             $commandTester->execute([]);
-        } catch (Exception $e) {
-            dump($e->getMessage());
+        } catch (Exception) {
         }
     }
 }
