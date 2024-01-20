@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\Tests\Doctrine\ODM\DynamoDb\Action;
 
+use Aristek\Bundle\DynamodbBundle\ODM\Id\Index;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\MappingException;
 use Aristek\Bundle\DynamodbBundle\Tests\Doctrine\ODM\DynamoDb\BaseTestCase;
 use Aristek\Bundle\DynamodbBundle\Tests\Documents\CustomRepository\Game;
 use Aristek\Bundle\DynamodbBundle\Tests\Documents\CustomRepository\GameRepository;
 use Aristek\Bundle\DynamodbBundle\Tests\Documents\CustomRepository\GameWithFakeRepository;
 use Aristek\Bundle\DynamodbBundle\Tests\Documents\CustomRepository\User;
+use Aristek\Bundle\DynamodbBundle\Tests\Documents\Id\Team;
 use Aristek\Bundle\DynamodbBundle\Tests\Documents\Reference\District;
 use Aristek\Bundle\DynamodbBundle\Tests\Documents\Reference\School;
 use Aristek\Bundle\DynamodbBundle\Tests\Documents\Reference\WithMapping\Affiliate;
@@ -68,6 +70,43 @@ final class ReadTest extends BaseTestCase
         $district = $repository->find(['id' => '1']);
 
         self::assertEquals('District 1', $district->getName());
+    }
+
+    public function testFindWithPk(): void
+    {
+        $team = (new Team())
+            ->setId('1')
+            ->setProjectId('123')
+            ->setName('Team 1');
+
+        $this->dm->persist($team);
+        $this->dm->flush();
+
+        $repository = $this->dm->getRepository(Team::class);
+
+        $teams = $repository->find(new Index('1'));
+
+        self::assertCount(1, $teams);
+        self::assertEquals($team->getName(), $teams->first()->getName());
+    }
+
+    public function testFindWithPkAndSk(): void
+    {
+        $expect = (new Team())
+            ->setId('1')
+            ->setProjectId('123')
+            ->setName('Team 1');
+
+        $this->dm->persist($expect);
+        $this->dm->flush();
+
+        $repository = $this->dm->getRepository(Team::class);
+
+        $actual = $repository->find(new Index('1', '123'));
+
+        self::assertEquals($expect->getId(), $actual->getId());
+        self::assertEquals($expect->getName(), $actual->getName());
+        self::assertEquals($expect->getProjectId(), $actual->getProjectId());
     }
 
     public function testFindWithNullId(): void

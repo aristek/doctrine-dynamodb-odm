@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations;
 
-use Aristek\Bundle\DynamodbBundle\ODM\Id\UuidGenerator;
+use Aristek\Bundle\DynamodbBundle\ODM\Id\Index as IdIndex;
 use Attribute;
 use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
 
@@ -15,17 +15,21 @@ use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
  * @NamedArgumentConstructor
  */
 #[Attribute(Attribute::TARGET_PROPERTY)]
-class Id extends AbstractField
+final class Pk extends AbstractField
 {
-    public bool $id = true;
+    public string $keyType = IdIndex::HASH;
+
+    public KeyStrategy $strategy;
 
     public function __construct(
-        ?string $name = null,
+        ?string $name = IdIndex::HASH,
+        ?KeyStrategy $strategy = null,
         ?string $type = null,
         bool $nullable = false,
         array $options = [],
-        ?string $strategy = UuidGenerator::STRATEGY,
     ) {
-        parent::__construct($name, $type, $nullable, $options, $strategy);
+        $this->strategy = $strategy ?: new KeyStrategy(KeyStrategy::HASH_STRATEGY_FORMAT);
+
+        parent::__construct($name, $type, $nullable, $options);
     }
 }

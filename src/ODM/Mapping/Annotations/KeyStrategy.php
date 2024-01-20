@@ -9,39 +9,24 @@ use ReflectionException;
 use function array_map;
 use function implode;
 use function is_string;
+use function preg_match;
+use function preg_match_all;
 use function preg_replace_callback;
+use const PREG_OFFSET_CAPTURE;
 
-final class IndexStrategy
+class KeyStrategy
 {
-    public const PK_STRATEGY_FORMAT = '{CLASS_SHORT_NAME}#{id}';
-    public const SK_STRATEGY_FORMAT = '{CLASS}';
+    public const HASH_STRATEGY_FORMAT = '{CLASS_SHORT_NAME}#{id}';
+    public const RANGE_STRATEGY_FORMAT = '{CLASS}';
 
-    public function __construct(
-        public readonly string $hash = self::PK_STRATEGY_FORMAT,
-        public readonly ?string $range = null,
-    ) {
-    }
-
-    /**
-     * @throws ReflectionException
-     */
-    public function getHash(object|string $document, array $attributes = []): string
+    public function __construct(public readonly string $strategy)
     {
-        return $this->format($this->hash, $document, $attributes);
     }
 
     /**
      * @throws ReflectionException
      */
-    public function getRange(object|string $document, array $attributes = []): ?string
-    {
-        return $this->range ? $this->format($this->range, $document, $attributes) : null;
-    }
-
-    /**
-     * @throws ReflectionException
-     */
-    private function format(string $index, object|string $document, array $attributes): string
+    public function getValue(object|string $document, array $attributes = []): string
     {
         $ref = new ReflectionClass($document);
 
@@ -80,7 +65,7 @@ final class IndexStrategy
 
                 return '';
             },
-            $index
+            $this->strategy
         );
     }
 }

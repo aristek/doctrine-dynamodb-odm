@@ -6,6 +6,7 @@ namespace Aristek\Bundle\DynamodbBundle\ODM\Repository;
 
 use Aristek\Bundle\DynamodbBundle\ODM\DocumentManager;
 use Aristek\Bundle\DynamodbBundle\ODM\DynamoDBException;
+use Aristek\Bundle\DynamodbBundle\ODM\Id\Index;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\ClassMetadata;
 use Aristek\Bundle\DynamodbBundle\ODM\Persisters\DocumentPersister;
 use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder;
@@ -18,7 +19,6 @@ use Doctrine\Persistence\ObjectRepository;
 use InvalidArgumentException;
 use LogicException;
 use ReflectionException;
-use function is_array;
 
 /**
  * A DocumentRepository serves as a repository for documents with generic as well as
@@ -55,6 +55,8 @@ class DocumentRepository implements ObjectRepository, Selectable
 
     /**
      * Finds a document matching the specified identifier. Optionally a lock mode and expected version may be specified.
+     *
+     * @return null|object|ArrayCollection
      */
     public function find(mixed $id): ?object
     {
@@ -62,25 +64,21 @@ class DocumentRepository implements ObjectRepository, Selectable
             return null;
         }
 
-        $class = $this->getClassMetadata();
-
-        [$identifierFieldName] = $class->getIdentifierFieldNames();
-
-        if (is_array($id)) {
-            if (!isset($id[$identifierFieldName])) {
-                throw new InvalidArgumentException();
-            }
-
-            $id = $id[$identifierFieldName];
+        if (!$id instanceof Index) {
+            throw new InvalidArgumentException();
         }
 
-        $document = $this->uow->tryGetById($id, $class);
+        $class = $this->getClassMetadata();
+
+        [$pk, $sk] = $class->getIdentifierFieldNames();
+
+        $document = $this->uow->tryGetById([$id->getHash(), $id->getRange()], $class);
 
         if ($document) {
             return $document;
         }
 
-        $criteria = $class->getPrimaryIndexData($this->getClassName(), [$identifierFieldName => $id]);
+        $criteria = $class->getPrimaryIndexData($this->getClassName(), [$pk => $id->getHash(), $sk => $id->getRange()]);
 
         return $this->getDocumentPersister()->load($criteria);
     }

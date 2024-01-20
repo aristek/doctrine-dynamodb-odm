@@ -29,6 +29,7 @@ use ReflectionException;
 use ReflectionProperty;
 use UnexpectedValueException;
 use function array_filter;
+use function array_keys;
 use function assert;
 use function count;
 use function get_class;
@@ -729,7 +730,8 @@ final class UnitOfWork implements PropertyChangedListener
             return $document;
         }
 
-        $id = $class->getDatabaseIdentifierValue($data[$class->getIdentifier()]);
+        $keys = array_keys($class->getIdentifier());
+        $id = $class->getDatabaseIdentifierValue([$data[$keys[0]], $data[$keys[1]]]);
         $serializedId = serialize($id);
         $isManagedObject = isset($this->identityMap[$class->name][$serializedId]);
 
@@ -2742,7 +2744,7 @@ final class UnitOfWork implements PropertyChangedListener
 
         if ($class->identifier) {
             $idValue = $class->getIdentifierValue($document);
-            $upsert = !$class->isEmbeddedDocument && $idValue !== null;
+            $upsert = !$class->isEmbeddedDocument && $idValue[0] !== null && $idValue[1] !== null;
 
             if ($class->generatorType === ClassMetadata::GENERATOR_TYPE_NONE && !$idValue) {
                 throw new InvalidArgumentException(

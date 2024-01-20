@@ -5,16 +5,19 @@ declare(strict_types=1);
 namespace Aristek\Bundle\DynamodbBundle\ODM\Mapping\Driver;
 
 use Aristek\Bundle\DynamodbBundle\ODM\Events;
+use Aristek\Bundle\DynamodbBundle\ODM\Id\Index;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations as ODM;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\ClassMetadata;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\MappingException;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\Reader;
 use Doctrine\Persistence\Mapping\Driver\ColocatedMappingDriver;
+use LogicException;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
 use function array_replace;
+use function array_values;
 use function assert;
 use function interface_exists;
 
@@ -98,18 +101,6 @@ class AnnotationDriver extends CompatibilityAnnotationDriver
             }
         }
 
-        if ($documentAnnot instanceof ODM\Document) {
-            $metadata->addIndex($documentAnnot->primaryIndex);
-
-            foreach ($documentAnnot->globalSecondaryIndexes as $globalSecondaryIndex) {
-                $metadata->addIndex($globalSecondaryIndex, ClassMetadata::INDEX_GSI);
-            }
-
-            foreach ($documentAnnot->localSecondaryIndexes as $localSecondaryIndices) {
-                $metadata->addIndex($localSecondaryIndices, ClassMetadata::INDEX_LSI);
-            }
-        }
-
         if ($documentAnnot === null) {
             throw MappingException::classIsNotAValidDocument($className);
         }
@@ -159,6 +150,30 @@ class AnnotationDriver extends CompatibilityAnnotationDriver
             if ($fieldAnnot) {
                 $mapping = array_replace($mapping, (array) $fieldAnnot);
                 $metadata->mapField($mapping);
+            }
+        }
+
+        if (!isset($metadata->identifier[Index::RANGE])) {
+            $metadata->identifier[Index::RANGE] = [
+                $metadata::ID_KEY      => Index::RANGE,
+                $metadata::ID_FIELD    => null,
+                $metadata::ID_STRATEGY => new ODM\KeyStrategy(ODM\KeyStrategy::RANGE_STRATEGY_FORMAT),
+            ];
+        }
+
+        if (count($metadata->getIdentifier()) !== 2) {
+            throw new LogicException('Attributes Pk and Sk are required.');
+        }
+
+        if ($documentAnnot instanceof ODM\Document) {
+            $metadata->addIndex(new Index(...array_values($metadata->getIdentifierKeys())));
+
+            foreach ($documentAnnot->globalSecondaryIndexes as $globalSecondaryIndex) {
+                $metadata->addIndex($globalSecondaryIndex, ClassMetadata::INDEX_GSI);
+            }
+
+            foreach ($documentAnnot->localSecondaryIndexes as $localSecondaryIndices) {
+                $metadata->addIndex($localSecondaryIndices, ClassMetadata::INDEX_LSI);
             }
         }
 

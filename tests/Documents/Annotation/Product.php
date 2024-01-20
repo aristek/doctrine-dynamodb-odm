@@ -8,6 +8,7 @@ use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\AlsoLoad;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Document;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Field;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Id;
+use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Pk;
 
 #[Document]
 class Product
@@ -16,7 +17,7 @@ class Product
     #[Field]
     private ?string $alias = null;
 
-    #[Id]
+    #[Pk]
     private ?string $id = null;
 
     #[AlsoLoad(['alias', 'secondAlias'])]

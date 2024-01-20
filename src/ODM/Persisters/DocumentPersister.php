@@ -21,6 +21,7 @@ use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\DynamoDb\DynamoDbManage
 use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\Exception\NotSupportedException;
 use Aristek\Bundle\DynamodbBundle\ODM\UnitOfWork;
 use BadMethodCallException;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Instantiator\Exception\ExceptionInterface;
 use Doctrine\Persistence\Mapping\MappingException;
@@ -30,6 +31,7 @@ use ProxyManager\Proxy\GhostObjectInterface;
 use ReflectionException;
 use Traversable;
 use function assert;
+use function count;
 use function current;
 use function gettype;
 use function is_array;
@@ -227,7 +229,7 @@ final class DocumentPersister
      * @param object|null                      $document
      * @param array                            $hints
      *
-     * @return object|null
+     * @return ArrayCollection|object|null
      *
      * @throws ExceptionInterface
      * @throws HydratorException
@@ -242,13 +244,13 @@ final class DocumentPersister
         }
 
         $qb = $this->getNewQuery();
-        $result = $qb->find(id: $criteria, hydrationMode: QueryBuilder::HYDRATE_ARRAY);
-
-        if ($result === null) {
-            return null;
+        if (count($criteria) === 1) {
+            return $qb->where($criteria)->all();
         }
 
-        return $this->createDocument($result, $document, $hints);
+        $result = $qb->find(id: $criteria, hydrationMode: QueryBuilder::HYDRATE_ARRAY);
+
+        return $result ? $this->createDocument($result, $document, $hints) : null;
     }
 
     /**

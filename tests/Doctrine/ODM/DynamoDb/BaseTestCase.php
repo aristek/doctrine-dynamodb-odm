@@ -15,6 +15,7 @@ use Exception;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
+use function dump;
 
 class BaseTestCase extends WebTestCase
 {
@@ -71,7 +72,8 @@ class BaseTestCase extends WebTestCase
             $createCommand = $application->find('aristek:dynamodb:create-schema');
             $commandTester = new CommandTester($createCommand);
             $commandTester->execute([]);
-        } catch (Exception) {
+        } catch (Exception $e) {
+            dump($e);
         }
     }
 }
