@@ -10,15 +10,15 @@ class Index
     public const RANGE = 'sk';
 
     public function __construct(
-        public readonly string $hash,
-        public readonly ?string $range = null,
+        public readonly string|int $hash,
+        public readonly string|int|null $range = null,
         public readonly ?string $name = null,
     ) {
     }
 
     public function getHash(): string
     {
-        return $this->hash;
+        return (string) $this->hash;
     }
 
     public function getName(): ?string
@@ -28,6 +28,6 @@ class Index
 
     public function getRange(): ?string
     {
-        return $this->range;
+        return (string) $this->range;
     }
 }

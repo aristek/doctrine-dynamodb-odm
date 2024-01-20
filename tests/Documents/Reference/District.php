@@ -6,9 +6,9 @@ namespace Aristek\Bundle\DynamodbBundle\Tests\Documents\Reference;
 
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Document;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Field;
-use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Id;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Index;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\IndexStrategy;
+use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Pk;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\ReferenceMany;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\ReferenceOne;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -26,7 +26,7 @@ use Doctrine\Common\Collections\Collection;
 )]
 class District
 {
-    #[Id]
+    #[Pk]
     private ?string $id = null;
 
     #[Field]

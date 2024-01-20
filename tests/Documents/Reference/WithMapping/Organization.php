@@ -6,7 +6,7 @@ namespace Aristek\Bundle\DynamodbBundle\Tests\Documents\Reference\WithMapping;
 
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Document;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Field;
-use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Id;
+use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Pk;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\ReferenceMany;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -17,7 +17,7 @@ final class Organization
     #[ReferenceMany(targetDocument: Affiliate::class, cascade: 'all', mappedBy: 'organization')]
     private Collection $affiliates;
 
-    #[Id]
+    #[Pk]
     private ?string $id = null;
 
     #[Field]

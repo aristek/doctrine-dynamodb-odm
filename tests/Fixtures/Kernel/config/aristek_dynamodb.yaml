@@ -1,6 +1,6 @@
 aristek_dynamodb:
-    item_namespace: 'Aristek\Bundle\DynamodbBundle\Tests\Documents\Id'
-    item_dir: '%kernel.project_dir%/tests/Documents/Id'
+    item_namespace: 'Aristek\Bundle\DynamodbBundle\Tests\Documents'
+    item_dir: '%kernel.project_dir%/tests/Documents'
     table: '%env(DYNAMODB_TABLE)%'
     dynamodb_config:
         endpoint: '%env(AWS_ENDPOINT)%'

@@ -11,7 +11,7 @@ use Aristek\Bundle\DynamodbBundle\ODM\Event\PreUpdateEventArgs;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Document;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Field;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\HasLifecycleCallbacks;
-use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Id;
+use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Pk;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\PostLoad;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\PostPersist;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\PreFlush;
@@ -27,7 +27,7 @@ class User
     #[Field]
     private ?DateTimeImmutable $createdAt = null;
 
-    #[Id]
+    #[Pk]
     private ?string $id = null;
 
     private ?string $postLoad = null;

@@ -80,6 +80,10 @@ class DocumentRepository implements ObjectRepository, Selectable
 
         $criteria = $class->getPrimaryIndexData($this->getClassName(), [$pk => $id->getHash(), $sk => $id->getRange()]);
 
+        if (!$id->getRange()) {
+            unset($criteria[$class->getPrimaryIndex()?->getRange()]);
+        }
+
         return $this->getDocumentPersister()->load($criteria);
     }
 

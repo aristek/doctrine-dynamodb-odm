@@ -156,6 +156,10 @@ final class StaticProxyFactory implements ProxyFactory
         $idFieldFqcns = [];
 
         foreach ($metadata->getIdentifierFieldNames() as $idField) {
+            if (!$idField) {
+                continue;
+            }
+
             $idFieldFqcns[] = $this->propertyFqcn($metadata->getReflectionProperty($idField));
         }
 

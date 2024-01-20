@@ -19,6 +19,8 @@ class KeyStrategy
     public const HASH_STRATEGY_FORMAT = '{CLASS_SHORT_NAME}#{id}';
     public const RANGE_STRATEGY_FORMAT = '{CLASS}';
 
+    private ?string $value = null;
+
     public function __construct(public readonly string $strategy)
     {
     }
@@ -26,13 +28,13 @@ class KeyStrategy
     /**
      * @throws ReflectionException
      */
-    public function getValue(object|string $document, array $attributes = []): string
+    public function marshal(object|string $document, array $attributes = []): string
     {
         $ref = new ReflectionClass($document);
 
         return preg_replace_callback(
             '/(\{\w+\})/',
-            static function ($matches) use ($ref, $document, $attributes) {
+            function ($matches) use ($ref, $document, $attributes) {
                 foreach ($matches as $match) {
                     preg_match('/\{(\w+)\}/', $match, $matches);
                     $key = $matches[1] ?? null;
@@ -54,11 +56,15 @@ class KeyStrategy
                                     return '';
                                 }
 
-                                return $attributes[$key];
+                                $this->value = $attributes[$key];
+
+                                return $this->value;
                             }
 
                             if ($ref->hasProperty($key)) {
-                                return $ref->getProperty($key)->getValue($document);
+                                $this->value = $ref->getProperty($key)->getValue($document);
+
+                                return $this->value;
                             }
                     }
                 }
@@ -67,5 +73,10 @@ class KeyStrategy
             },
             $this->strategy
         );
+    }
+
+    public function unmarshal(): ?string
+    {
+        return $this->value;
     }
 }

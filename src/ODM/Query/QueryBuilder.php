@@ -6,6 +6,7 @@ namespace Aristek\Bundle\DynamodbBundle\ODM\Query;
 
 use Aristek\Bundle\DynamodbBundle\ODM\DocumentManager;
 use Aristek\Bundle\DynamodbBundle\ODM\Hydrator\HydratorException;
+use Aristek\Bundle\DynamodbBundle\ODM\Id\Index;
 use Aristek\Bundle\DynamodbBundle\ODM\Iterator\UnmarshalIterator;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\ClassMetadata;
 use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\ConditionAnalyzer\Analyzer;
@@ -300,6 +301,7 @@ class QueryBuilder
         }
 
         $data = $this->dbManager->unmarshalItem($item);
+        $this->unmarshalIndexData($data);
 
         if ($hydrationMode === self::HYDRATE_OBJECT) {
             return $this->documentManager->getUnitOfWork()->getOrCreateDocument($this->className, $data);
@@ -355,6 +357,7 @@ class QueryBuilder
 
         foreach ($response['Responses'][$table] as $item) {
             $item = $this->dbManager->unmarshalItem($item);
+            $this->unmarshalIndexData($item);
 
             if ($hydrationMode === self::HYDRATE_OBJECT) {
                 $result->add($this->documentManager->getUnitOfWork()->getOrCreateDocument($this->className, $item));
@@ -716,6 +719,7 @@ class QueryBuilder
 
         foreach ($iterator as $item) {
             $item = $this->dbManager->unmarshalItem($item);
+            $this->unmarshalIndexData($item);
 
             if ($hydrationMode === self::HYDRATE_OBJECT) {
                 $model = $this->documentManager->getUnitOfWork()->getOrCreateDocument($this->className, $item);
@@ -820,5 +824,34 @@ class QueryBuilder
         }
 
         return $raw;
+    }
+
+    private function unmarshalIndexData(array &$data): void
+    {
+        $index = $this->classMetadata->getPrimaryIndex();
+
+        $unmarshal = function (array &$data, Index $index) {
+            if (isset($data[$index->getHash()])) {
+                $unmarshalValue = $this->classMetadata->getHashStrategy()->unmarshal();
+                $data[$index->getHash()] = $unmarshalValue ?: $data[$index->getHash()];
+            }
+
+            if ($index->getRange() && isset($data[$index->getRange()])) {
+                $unmarshalValue = $this->classMetadata->getRangeStrategy()->unmarshal();
+                $data[$index->getRange()] = $unmarshalValue ?: $data[$index->getRange()];
+            }
+        };
+
+        if ($index) {
+            $unmarshal($data, $index);
+        }
+
+        foreach ($this->classMetadata->getGlobalSecondaryIndexes() as $globalSecondaryIndex) {
+            $unmarshal($data, $globalSecondaryIndex);
+        }
+
+        foreach ($this->classMetadata->getLocalSecondaryIndexes() as $localSecondaryIndex) {
+            $unmarshal($data, $localSecondaryIndex);
+        }
     }
 }

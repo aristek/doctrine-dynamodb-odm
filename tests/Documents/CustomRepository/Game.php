@@ -6,23 +6,14 @@ namespace Aristek\Bundle\DynamodbBundle\Tests\Documents\CustomRepository;
 
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Document;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Field;
-use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Id;
-use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Index;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\IndexStrategy;
+use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Pk;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\ReferenceMany;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
 #[Document(
-    primaryIndex: new Index(
-        hash: 'pk',
-        name: '',
-        strategy: new IndexStrategy(
-            hash: '{CLASS}_WITH_REPO',
-            range: '{CLASS_SHORT_NAME}#{id}'
-        ),
-        range: 'sk'
-    ),
+    indexStrategy: new IndexStrategy(hash: '{CLASS}_WITH_REPO', range: '{CLASS_SHORT_NAME}#{id}'),
     repositoryClass: GameRepository::class
 )]
 class Game
@@ -30,7 +21,7 @@ class Game
     #[ReferenceMany(targetDocument: User::class, cascade: 'all', repositoryMethod: 'getAdminUsers')]
     private Collection $adminUsers;
 
-    #[Id]
+    #[Pk]
     private ?string $id = null;
 
     #[Field]

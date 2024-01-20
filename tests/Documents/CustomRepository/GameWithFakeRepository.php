@@ -6,14 +6,14 @@ namespace Aristek\Bundle\DynamodbBundle\Tests\Documents\CustomRepository;
 
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Document;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Field;
-use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Id;
+use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Pk;
 
 #[Document(
     repositoryClass: GameFakeRepository::class
 )]
 class GameWithFakeRepository
 {
-    #[Id]
+    #[Pk]
     private ?string $id = null;
 
     #[Field]

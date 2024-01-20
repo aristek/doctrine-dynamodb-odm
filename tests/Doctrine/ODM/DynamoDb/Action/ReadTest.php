@@ -67,7 +67,7 @@ final class ReadTest extends BaseTestCase
         $districtRepository = $this->dm->getRepository(District::class);
         $repository = $districtRepository;
 
-        $district = $repository->find(['id' => '1']);
+        $district = $repository->find(new Index('1', 'District'));
 
         self::assertEquals('District 1', $district->getName());
     }
@@ -81,6 +81,7 @@ final class ReadTest extends BaseTestCase
 
         $this->dm->persist($team);
         $this->dm->flush();
+        $this->dm->clear();
 
         $repository = $this->dm->getRepository(Team::class);
 
@@ -99,6 +100,7 @@ final class ReadTest extends BaseTestCase
 
         $this->dm->persist($expect);
         $this->dm->flush();
+        $this->dm->clear();
 
         $repository = $this->dm->getRepository(Team::class);
 
@@ -222,7 +224,7 @@ final class ReadTest extends BaseTestCase
         $districtRepository = $this->dm->getRepository(District::class);
         $repository = $districtRepository;
         $district1 = $repository->findOneBy(['id' => '1']);
-        $district2 = $repository->find('2');
+        $district2 = $repository->find(new Index('2', 'District'));
 
         self::assertEquals('District 1', $district1->getName());
         self::assertEquals('District 2', $district2->getName());
@@ -238,7 +240,7 @@ final class ReadTest extends BaseTestCase
 
         $repository = $this->dm->getRepository(Game::class);
 
-        $game = $repository->find('1');
+        $game = $repository->find(new Index('1', 'District'));
 
         self::assertInstanceOf(GameRepository::class, $repository);
         self::assertEquals('Name Set on Custom Repository', $game->getName());
@@ -262,7 +264,7 @@ final class ReadTest extends BaseTestCase
 
         $repository = $this->dm->getRepository(Game::class);
 
-        $game = $repository->find('1');
+        $game = $repository->find(new Index('1', 'District'));
 
         self::assertCount(3, $game->getUsers());
         self::assertCount(1, $game->getAdminUsers());
@@ -295,7 +297,7 @@ final class ReadTest extends BaseTestCase
         $this->dm->flush();
 
         $qb = $this->dm->getRepository(District::class)->createQueryBuilder();
-        $district = $qb->find(['pk' => 'District', 'sk' => 'D#1']);
+        $district = $qb->find(new Index('1', 'District'));
 
         self::assertEquals('District 1', $district->getName());
     }
@@ -332,7 +334,7 @@ final class ReadTest extends BaseTestCase
 
         $this->dm->clear();
 
-        $district = $this->dm->find(District::class, $districtId);
+        $district = $this->dm->find(District::class, new Index($districtId, 'District'));
 
         self::assertEquals($districtId, $district->getId());
         self::assertEquals('District', $district->getName());
@@ -352,8 +354,8 @@ final class ReadTest extends BaseTestCase
         $this->dm->flush();
         $this->dm->clear();
 
-        $organization = $this->dm->getRepository(Organization::class)->find('1');
-        $affiliate1 = $this->dm->getRepository(Affiliate::class)->find('1');
+        $organization = $this->dm->getRepository(Organization::class)->find(new Index('1', 'Organization'));
+        $affiliate1 = $this->dm->getRepository(Affiliate::class)->find(new Index('1', 'Affiliate'));
 
         self::assertNotNull($organization);
         self::assertCount(2, $organization->getAffiliates());

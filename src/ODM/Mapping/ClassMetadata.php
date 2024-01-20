@@ -169,6 +169,8 @@ final class ClassMetadata implements BaseClassMetadata
      */
     public array $identifier = [];
 
+    public ?IndexStrategy $indexStrategy = null;
+
     /**
      * READ-ONLY: The array of indexes for the document collection.
      *
@@ -551,6 +553,15 @@ final class ClassMetadata implements BaseClassMetadata
         return $this->indexes[self::INDEX_GSI] ?? [];
     }
 
+    public function getHashStrategy(): KeyStrategy
+    {
+        if ($strategy = $this->getIdentifier()[IdIndex::HASH][self::ID_STRATEGY]) {
+            return $strategy;
+        }
+
+        return new KeyStrategy($this->indexStrategy->hash ?? KeyStrategy::HASH_STRATEGY_FORMAT);
+    }
+
     public function getIdentifier(): array
     {
         return $this->identifier;
@@ -594,7 +605,7 @@ final class ClassMetadata implements BaseClassMetadata
             $this->reflFields[$this->getHashField()]->getValue($document),
             $this->getRangeField()
                 ? $this->reflFields[$this->getRangeField()]->getValue($document)
-                : $this->getRangeStrategy()->getValue($document),
+                : $this->getRangeStrategy()->marshal($document),
         ];
     }
 
@@ -723,8 +734,8 @@ final class ClassMetadata implements BaseClassMetadata
         $data = [];
 
         if ($primaryIndex = $this->getPrimaryIndex()) {
-            $data[$primaryIndex->hash] = $this->getHashStrategy()->getValue($document, $attributes);
-            $data[$primaryIndex->range] = $this->getRangeStrategy()->getValue($document, $attributes);
+            $data[$primaryIndex->hash] = $this->getHashStrategy()->marshal($document, $attributes);
+            $data[$primaryIndex->range] = $this->getRangeStrategy()->marshal($document, $attributes);
         }
 
         if (empty($data[$primaryIndex->range])) {
@@ -752,6 +763,15 @@ final class ClassMetadata implements BaseClassMetadata
         $reflectionProperty->setAccessible($oldAccessibility);
 
         return $ret;
+    }
+
+    public function getRangeStrategy(): KeyStrategy
+    {
+        if ($strategy = $this->getIdentifier()[IdIndex::RANGE][self::ID_STRATEGY]) {
+            return $strategy;
+        }
+
+        return new KeyStrategy($this->indexStrategy->range ?? KeyStrategy::RANGE_STRATEGY_FORMAT);
     }
 
     public function getReflectionClass(): ReflectionClass
@@ -1313,7 +1333,11 @@ final class ClassMetadata implements BaseClassMetadata
     public function setIdentifierValue(object $document, mixed $id): void
     {
         $id = $this->getPHPIdentifierValue($id);
-        $this->reflFields[$this->identifier]->setValue($document, $id);
+        $this->reflFields[$this->getHashField()]->setValue($document, $id[0]);
+
+        if ($this->getRangeField()) {
+            $this->reflFields[$this->getRangeField()]->setValue($document, $id[1]);
+        }
     }
 
     /**
@@ -1403,34 +1427,24 @@ final class ClassMetadata implements BaseClassMetadata
         }
     }
 
-    private function getHashField(): string
+    public function getHashField(): string
     {
         return $this->getIdentifierFields()[IdIndex::HASH];
     }
 
-    private function getHashKey(): string
+    public function getHashKey(): string
     {
         return $this->getIdentifierKeys()[IdIndex::HASH];
     }
 
-    private function getHashStrategy(): KeyStrategy
-    {
-        return $this->getIdentifier()[IdIndex::HASH][self::ID_STRATEGY];
-    }
-
-    private function getRangeField(): ?string
+    public function getRangeField(): ?string
     {
         return $this->getIdentifierFields()[IdIndex::RANGE];
     }
 
-    private function getRangeKey(): string
+    public function getRangeKey(): string
     {
         return $this->getIdentifierKeys()[IdIndex::RANGE];
-    }
-
-    private function getRangeStrategy(): KeyStrategy
-    {
-        return $this->getIdentifier()[IdIndex::RANGE][self::ID_STRATEGY];
     }
 
     /**

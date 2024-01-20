@@ -202,7 +202,11 @@ final class CollectionPersister
         $className = $document::class;
         $class = $this->dm->getClassMetadata($className);
         $id = $class->getDatabaseIdentifierValue($this->uow->getDocumentIdentifier($document));
-        $query = ['id' => $id];
+
+        $query[$class->getHashField()] = $id[0];
+        if (!empty($id[1])) {
+            $query[$class->getRangeField()] = $id[1];
+        }
 
         $this->getDynamoDbManager($className)->updateOne(
             $class->getPrimaryIndexData($className, $query),

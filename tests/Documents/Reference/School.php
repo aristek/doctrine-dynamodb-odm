@@ -6,7 +6,7 @@ namespace Aristek\Bundle\DynamodbBundle\Tests\Documents\Reference;
 
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Document;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Field;
-use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Id;
+use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Pk;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\ReferenceOne;
 use Aristek\Bundle\DynamodbBundle\Tests\Documents\Enum\SchoolNonBackedEnum;
 use Aristek\Bundle\DynamodbBundle\Tests\Documents\Enum\SchoolNumberIntEnum;
@@ -35,7 +35,7 @@ class School
     #[Field]
     private float $float;
 
-    #[Id]
+    #[Pk]
     private ?string $id = null;
 
     #[Field]

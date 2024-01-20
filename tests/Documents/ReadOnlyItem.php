@@ -6,12 +6,12 @@ namespace Aristek\Bundle\DynamodbBundle\Tests\Documents;
 
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Document;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Field;
-use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Id;
+use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Pk;
 
 #[Document(readOnly: true)]
 final class ReadOnlyItem
 {
-    #[Id]
+    #[Pk]
     private ?string $id = null;
 
     #[Field]

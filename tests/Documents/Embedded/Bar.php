@@ -8,14 +8,14 @@ use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Document;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\EmbedMany;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\EmbedOne;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Field;
-use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Id;
+use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Pk;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
 #[Document]
 class Bar
 {
-    #[Id]
+    #[Pk]
     private ?string $id = null;
 
     /**

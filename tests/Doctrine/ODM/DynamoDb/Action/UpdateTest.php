@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\Tests\Doctrine\ODM\DynamoDb\Action;
 
+use Aristek\Bundle\DynamodbBundle\ODM\Id\Index;
 use Aristek\Bundle\DynamodbBundle\Tests\Doctrine\ODM\DynamoDb\BaseTestCase;
 use Aristek\Bundle\DynamodbBundle\Tests\Documents\ReadOnlyItem;
 use Aristek\Bundle\DynamodbBundle\Tests\Documents\Reference\District;
@@ -14,10 +15,10 @@ final class UpdateTest extends BaseTestCase
     public function testReadOnly(): void
     {
         $dynamoDbManager = $this->dm->getQueryBuilder(ReadOnlyItem::class)->getDynamoDbManager();
-        $item = ['pk' => 'ReadOnlyItem', 'sk' => 'ROI#1', 'id' => '1', 'name' => 'Test Name'];
+        $item = ['pk' => 'ROI#1', 'sk' => 'ReadOnlyItem', 'id' => '1', 'name' => 'Test Name'];
         $dynamoDbManager->insertOne($item, $this->dm->getConfiguration()->getDatabase());
 
-        $readOnlyItem = $this->dm->getRepository(ReadOnlyItem::class)->find('1');
+        $readOnlyItem = $this->dm->getRepository(ReadOnlyItem::class)->find(new Index('1', 'ReadOnlyItem'));
 
         self::assertNotNull($readOnlyItem);
         self::assertEquals('Test Name', $readOnlyItem->getName());
@@ -27,7 +28,7 @@ final class UpdateTest extends BaseTestCase
         $this->dm->flush();
         $this->dm->clear();
 
-        $readOnlyItem = $this->dm->getRepository(ReadOnlyItem::class)->find('1');
+        $readOnlyItem = $this->dm->getRepository(ReadOnlyItem::class)->find(new Index('1', 'ReadOnlyItem'));
 
         self::assertNotEquals('New Name', $readOnlyItem->getName());
     }
@@ -39,7 +40,7 @@ final class UpdateTest extends BaseTestCase
         $this->dm->flush();
         $this->dm->clear();
 
-        $district = $this->dm->getRepository(District::class)->find('1');
+        $district = $this->dm->getRepository(District::class)->find(new Index('1', 'District'));
 
         self::assertNotNull($district);
         self::assertEquals('District', $district->getName());
@@ -49,7 +50,7 @@ final class UpdateTest extends BaseTestCase
         $this->dm->flush();
         $this->dm->clear();
 
-        $district = $this->dm->getRepository(District::class)->find('1');
+        $district = $this->dm->getRepository(District::class)->find(new Index('1', 'District'));
 
         self::assertEquals('New District', $district->getName());
     }
@@ -65,7 +66,7 @@ final class UpdateTest extends BaseTestCase
 
         $this->dm->clear();
 
-        $school = $this->dm->getRepository(School::class)->find($schoolId);
+        $school = $this->dm->getRepository(School::class)->find(new Index($schoolId, 'School'));
 
         self::assertNotNull($school);
         self::assertEquals('School 1', $school->getName());
@@ -75,7 +76,7 @@ final class UpdateTest extends BaseTestCase
         $this->dm->flush();
         $this->dm->clear();
 
-        $school = $this->dm->getRepository(School::class)->find($schoolId);
+        $school = $this->dm->getRepository(School::class)->find(new Index($schoolId, 'School'));
 
         self::assertEquals('New School', $school->getName());
     }

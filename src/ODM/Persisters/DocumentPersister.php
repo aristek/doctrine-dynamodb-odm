@@ -361,9 +361,8 @@ final class DocumentPersister
     {
         $update = $this->pb->prepareUpdateData($document);
 
-        $query = $this->getQueryForDocument($document);
-
         if (!empty($update)) {
+            $query = $this->getQueryForDocument($document);
             assert($this->dbManager instanceof DynamoDbManager);
             $this->dbManager->updateOne($query, $update, $this->getTable());
         }
@@ -422,8 +421,14 @@ final class DocumentPersister
     {
         $id = $this->uow->getDocumentIdentifier($document);
         $id = $this->class->getDatabaseIdentifierValue($id);
+        [$pk, $sk] = $this->class->getIdentifierFieldNames();
 
-        return $this->class->getPrimaryIndexData($this->class->name, ['id' => $id]);
+        $attributes[$pk] = $id[0];
+        if (!empty($id[1])) {
+            $attributes[$sk] = $id[1];
+        }
+
+        return $this->class->getPrimaryIndexData($this->class->name, $attributes);
     }
 
     private function getTable(): string

@@ -153,19 +153,20 @@ class AnnotationDriver extends CompatibilityAnnotationDriver
             }
         }
 
-        if (!isset($metadata->identifier[Index::RANGE])) {
-            $metadata->identifier[Index::RANGE] = [
-                $metadata::ID_KEY      => Index::RANGE,
-                $metadata::ID_FIELD    => null,
-                $metadata::ID_STRATEGY => new ODM\KeyStrategy(ODM\KeyStrategy::RANGE_STRATEGY_FORMAT),
-            ];
-        }
-
-        if (count($metadata->getIdentifier()) !== 2) {
-            throw new LogicException('Attributes Pk and Sk are required.');
-        }
-
         if ($documentAnnot instanceof ODM\Document) {
+            if (!isset($metadata->identifier[Index::RANGE])) {
+                $metadata->identifier[Index::RANGE] = [
+                    $metadata::ID_KEY      => Index::RANGE,
+                    $metadata::ID_FIELD    => null,
+                    $metadata::ID_STRATEGY => null,
+                ];
+            }
+
+            if (count($metadata->getIdentifier()) !== 2) {
+                throw new LogicException('Attributes Pk and Sk are required.');
+            }
+
+            $metadata->indexStrategy = $documentAnnot->indexStrategy;
             $metadata->addIndex(new Index(...array_values($metadata->getIdentifierKeys())));
 
             foreach ($documentAnnot->globalSecondaryIndexes as $globalSecondaryIndex) {

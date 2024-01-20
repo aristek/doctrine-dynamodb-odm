@@ -2744,7 +2744,7 @@ final class UnitOfWork implements PropertyChangedListener
 
         if ($class->identifier) {
             $idValue = $class->getIdentifierValue($document);
-            $upsert = !$class->isEmbeddedDocument && $idValue[0] !== null && $idValue[1] !== null;
+            $upsert = !$class->isEmbeddedDocument && $idValue[0] !== null;
 
             if ($class->generatorType === ClassMetadata::GENERATOR_TYPE_NONE && !$idValue) {
                 throw new InvalidArgumentException(
@@ -2756,10 +2756,10 @@ final class UnitOfWork implements PropertyChangedListener
             }
 
             if ($class->generatorType !== ClassMetadata::GENERATOR_TYPE_NONE
-                && $idValue === null
+                && $idValue[0] === null
                 && $class->idGenerator !== null
             ) {
-                $idValue = $class->idGenerator->generate($this->dm, $document);
+                $idValue[0] = $class->idGenerator->generate($this->dm, $document);
                 $idValue = $class->getPHPIdentifierValue($class->getDatabaseIdentifierValue($idValue));
                 $class->setIdentifierValue($document, $idValue);
             }
