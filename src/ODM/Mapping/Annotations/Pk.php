@@ -19,16 +19,16 @@ final class Pk extends AbstractField
 {
     public string $keyType = IdIndex::HASH;
 
-    public KeyStrategy $strategy;
+    public string $strategy;
 
     public function __construct(
         ?string $name = IdIndex::HASH,
-        ?KeyStrategy $strategy = null,
+        ?string $strategy = null,
         ?string $type = null,
         bool $nullable = false,
         array $options = [],
     ) {
-        $this->strategy = $strategy ?: new KeyStrategy(KeyStrategy::HASH_STRATEGY_FORMAT);
+        $this->strategy = $strategy ?: IndexStrategy::PK_STRATEGY_FORMAT;
 
         parent::__construct($name, $type, $nullable, $options);
     }

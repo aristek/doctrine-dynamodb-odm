@@ -17,7 +17,6 @@ use Aristek\Bundle\DynamodbBundle\Tests\Documents\Reference\School;
 use Aristek\Bundle\DynamodbBundle\Tests\Documents\Reference\WithMapping\Affiliate;
 use Aristek\Bundle\DynamodbBundle\Tests\Documents\Reference\WithMapping\Organization;
 use Doctrine\Common\Collections\Criteria;
-use InvalidArgumentException;
 use LogicException;
 use function array_map;
 
@@ -37,24 +36,9 @@ final class ReadTest extends BaseTestCase
 
         $districtRepository = $this->dm->getRepository(District::class);
         $repository = $districtRepository;
-        $district = $repository->findOneBy(['id' => 1]);
+        $district = $repository->findOneBy(new Index(1));
 
         self::assertEquals('District 1', $district->getName());
-    }
-
-    public function testFindOneByWithoutId(): void
-    {
-        $district = (new District())->setId('1')->setName('District 1');
-
-        $this->dm->persist($district);
-        $this->dm->flush();
-
-        $districtRepository = $this->dm->getRepository(District::class);
-        $repository = $districtRepository;
-
-        $this->expectException(InvalidArgumentException::class);
-
-        $repository->findOneBy(['test' => '1']);
     }
 
     public function testFindWithIdAsArray(): void
@@ -72,6 +56,21 @@ final class ReadTest extends BaseTestCase
         self::assertEquals('District 1', $district->getName());
     }
 
+    public function testFindWithNullId(): void
+    {
+        $district = (new District())->setId('1')->setName('District 1');
+
+        $this->dm->persist($district);
+        $this->dm->flush();
+
+        $districtRepository = $this->dm->getRepository(District::class);
+        $repository = $districtRepository;
+
+        $district = $repository->find(null);
+
+        self::assertNull($district);
+    }
+
     public function testFindWithPk(): void
     {
         $team = (new Team())
@@ -85,10 +84,10 @@ final class ReadTest extends BaseTestCase
 
         $repository = $this->dm->getRepository(Team::class);
 
-        $teams = $repository->find(new Index('1'));
+        $teams = $repository->findBy(new Index('1'));
 
         self::assertCount(1, $teams);
-        self::assertEquals($team->getName(), $teams->first()->getName());
+        self::assertEquals($team->getName(), $teams[0]->getName());
     }
 
     public function testFindWithPkAndSk(): void
@@ -109,36 +108,6 @@ final class ReadTest extends BaseTestCase
         self::assertEquals($expect->getId(), $actual->getId());
         self::assertEquals($expect->getName(), $actual->getName());
         self::assertEquals($expect->getProjectId(), $actual->getProjectId());
-    }
-
-    public function testFindWithNullId(): void
-    {
-        $district = (new District())->setId('1')->setName('District 1');
-
-        $this->dm->persist($district);
-        $this->dm->flush();
-
-        $districtRepository = $this->dm->getRepository(District::class);
-        $repository = $districtRepository;
-
-        $district = $repository->find(null);
-
-        self::assertNull($district);
-    }
-
-    public function testFindWithoutId(): void
-    {
-        $district = (new District())->setId('1')->setName('District 1');
-
-        $this->dm->persist($district);
-        $this->dm->flush();
-
-        $districtRepository = $this->dm->getRepository(District::class);
-        $repository = $districtRepository;
-
-        $this->expectException(InvalidArgumentException::class);
-
-        $repository->find(['test' => '1']);
     }
 
     public function testMatching(): void
@@ -170,7 +139,7 @@ final class ReadTest extends BaseTestCase
 
         $districtRepository = $this->dm->getRepository(District::class);
         $repository = $districtRepository;
-        $districts = $repository->findAll();
+        $districts = $repository->find(new Index(hash: 'DISTRICT', range: 1, name: 'ItemTypeIndex'));
 
         self::assertCount(3, $districts);
 

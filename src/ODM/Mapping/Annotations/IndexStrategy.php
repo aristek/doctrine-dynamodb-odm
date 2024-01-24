@@ -16,6 +16,10 @@ final class IndexStrategy
     public const PK_STRATEGY_FORMAT = '{CLASS_SHORT_NAME}#{id}';
     public const SK_STRATEGY_FORMAT = '{CLASS}';
 
+    private ?string $hashValue = null;
+
+    private ?string $rangeValue = null;
+
     public function __construct(
         public readonly string $hash = self::PK_STRATEGY_FORMAT,
         public readonly ?string $range = null,
@@ -30,12 +34,22 @@ final class IndexStrategy
         return $this->format($this->hash, $document, $attributes);
     }
 
+    public function getHashValue(): ?string
+    {
+        return $this->hashValue;
+    }
+
     /**
      * @throws ReflectionException
      */
     public function getRange(object|string $document, array $attributes = []): ?string
     {
         return $this->range ? $this->format($this->range, $document, $attributes) : null;
+    }
+
+    public function getRangeValue(): ?string
+    {
+        return $this->rangeValue;
     }
 
     /**
@@ -47,7 +61,7 @@ final class IndexStrategy
 
         return preg_replace_callback(
             '/(\{\w+\})/',
-            static function ($matches) use ($ref, $document, $attributes) {
+            function ($matches) use ($ref, $document, $attributes, $index) {
                 foreach ($matches as $match) {
                     preg_match('/\{(\w+)\}/', $match, $matches);
                     $key = $matches[1] ?? null;
@@ -69,11 +83,23 @@ final class IndexStrategy
                                     return '';
                                 }
 
-                                return $attributes[$key];
+                                $value = $attributes[$key];
+
+                                $index === self::PK_STRATEGY_FORMAT
+                                    ? $this->hashValue = $value
+                                    : $this->rangeValue = $value;
+
+                                return $value;
                             }
 
                             if ($ref->hasProperty($key)) {
-                                return $ref->getProperty($key)->getValue($document);
+                                $value = $ref->getProperty($key)->getValue($document);
+
+                                $index === self::PK_STRATEGY_FORMAT
+                                    ? $this->hashValue = $value
+                                    : $this->rangeValue = $value;
+
+                                return $value;
                             }
                     }
                 }

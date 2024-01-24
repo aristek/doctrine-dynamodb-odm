@@ -6,8 +6,8 @@ namespace Aristek\Bundle\DynamodbBundle\ODM\Query;
 
 use Aristek\Bundle\DynamodbBundle\ODM\DocumentManager;
 use Aristek\Bundle\DynamodbBundle\ODM\Hydrator\HydratorException;
-use Aristek\Bundle\DynamodbBundle\ODM\Id\Index;
 use Aristek\Bundle\DynamodbBundle\ODM\Iterator\UnmarshalIterator;
+use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Index;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\ClassMetadata;
 use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\ConditionAnalyzer\Analyzer;
 use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\DynamoDb\AwsWrappers\DynamoDbTable;
@@ -830,14 +830,14 @@ class QueryBuilder
     {
         $index = $this->classMetadata->getPrimaryIndex();
 
-        $unmarshal = function (array &$data, Index $index) {
+        $unmarshal = static function (array &$data, Index $index) {
             if (isset($data[$index->getHash()])) {
-                $unmarshalValue = $this->classMetadata->getHashStrategy()->unmarshal();
+                $unmarshalValue = $index->strategy->getHashValue();
                 $data[$index->getHash()] = $unmarshalValue ?: $data[$index->getHash()];
             }
 
             if ($index->getRange() && isset($data[$index->getRange()])) {
-                $unmarshalValue = $this->classMetadata->getRangeStrategy()->unmarshal();
+                $unmarshalValue = $index->strategy->getRangeValue();
                 $data[$index->getRange()] = $unmarshalValue ?: $data[$index->getRange()];
             }
         };

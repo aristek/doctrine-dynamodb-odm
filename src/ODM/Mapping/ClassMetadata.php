@@ -8,7 +8,6 @@ use Aristek\Bundle\DynamodbBundle\ODM\Id\IdGenerator;
 use Aristek\Bundle\DynamodbBundle\ODM\Id\Index as IdIndex;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Index;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\IndexStrategy;
-use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\KeyStrategy;
 use Aristek\Bundle\DynamodbBundle\ODM\Types\Type;
 use BadMethodCallException;
 use DateTime;
@@ -553,13 +552,14 @@ final class ClassMetadata implements BaseClassMetadata
         return $this->indexes[self::INDEX_GSI] ?? [];
     }
 
-    public function getHashStrategy(): KeyStrategy
+    public function getHashField(): string
     {
-        if ($strategy = $this->getIdentifier()[IdIndex::HASH][self::ID_STRATEGY]) {
-            return $strategy;
-        }
+        return $this->getIdentifierFields()[IdIndex::HASH];
+    }
 
-        return new KeyStrategy($this->indexStrategy->hash ?? KeyStrategy::HASH_STRATEGY_FORMAT);
+    public function getHashKey(): string
+    {
+        return $this->getIdentifierKeys()[IdIndex::HASH];
     }
 
     public function getIdentifier(): array
@@ -567,8 +567,14 @@ final class ClassMetadata implements BaseClassMetadata
         return $this->identifier;
     }
 
-    public function getIdentifierFieldNames(): array
+    public function getIdentifierFieldNames(?string $name = null): array
     {
+        if ($name) {
+            $index = $this->getIndex($name);
+
+            return [$index->getHash(), $index->getRange()];
+        }
+
         return [$this->getHashField(), $this->getRangeField()];
     }
 
@@ -596,6 +602,14 @@ final class ClassMetadata implements BaseClassMetadata
         return $this->getDatabaseIdentifierValue($this->getIdentifierValue($document));
     }
 
+    public function getIdentifierStrategies(): array
+    {
+        return [
+            IdIndex::HASH  => $this->identifier[IdIndex::HASH][self::ID_STRATEGY],
+            IdIndex::RANGE => $this->identifier[IdIndex::RANGE][self::ID_STRATEGY],
+        ];
+    }
+
     /**
      * Gets the document identifier as a PHP type.
      */
@@ -605,7 +619,7 @@ final class ClassMetadata implements BaseClassMetadata
             $this->reflFields[$this->getHashField()]->getValue($document),
             $this->getRangeField()
                 ? $this->reflFields[$this->getRangeField()]->getValue($document)
-                : $this->getRangeStrategy()->marshal($document),
+                : $this->getPrimaryIndex()->strategy->getRange($document),
         ];
     }
 
@@ -619,12 +633,37 @@ final class ClassMetadata implements BaseClassMetadata
         return $this->getIdentifierValue($object);
     }
 
-    /**
-     * Returns the array of indexes for this Document.
-     */
-    public function getIndexes(): array
+    public function getIndex(?string $name = null): Index
     {
-        return $this->indexes;
+        if (!$name) {
+            return $this->getPrimaryIndex();
+        }
+
+        foreach ($this->getGlobalSecondaryIndexes() as $globalSecondaryIndex) {
+            if ($globalSecondaryIndex->name === $name) {
+                return $globalSecondaryIndex;
+            }
+        }
+
+        foreach ($this->getLocalSecondaryIndexes() as $localSecondaryIndex) {
+            if ($localSecondaryIndex->name === $name) {
+                return $localSecondaryIndex;
+            }
+        }
+
+        throw new LogicException(sprintf('Index with name "%s" not found.', $name));
+    }
+
+    public function getIndexData(Index $index, object|string $document, array $attributes = []): array
+    {
+        $data[$index->hash] = $index->strategy->getHash($document, $attributes);
+        $data[$index->range] = $index->strategy->getRange($document, $attributes);
+
+        if (empty($data[$index->range])) {
+            unset($data[$index->range]);
+        }
+
+        return $data;
     }
 
     public function getIndexesData(object $document, array $attributes = []): array
@@ -724,25 +763,18 @@ final class ClassMetadata implements BaseClassMetadata
         ];
     }
 
-    public function getPrimaryIndex(): ?IdIndex
+    public function getPrimaryIndex(): ?Index
     {
         return $this->indexes[self::INDEX_PRIMARY] ?? null;
     }
 
     public function getPrimaryIndexData(object|string $document, array $attributes = []): array
     {
-        $data = [];
-
-        if ($primaryIndex = $this->getPrimaryIndex()) {
-            $data[$primaryIndex->hash] = $this->getHashStrategy()->marshal($document, $attributes);
-            $data[$primaryIndex->range] = $this->getRangeStrategy()->marshal($document, $attributes);
+        if (!$this->getPrimaryIndex()) {
+            return [];
         }
 
-        if (empty($data[$primaryIndex->range])) {
-            unset($data[$primaryIndex->range]);
-        }
-
-        return $data;
+        return $this->getIndexData($this->getPrimaryIndex(), $document, $attributes);
     }
 
     /**
@@ -765,13 +797,14 @@ final class ClassMetadata implements BaseClassMetadata
         return $ret;
     }
 
-    public function getRangeStrategy(): KeyStrategy
+    public function getRangeField(): ?string
     {
-        if ($strategy = $this->getIdentifier()[IdIndex::RANGE][self::ID_STRATEGY]) {
-            return $strategy;
-        }
+        return $this->getIdentifierFields()[IdIndex::RANGE];
+    }
 
-        return new KeyStrategy($this->indexStrategy->range ?? KeyStrategy::RANGE_STRATEGY_FORMAT);
+    public function getRangeKey(): string
+    {
+        return $this->getIdentifierKeys()[IdIndex::RANGE];
     }
 
     public function getReflectionClass(): ReflectionClass
@@ -1425,26 +1458,6 @@ final class ClassMetadata implements BaseClassMetadata
                 $fieldName
             );
         }
-    }
-
-    public function getHashField(): string
-    {
-        return $this->getIdentifierFields()[IdIndex::HASH];
-    }
-
-    public function getHashKey(): string
-    {
-        return $this->getIdentifierKeys()[IdIndex::HASH];
-    }
-
-    public function getRangeField(): ?string
-    {
-        return $this->getIdentifierFields()[IdIndex::RANGE];
-    }
-
-    public function getRangeKey(): string
-    {
-        return $this->getIdentifierKeys()[IdIndex::RANGE];
     }
 
     /**

@@ -16,17 +16,14 @@ use Aristek\Bundle\DynamodbBundle\ODM\PersistentCollection\PersistentCollectionE
 use Aristek\Bundle\DynamodbBundle\ODM\PersistentCollection\PersistentCollectionInterface;
 use Aristek\Bundle\DynamodbBundle\ODM\Query\Query;
 use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder;
-use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\DynamoDb\ComparisonOperator;
 use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\DynamoDb\DynamoDbManager;
 use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\Exception\NotSupportedException;
 use Aristek\Bundle\DynamodbBundle\ODM\UnitOfWork;
 use BadMethodCallException;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Instantiator\Exception\ExceptionInterface;
 use Doctrine\Persistence\Mapping\MappingException;
 use Exception;
-use LogicException;
 use ProxyManager\Proxy\GhostObjectInterface;
 use ReflectionException;
 use Traversable;
@@ -36,7 +33,6 @@ use function current;
 use function gettype;
 use function is_array;
 use function is_object;
-use function is_scalar;
 use function spl_object_hash;
 use function sprintf;
 
@@ -225,25 +221,25 @@ final class DocumentPersister
     /**
      * Finds a document by a set of criteria.
      *
-     * @param array<string, mixed>|scalar|null $criteria Query criteria
-     * @param object|null                      $document
-     * @param array                            $hints
+     * @param array<string, mixed> $criteria Query criteria
+     * @param object|null          $document
+     * @param string|null          $indexName
+     * @param array                $hints
      *
-     * @return ArrayCollection|object|null
-     *
-     * @throws ExceptionInterface
-     * @throws HydratorException
-     * @throws MappingException
-     * @throws ReflectionException
+     * @return object|null
      */
-    public function load(mixed $criteria, ?object $document = null, array $hints = []): ?object
-    {
-        if ($criteria === null || is_scalar($criteria)) {
-            [$identifierFieldName] = $this->class->getIdentifierFieldNames();
-            $criteria = $this->class->getPrimaryIndexData($this->class->name, [$identifierFieldName => $criteria]);
+    public function load(
+        array $criteria,
+        ?object $document = null,
+        ?string $indexName = null,
+        array $hints = []
+    ): ?object {
+        $qb = $this->getNewQuery();
+
+        if ($indexName) {
+            $qb->withIndex($indexName);
         }
 
-        $qb = $this->getNewQuery();
         if (count($criteria) === 1) {
             return $qb->where($criteria)->all();
         }
@@ -267,17 +263,16 @@ final class DocumentPersister
      */
     public function loadAll(
         array $criteria = [],
+        ?string $indexName = null,
         ?array $sort = null,
         ?int $limit = null,
-        ?int $skip = null,
         object|null|array $after = null
     ): Iterator {
-        $primaryIndex = $this->class->getPrimaryIndex();
-        if (!$primaryIndex) {
-            throw new LogicException('Primary Index undefined.');
-        }
-
         $qb = $this->getNewQuery();
+
+        if ($indexName) {
+            $qb->withIndex($indexName);
+        }
 
         if ($sort !== null) {
             $order = current($sort);
@@ -298,14 +293,7 @@ final class DocumentPersister
             }
         }
 
-        $baseCursor = $qb
-            ->where($primaryIndex->hash, $primaryIndex->strategy->getHash($this->class->name))
-            ->where(
-                $primaryIndex->range,
-                ComparisonOperator::BEGINS_WITH,
-                $primaryIndex->strategy->getRange($this->class->name)
-            )
-            ->all($criteria, hydrationMode: QueryBuilder::HYDRATE_ITERATOR);
+        $baseCursor = $qb->where($criteria)->all(hydrationMode: QueryBuilder::HYDRATE_ITERATOR);
 
         return $this->wrapCursor($baseCursor);
     }
@@ -596,13 +584,22 @@ final class DocumentPersister
             $class = $this->dm->getClassMetadata($className);
             $queryBuilder = $this->dm->getQueryBuilder($className);
             $criteria = [];
+            [$pk, $sk] = $this->class->getIdentifierFieldNames();
             foreach ($ids as $id) {
-                $criteria[] = $class->getPrimaryIndexData($className, [$class->getIdentifier() => $id]);
+                $attributes[$pk] = $id[0];
+                if (!empty($id[1])) {
+                    $attributes[$sk] = $id[1];
+                }
+
+                $criteria[] = $class->getPrimaryIndexData($className, $attributes);
             }
 
             $documents = $queryBuilder->find(id: $criteria, hydrationMode: QueryBuilder::HYDRATE_ARRAY);
             foreach ($documents as $documentData) {
-                $document = $this->uow->getById($documentData[$class->getIdentifier()], $class);
+                $document = $this->uow->getById(
+                    [$documentData[$this->class->getHashKey()], $documentData[$this->class->getRangeKey()]],
+                    $class
+                );
                 if ($document instanceof GhostObjectInterface && !$document->isProxyInitialized()) {
                     $data = $this->hydratorFactory->hydrate($document, $documentData);
                     $this->uow->setOriginalDocumentData($document, $data);

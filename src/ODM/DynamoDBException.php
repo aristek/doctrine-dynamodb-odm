@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\ODM;
 
-use Doctrine\Persistence\ObjectRepository;
+use Aristek\Bundle\DynamodbBundle\ODM\Repository\ObjectRepositoryInterface;
 use Exception;
 use function array_slice;
 use function end;
@@ -45,7 +45,7 @@ class DynamoDBException extends Exception
     public static function invalidDocumentRepository(string $className): self
     {
         return new self(
-            sprintf("Invalid repository class '%s'. It must be a %s.", $className, ObjectRepository::class)
+            sprintf("Invalid repository class '%s'. It must be a %s.", $className, ObjectRepositoryInterface::class)
         );
     }
 

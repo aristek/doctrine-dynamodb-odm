@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Aristek\Bundle\DynamodbBundle\ODM\Repository;
 
 use Aristek\Bundle\DynamodbBundle\ODM\DocumentManager;
-use Aristek\Bundle\DynamodbBundle\ODM\DynamoDBException;
 use Aristek\Bundle\DynamodbBundle\ODM\Id\Index;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\ClassMetadata;
 use Aristek\Bundle\DynamodbBundle\ODM\Persisters\DocumentPersister;
@@ -14,11 +13,9 @@ use Aristek\Bundle\DynamodbBundle\ODM\UnitOfWork;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Selectable;
-use Doctrine\Persistence\Mapping\MappingException;
-use Doctrine\Persistence\ObjectRepository;
 use InvalidArgumentException;
 use LogicException;
-use ReflectionException;
+use function sprintf;
 
 /**
  * A DocumentRepository serves as a repository for documents with generic as well as
@@ -27,7 +24,7 @@ use ReflectionException;
  * This class is designed for inheritance and users can subclass this class to
  * write their own repositories with business-specific methods to locate documents.
  */
-class DocumentRepository implements ObjectRepository, Selectable
+class DocumentRepository implements ObjectRepositoryInterface, Selectable
 {
     protected ClassMetadata $class;
 
@@ -55,22 +52,20 @@ class DocumentRepository implements ObjectRepository, Selectable
 
     /**
      * Finds a document matching the specified identifier. Optionally a lock mode and expected version may be specified.
-     *
-     * @return null|object|ArrayCollection
      */
-    public function find(mixed $id): ?object
+    public function find(?Index $id): ?object
     {
         if ($id === null) {
             return null;
         }
 
-        if (!$id instanceof Index) {
-            throw new InvalidArgumentException();
+        if (!$id->getRange()) {
+            throw new InvalidArgumentException(
+                sprintf('Method "%s" require "%s" with hash and range.', __METHOD__, Index::class)
+            );
         }
 
         $class = $this->getClassMetadata();
-
-        [$pk, $sk] = $class->getIdentifierFieldNames();
 
         $document = $this->uow->tryGetById([$id->getHash(), $id->getRange()], $class);
 
@@ -78,66 +73,59 @@ class DocumentRepository implements ObjectRepository, Selectable
             return $document;
         }
 
-        $criteria = $class->getPrimaryIndexData($this->getClassName(), [$pk => $id->getHash(), $sk => $id->getRange()]);
+        [$pk, $sk] = $class->getIdentifierFieldNames($id->getName());
 
-        if (!$id->getRange()) {
-            unset($criteria[$class->getPrimaryIndex()?->getRange()]);
-        }
+        $criteria = $class->getIndexData(
+            $class->getIndex($id->getName()),
+            $this->getClassName(),
+            [$pk => $id->getHash(), $sk => $id->getRange()]
+        );
 
         return $this->getDocumentPersister()->load($criteria);
-    }
-
-    /**
-     * Finds all documents in the repository.
-     */
-    public function findAll(): array
-    {
-        return $this->findBy([]);
     }
 
     /**
      * Finds documents by a set of criteria.
      */
     public function findBy(
-        array $criteria,
+        Index $criteria,
         ?array $orderBy = null,
         ?int $limit = null,
         ?int $offset = null,
         ?object $after = null
     ): array {
-        return $this->getDocumentPersister()->loadAll($criteria, $orderBy, $limit, $offset, $after)->toArray();
+        $class = $this->getClassMetadata();
+
+        [$pk, $sk] = $class->getIdentifierFieldNames($criteria->getName());
+
+        return $this->getDocumentPersister()->loadAll(
+            $class->getPrimaryIndexData(
+                $this->getClassName(),
+                [$pk => $criteria->getHash(), $sk => $criteria->getRange()]
+            ),
+            $orderBy,
+            $limit,
+            $offset,
+            $after
+        )->toArray();
     }
 
     /**
      * Finds a single document by a set of criteria.
      *
-     * @param array<string, mixed> $criteria
+     * @param Index $criteria
      *
-     * @throws MappingException
-     * @throws ReflectionException
-     * @throws DynamoDBException
+     * @return object|null
      */
-    public function findOneBy(array $criteria): ?object
+    public function findOneBy(Index $criteria): ?object
     {
-        $class = $this->getClassMetadata();
-        [$identifierFieldName] = $class->getIdentifierFieldNames();
-
-        if (!isset($criteria[$identifierFieldName])) {
-            throw new InvalidArgumentException();
+        if ($criteria->getHash() && $criteria->getRange()) {
+            return $this->find($criteria);
         }
 
-        $id = $criteria[$identifierFieldName];
+        $items = $this->findBy($criteria);
 
-        // Check identity map first
-        $document = $this->uow->tryGetById($id, $class);
-
-        if ($document) {
-            return $document;
-        }
-
-        $criteria = $class->getPrimaryIndexData($this->getClassName(), [$identifierFieldName => $id]);
-
-        return $this->getDocumentPersister()->load($criteria);
+        return reset($items);
     }
 
     public function getClassMetadata(): ClassMetadata

@@ -14,12 +14,12 @@ use Aristek\Bundle\DynamodbBundle\ODM\PersistentCollection\PersistentCollectionG
 use Aristek\Bundle\DynamodbBundle\ODM\Proxy\FileLocator;
 use Aristek\Bundle\DynamodbBundle\ODM\Repository\DefaultRepositoryFactory;
 use Aristek\Bundle\DynamodbBundle\ODM\Repository\DocumentRepository;
+use Aristek\Bundle\DynamodbBundle\ODM\Repository\ObjectRepositoryInterface;
 use Aristek\Bundle\DynamodbBundle\ODM\Repository\RepositoryFactory;
 use Aws\DynamoDb\DynamoDbClient;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Cache\Psr6\DoctrineProvider;
 use Doctrine\Persistence\Mapping\Driver\MappingDriver;
-use Doctrine\Persistence\ObjectRepository;
 use InvalidArgumentException;
 use ProxyManager\Configuration as ProxyManagerConfiguration;
 use ProxyManager\Factory\LazyLoadingGhostFactory;
@@ -423,7 +423,7 @@ class Configuration
     {
         $reflectionClass = new ReflectionClass($className);
 
-        if (!$reflectionClass->implementsInterface(ObjectRepository::class)) {
+        if (!$reflectionClass->implementsInterface(ObjectRepositoryInterface::class)) {
             throw DynamoDBException::invalidDocumentRepository($className);
         }
 

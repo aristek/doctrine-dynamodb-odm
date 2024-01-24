@@ -6,7 +6,6 @@ namespace Aristek\Bundle\DynamodbBundle\Tests\Documents\Id;
 
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Document;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Field;
-use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\KeyStrategy;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Pk;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Sk;
 
@@ -19,7 +18,7 @@ final class Team
     #[Field]
     private string $name;
 
-    #[Sk(strategy: new KeyStrategy('{projectId}'))]
+    #[Sk(strategy: '{projectId}')]
     private ?string $projectId = null;
 
     public function getId(): ?string

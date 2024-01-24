@@ -18,6 +18,7 @@ use ReflectionProperty;
 use Throwable;
 use function array_filter;
 use function count;
+use function dump;
 
 /**
  * This factory is used to create proxy objects for documents at runtime.
@@ -107,7 +108,7 @@ final class StaticProxyFactory implements ProxyFactory
         ): bool {
             $originalInitializer = $initializer;
             $initializer = null;
-            $identifier = $metadata->getIdentifierValue($ghostObject);
+            $identifier = $metadata->getPrimaryIndexData($ghostObject);
 
             try {
                 $document = $documentPersister->load($identifier, $ghostObject);
