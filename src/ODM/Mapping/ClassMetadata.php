@@ -1093,7 +1093,7 @@ final class ClassMetadata implements BaseClassMetadata
             }
 
             $this->identifier[$mapping['keyType']] = [
-                self::ID_KEY      => $mapping['name'],
+                self::ID_KEY      => $mapping['keyField'],
                 self::ID_FIELD    => $mapping['fieldName'],
                 self::ID_STRATEGY => $mapping['strategy'],
             ];

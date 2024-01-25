@@ -17,17 +17,21 @@ use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
 #[Attribute(Attribute::TARGET_PROPERTY)]
 final class Sk extends AbstractField
 {
+    public string $keyField;
+
     public string $keyType = IdIndex::RANGE;
 
     public string $strategy;
 
     public function __construct(
-        ?string $name = IdIndex::RANGE,
+        string $name = null,
+        ?string $keyField = null,
         ?string $type = null,
         ?string $strategy = null,
         bool $nullable = false,
         array $options = [],
     ) {
+        $this->keyField = $keyField ?: IdIndex::HASH;
         $this->strategy = $strategy ?: IndexStrategy::SK_STRATEGY_FORMAT;
 
         parent::__construct($name, $type, $nullable, $options);

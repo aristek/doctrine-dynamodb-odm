@@ -29,7 +29,6 @@ use ReflectionException;
 use ReflectionProperty;
 use UnexpectedValueException;
 use function array_filter;
-use function array_keys;
 use function assert;
 use function count;
 use function get_class;
@@ -619,7 +618,10 @@ final class UnitOfWork implements PropertyChangedListener
      */
     public function getDocumentIdentifier(object $document): mixed
     {
-        return $this->documentIdentifiers[spl_object_hash($document)] ?? null;
+        $class = $this->dm->getClassMetadata($document::class);
+        $id = $this->documentIdentifiers[spl_object_hash($document)] ?? null;
+
+        return $id ?: $class->getIdentifierValue($document);
     }
 
     /**
@@ -730,8 +732,10 @@ final class UnitOfWork implements PropertyChangedListener
             return $document;
         }
 
-        $keys = array_keys($class->getIdentifier());
-        $id = $class->getDatabaseIdentifierValue([$data[$keys[0]], $data[$keys[1]]]);
+        $id = $class->getDatabaseIdentifierValue([
+            $data[$class->getHashField()],
+            $data[$class->getRangeField() ?: $class->getRangeKey()],
+        ]);
         $serializedId = serialize($id);
         $isManagedObject = isset($this->identityMap[$class->name][$serializedId]);
 
@@ -2760,7 +2764,6 @@ final class UnitOfWork implements PropertyChangedListener
                 && $class->idGenerator !== null
             ) {
                 $idValue[0] = $class->idGenerator->generate($this->dm, $document);
-                $idValue = $class->getPHPIdentifierValue($class->getDatabaseIdentifierValue($idValue));
                 $class->setIdentifierValue($document, $idValue);
             }
 

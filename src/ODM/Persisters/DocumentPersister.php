@@ -408,15 +408,11 @@ final class DocumentPersister
     private function getQueryForDocument(object $document): array
     {
         $id = $this->uow->getDocumentIdentifier($document);
-        $id = $this->class->getDatabaseIdentifierValue($id);
-        [$pk, $sk] = $this->class->getIdentifierFieldNames();
 
-        $attributes[$pk] = $id[0];
-        if (!empty($id[1])) {
-            $attributes[$sk] = $id[1];
-        }
-
-        return $this->class->getPrimaryIndexData($this->class->name, $attributes);
+        return $this->class->getPrimaryIndexData(
+            $document::class,
+            [$this->class->getHashField() => $id[0], $this->class->getRangeField() => $id[1]]
+        );
     }
 
     private function getTable(): string
@@ -595,9 +591,12 @@ final class DocumentPersister
             }
 
             $documents = $queryBuilder->find(id: $criteria, hydrationMode: QueryBuilder::HYDRATE_ARRAY);
+
             foreach ($documents as $documentData) {
-                $document = $this->uow->getById(
-                    [$documentData[$this->class->getHashKey()], $documentData[$this->class->getRangeKey()]],
+                $document = $this->uow->getById([
+                    $documentData[$this->class->getHashField()],
+                    $documentData[$this->class->getRangeField() ?: $this->class->getRangeKey()],
+                ],
                     $class
                 );
                 if ($document instanceof GhostObjectInterface && !$document->isProxyInitialized()) {

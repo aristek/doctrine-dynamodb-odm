@@ -301,7 +301,6 @@ class QueryBuilder
         }
 
         $data = $this->dbManager->unmarshalItem($item);
-        $this->unmarshalIndexData($data);
 
         if ($hydrationMode === self::HYDRATE_OBJECT) {
             return $this->documentManager->getUnitOfWork()->getOrCreateDocument($this->className, $data);
@@ -357,7 +356,6 @@ class QueryBuilder
 
         foreach ($response['Responses'][$table] as $item) {
             $item = $this->dbManager->unmarshalItem($item);
-            $this->unmarshalIndexData($item);
 
             if ($hydrationMode === self::HYDRATE_OBJECT) {
                 $result->add($this->documentManager->getUnitOfWork()->getOrCreateDocument($this->className, $item));
@@ -719,7 +717,6 @@ class QueryBuilder
 
         foreach ($iterator as $item) {
             $item = $this->dbManager->unmarshalItem($item);
-            $this->unmarshalIndexData($item);
 
             if ($hydrationMode === self::HYDRATE_OBJECT) {
                 $model = $this->documentManager->getUnitOfWork()->getOrCreateDocument($this->className, $item);

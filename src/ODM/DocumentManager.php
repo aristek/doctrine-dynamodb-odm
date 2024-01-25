@@ -167,7 +167,7 @@ class DocumentManager implements ObjectManager
             );
         }
 
-        return $class->getDatabaseIdentifierValue($id);
+        return $id;
     }
 
     /**
