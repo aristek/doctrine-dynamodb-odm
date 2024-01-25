@@ -31,7 +31,7 @@ final class Sk extends AbstractField
         bool $nullable = false,
         array $options = [],
     ) {
-        $this->keyField = $keyField ?: IdIndex::HASH;
+        $this->keyField = $keyField ?: IdIndex::RANGE;
         $this->strategy = $strategy ?: IndexStrategy::SK_STRATEGY_FORMAT;
 
         parent::__construct($name, $type, $nullable, $options);
