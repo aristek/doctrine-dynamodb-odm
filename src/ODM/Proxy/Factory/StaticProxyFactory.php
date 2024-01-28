@@ -18,7 +18,6 @@ use ReflectionProperty;
 use Throwable;
 use function array_filter;
 use function count;
-use function dump;
 
 /**
  * This factory is used to create proxy objects for documents at runtime.
