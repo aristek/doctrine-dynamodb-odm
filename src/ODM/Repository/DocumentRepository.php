@@ -84,6 +84,11 @@ class DocumentRepository implements ObjectRepositoryInterface, Selectable
         return $this->getDocumentPersister()->load(criteria: $criteria, indexName: $id->getName());
     }
 
+    public function findAll(): array
+    {
+        return $this->getDocumentPersister()->loadAll()->toArray();
+    }
+
     /**
      * Finds documents by a set of criteria.
      */
@@ -105,7 +110,7 @@ class DocumentRepository implements ObjectRepositoryInterface, Selectable
         }
 
         return $this->getDocumentPersister()->loadAll(
-            $class->getIndexData( $class->getIndex($criteria->getName()), $this->getClassName(), $attributes),
+            $class->getIndexData($class->getIndex($criteria->getName()), $this->getClassName(), $attributes),
             $criteria->getName(),
             $orderBy,
             $limit,
