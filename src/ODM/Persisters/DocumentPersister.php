@@ -293,7 +293,11 @@ final class DocumentPersister
             }
         }
 
-        $baseCursor = $qb->where($criteria)->all(hydrationMode: QueryBuilder::HYDRATE_ITERATOR);
+        if ($criteria) {
+            $qb->where($criteria);
+        }
+
+        $baseCursor = $qb->all(hydrationMode: QueryBuilder::HYDRATE_ITERATOR);
 
         return $this->wrapCursor($baseCursor);
     }
