@@ -28,13 +28,13 @@ The fundamental functionality of an ODM library is to map object models (i.e. cl
 <?php
 
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Document;
-use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Id;
+use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Pk;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\ReferenceOne;
 
 #[Document]
 final class User
 {
-    #[Id]
+    #[Pk]
     private int $id;
 
     #[Field]
@@ -52,14 +52,14 @@ final class User
 <?php
 
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Document;
-use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Id;
+use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Pk;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\ReferenceMany;
 use Doctrine\Common\Collections\Collection;
 
 #[Document]
 final class Address
 {
-    #[Id]
+    #[Pk]
     private int $id;
 
     #[Field]
