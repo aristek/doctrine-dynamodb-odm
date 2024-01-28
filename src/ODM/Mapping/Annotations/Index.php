@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations;
 
-class Index
+use Aristek\Bundle\DynamodbBundle\ODM\Id\Index as IdIndex;
+
+class Index extends IdIndex
 {
     public const TYPE_ALL = 'ALL';
     public const TYPE_INCLUDE = 'INCLUDE';
@@ -16,14 +18,16 @@ class Index
     public string $projectionType = 'ALL';
 
     public function __construct(
-        public readonly string $hash,
-        public readonly string $name,
+        string $hash,
+        string $name,
         public readonly IndexStrategy $strategy,
         public readonly array $projectedAttributes = [],
         string $projectionType = self::TYPE_ALL,
-        public readonly ?string $range = null,
+        ?string $range = null,
 
     ) {
         $this->projectionType = $projectionType;
+
+        parent::__construct($hash, $range, $name);
     }
 }

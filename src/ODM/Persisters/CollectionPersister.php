@@ -201,14 +201,9 @@ final class CollectionPersister
     {
         $className = $document::class;
         $class = $this->dm->getClassMetadata($className);
-        $id = $class->getDatabaseIdentifierValue($this->uow->getDocumentIdentifier($document));
-        $query = ['id' => $id];
+        $id = $class->getPrimaryIndexData($document);
 
-        $this->getDynamoDbManager($className)->updateOne(
-            $class->getPrimaryIndexData($className, $query),
-            $newObj,
-            $this->getTable($class)
-        );
+        $this->getDynamoDbManager($className)->updateOne($id, $newObj, $this->getTable($class));
     }
 
     private function getDynamoDbManager(string $class): DynamoDbManager

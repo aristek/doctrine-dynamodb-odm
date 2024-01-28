@@ -28,15 +28,15 @@ final class Document extends AbstractDocument
      */
     public array $globalSecondaryIndexes = [];
 
+    public IndexStrategy $indexStrategy;
+
     /**
      * @var Index[]|array
      */
     public array $localSecondaryIndexes = [];
 
-    public Index $primaryIndex;
-
     public function __construct(
-        ?Index $primaryIndex = null,
+        ?IndexStrategy $indexStrategy = null,
         public readonly ?string $db = null,
         public readonly ?string $repositoryClass = null,
         public readonly bool $readOnly = false,
@@ -47,16 +47,7 @@ final class Document extends AbstractDocument
     ) {
         $this->billingType = $billingType;
 
-        if (!$primaryIndex) {
-            $primaryIndex = new Index(
-                hash: 'pk',
-                name: '',
-                strategy: new IndexStrategy(range: IndexStrategy::SK_STRATEGY_FORMAT),
-                range: 'sk'
-            );
-        }
-
-        $this->primaryIndex = $primaryIndex;
+        $this->indexStrategy = $indexStrategy ?: new IndexStrategy(range: IndexStrategy::SK_STRATEGY_FORMAT);
 
         foreach ($globalSecondaryIndexes as $globalSecondaryIndex) {
             if (!$globalSecondaryIndex instanceof Index) {

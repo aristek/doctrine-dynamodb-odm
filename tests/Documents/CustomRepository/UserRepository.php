@@ -27,7 +27,7 @@ final class UserRepository extends DocumentRepository
     {
         return $this
             ->createQueryBuilder()
-            ->where('pk', 'User')
+            ->where('pk', ComparisonOperator::BEGINS_WITH, 'U#')
             ->where('sk', ComparisonOperator::BEGINS_WITH, 'admin')
             ->all(hydrationMode: QueryBuilder::HYDRATE_ITERATOR);
     }

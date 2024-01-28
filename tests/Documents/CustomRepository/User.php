@@ -6,20 +6,14 @@ namespace Aristek\Bundle\DynamodbBundle\Tests\Documents\CustomRepository;
 
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Document;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Field;
-use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Id;
-use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Index;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\IndexStrategy;
+use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Pk;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\ReferenceOne;
 
 #[Document(
-    primaryIndex: new Index(
-        hash: 'pk',
-        name: '',
-        strategy: new IndexStrategy(
-            hash: IndexStrategy::PK_STRATEGY_FORMAT,
-            range: '{role}#{id}'
-        ),
-        range: 'sk'
+    indexStrategy: new IndexStrategy(
+        hash: IndexStrategy::PK_STRATEGY_FORMAT,
+        range: '{role}#{id}'
     ),
     repositoryClass: UserRepository::class
 )]
@@ -28,7 +22,7 @@ class User
     #[ReferenceOne(targetDocument: Game::class)]
     private ?Game $game = null;
 
-    #[Id]
+    #[Pk]
     private ?string $id = null;
 
     #[Field]

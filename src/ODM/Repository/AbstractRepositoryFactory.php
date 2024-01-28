@@ -7,7 +7,6 @@ namespace Aristek\Bundle\DynamodbBundle\ODM\Repository;
 use Aristek\Bundle\DynamodbBundle\ODM\DocumentManager;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\ClassMetadata;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\MappingException;
-use Doctrine\Persistence\ObjectRepository;
 use ReflectionException;
 use function is_a;
 use function spl_object_hash;
@@ -20,7 +19,7 @@ abstract class AbstractRepositoryFactory implements RepositoryFactory
     /**
      * The list of DocumentRepository instances.
      *
-     * @var ObjectRepository<object>[]
+     * @var ObjectRepositoryInterface<object>[]
      */
     private array $repositoryList = [];
 
@@ -29,7 +28,7 @@ abstract class AbstractRepositoryFactory implements RepositoryFactory
      * @throws \Doctrine\Persistence\Mapping\MappingException
      * @throws ReflectionException
      */
-    public function getRepository(DocumentManager $documentManager, string $documentName): ObjectRepository
+    public function getRepository(DocumentManager $documentManager, string $documentName): ObjectRepositoryInterface
     {
         $metadata = $documentManager->getClassMetadata($documentName);
         $hashKey = $metadata->getName().spl_object_hash($documentManager);
@@ -52,7 +51,7 @@ abstract class AbstractRepositoryFactory implements RepositoryFactory
      * @throws ReflectionException
      * @throws \Doctrine\Persistence\Mapping\MappingException
      */
-    protected function createRepository(DocumentManager $documentManager, string $documentName): ObjectRepository
+    protected function createRepository(DocumentManager $documentManager, string $documentName): ObjectRepositoryInterface
     {
         $metadata = $documentManager->getClassMetadata($documentName);
 
@@ -80,5 +79,5 @@ abstract class AbstractRepositoryFactory implements RepositoryFactory
         string $repositoryClassName,
         DocumentManager $documentManager,
         ClassMetadata $metadata
-    ): ObjectRepository;
+    ): ObjectRepositoryInterface;
 }

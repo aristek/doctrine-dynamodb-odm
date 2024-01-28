@@ -107,7 +107,16 @@ final class StaticProxyFactory implements ProxyFactory
         ): bool {
             $originalInitializer = $initializer;
             $initializer = null;
-            $identifier = $metadata->getIdentifierValue($ghostObject);
+
+            $id = $metadata->getIdentifierValue($ghostObject);
+
+            [$pk, $sk] = $metadata->getIdentifierFieldNames();
+            $attributes[$pk] = $id[0];
+            if (!empty($id[1])) {
+                $attributes[$sk] = $id[1];
+            }
+
+            $identifier = $metadata->getPrimaryIndexData($metadata->getName(), $attributes);
 
             try {
                 $document = $documentPersister->load($identifier, $ghostObject);
@@ -156,6 +165,10 @@ final class StaticProxyFactory implements ProxyFactory
         $idFieldFqcns = [];
 
         foreach ($metadata->getIdentifierFieldNames() as $idField) {
+            if (!$idField) {
+                continue;
+            }
+
             $idFieldFqcns[] = $this->propertyFqcn($metadata->getReflectionProperty($idField));
         }
 

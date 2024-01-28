@@ -415,7 +415,15 @@ EOF
                 $this->unitOfWork->setParentAssociation($return, $this->class->fieldMappings['%2$s'], $document, '%1$s');
 
                 $embeddedData = $this->dm->getHydratorFactory()->hydrate($return, $embeddedDocument, $hints);
-                $embeddedId = $embeddedMetadata->identifier && isset($embeddedData[$embeddedMetadata->identifier]) ? $embeddedData[$embeddedMetadata->identifier] : null;
+                $embeddedId = null;
+                if ($embeddedMetadata->identifier) {
+                    $embeddedId = [];
+                    foreach ($embeddedMetadata->identifier as $item) {
+                        if (!empty($embeddedData[$item])) {
+                            $id[] = $embeddedData[$item];
+                        }
+                    }
+                }
 
                 if (empty($hints[Query::HINT_READ_ONLY])) {
                     $this->unitOfWork->registerManaged($return, $embeddedId, $embeddedData);

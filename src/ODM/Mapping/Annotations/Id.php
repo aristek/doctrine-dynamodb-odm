@@ -15,7 +15,7 @@ use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
  * @NamedArgumentConstructor
  */
 #[Attribute(Attribute::TARGET_PROPERTY)]
-final class Id extends AbstractField
+class Id extends AbstractField
 {
     public bool $id = true;
 

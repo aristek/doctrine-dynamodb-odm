@@ -73,7 +73,10 @@ final class QueryBuilder
     {
         if (Str::startsWith($method, 'set')) {
             $key = array_reverse(explode('set', $method, 2))[0];
-            $this->query[$key] = current($parameters);
+
+            if ($value = current($parameters)) {
+                $this->query[$key] = $value;
+            }
 
             return $this;
         }

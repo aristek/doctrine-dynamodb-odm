@@ -15,12 +15,12 @@ use Aristek\Bundle\DynamodbBundle\ODM\Proxy\Resolver\CachingClassNameResolver;
 use Aristek\Bundle\DynamodbBundle\ODM\Proxy\Resolver\ProxyManagerClassNameResolver;
 use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder;
 use Aristek\Bundle\DynamodbBundle\ODM\Repository\DocumentRepository;
+use Aristek\Bundle\DynamodbBundle\ODM\Repository\ObjectRepositoryInterface;
 use Aristek\Bundle\DynamodbBundle\ODM\Repository\RepositoryFactory;
 use Doctrine\Common\EventManager;
 use Doctrine\Instantiator\Exception\ExceptionInterface;
 use Doctrine\Persistence\Mapping\ProxyClassNameResolver;
 use Doctrine\Persistence\ObjectManager;
-use Doctrine\Persistence\ObjectRepository;
 use InvalidArgumentException;
 use ReflectionException;
 use RuntimeException;
@@ -167,7 +167,7 @@ class DocumentManager implements ObjectManager
             );
         }
 
-        return $class->getDatabaseIdentifierValue($id);
+        return $id;
     }
 
     /**
@@ -354,7 +354,7 @@ class DocumentManager implements ObjectManager
     /**
      * Gets the repository for a document class.
      */
-    public function getRepository(string $className): ObjectRepository|DocumentRepository
+    public function getRepository(string $className): ObjectRepositoryInterface|DocumentRepository
     {
         return $this->repositoryFactory->getRepository($this, $className);
     }

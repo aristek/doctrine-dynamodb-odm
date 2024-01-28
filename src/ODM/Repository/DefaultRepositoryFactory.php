@@ -6,7 +6,6 @@ namespace Aristek\Bundle\DynamodbBundle\ODM\Repository;
 
 use Aristek\Bundle\DynamodbBundle\ODM\DocumentManager;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\ClassMetadata;
-use Doctrine\Persistence\ObjectRepository;
 
 /**
  * This factory is used to create default repository objects for documents at runtime.
@@ -17,7 +16,7 @@ final class DefaultRepositoryFactory extends AbstractRepositoryFactory
         string $repositoryClassName,
         DocumentManager $documentManager,
         ClassMetadata $metadata
-    ): ObjectRepository {
+    ): ObjectRepositoryInterface {
         return new $repositoryClassName($documentManager, $documentManager->getUnitOfWork(), $metadata);
     }
 }

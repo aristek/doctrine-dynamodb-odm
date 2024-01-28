@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace Aristek\Bundle\DynamodbBundle\ODM\Mapping\Driver;
 
 use Aristek\Bundle\DynamodbBundle\ODM\Events;
+use Aristek\Bundle\DynamodbBundle\ODM\Id\Index as IdIndex;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations as ODM;
+use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Index;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\ClassMetadata;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\MappingException;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\Reader;
 use Doctrine\Persistence\Mapping\Driver\ColocatedMappingDriver;
+use LogicException;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
@@ -98,18 +101,6 @@ class AnnotationDriver extends CompatibilityAnnotationDriver
             }
         }
 
-        if ($documentAnnot instanceof ODM\Document) {
-            $metadata->addIndex($documentAnnot->primaryIndex);
-
-            foreach ($documentAnnot->globalSecondaryIndexes as $globalSecondaryIndex) {
-                $metadata->addIndex($globalSecondaryIndex, ClassMetadata::INDEX_GSI);
-            }
-
-            foreach ($documentAnnot->localSecondaryIndexes as $localSecondaryIndices) {
-                $metadata->addIndex($localSecondaryIndices, ClassMetadata::INDEX_LSI);
-            }
-        }
-
         if ($documentAnnot === null) {
             throw MappingException::classIsNotAValidDocument($className);
         }
@@ -159,6 +150,42 @@ class AnnotationDriver extends CompatibilityAnnotationDriver
             if ($fieldAnnot) {
                 $mapping = array_replace($mapping, (array) $fieldAnnot);
                 $metadata->mapField($mapping);
+            }
+        }
+
+        if ($documentAnnot instanceof ODM\Document) {
+            if (!isset($metadata->identifier[IdIndex::RANGE])) {
+                $metadata->identifier[IdIndex::RANGE] = [
+                    $metadata::ID_KEY      => IdIndex::RANGE,
+                    $metadata::ID_FIELD    => null,
+                    $metadata::ID_STRATEGY => null,
+                ];
+            }
+
+            if (count($metadata->getIdentifier()) !== 2) {
+                throw new LogicException('Attributes Pk and Sk are required.');
+            }
+
+            $primaryIndexKeys = $metadata->getIdentifierKeys();
+            $primaryIndexStrategies = $metadata->getIdentifierStrategies();
+            $metadata->addIndex(
+                new Index(
+                    hash: $primaryIndexKeys[IdIndex::HASH],
+                    name: '',
+                    strategy: new ODM\IndexStrategy(
+                        hash: $primaryIndexStrategies[IdIndex::HASH] ?? $documentAnnot->indexStrategy->hash,
+                        range: $primaryIndexStrategies[IdIndex::RANGE] ?? $documentAnnot->indexStrategy->range
+                    ),
+                    range: $primaryIndexKeys[IdIndex::RANGE]
+                )
+            );
+
+            foreach ($documentAnnot->globalSecondaryIndexes as $globalSecondaryIndex) {
+                $metadata->addIndex($globalSecondaryIndex, ClassMetadata::INDEX_GSI);
+            }
+
+            foreach ($documentAnnot->localSecondaryIndexes as $localSecondaryIndices) {
+                $metadata->addIndex($localSecondaryIndices, ClassMetadata::INDEX_LSI);
             }
         }
 

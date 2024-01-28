@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aristek\Bundle\DynamodbBundle\ODM\Mapping;
 
 use Aristek\Bundle\DynamodbBundle\ODM\Id\IdGenerator;
+use Aristek\Bundle\DynamodbBundle\ODM\Id\Index as IdIndex;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Index;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\IndexStrategy;
 use Aristek\Bundle\DynamodbBundle\ODM\Types\Type;
@@ -72,6 +73,9 @@ final class ClassMetadata implements BaseClassMetadata
      * UUID means Doctrine will generate uuid for us.
      */
     public const GENERATOR_TYPE_UUID = 1;
+    public const ID_FIELD = 'field';
+    public const ID_KEY = 'key';
+    public const ID_STRATEGY = 'strategy';
     /**
      * Indexing Types
      */
@@ -162,7 +166,9 @@ final class ClassMetadata implements BaseClassMetadata
     /**
      * READ-ONLY: The field name of the document identifier.
      */
-    public mixed $identifier = null;
+    public array $identifier = [];
+
+    public ?IndexStrategy $indexStrategy = null;
 
     /**
      * READ-ONLY: The array of indexes for the document collection.
@@ -344,7 +350,7 @@ final class ClassMetadata implements BaseClassMetadata
     /**
      * Add a index for this Document.
      */
-    public function addIndex(Index $index, string $type = null): void
+    public function addIndex(IdIndex $index, string $type = null): void
     {
         if (!$type) {
             $this->indexes[self::INDEX_PRIMARY] = $index;
@@ -444,11 +450,14 @@ final class ClassMetadata implements BaseClassMetadata
     /**
      * Casts the identifier to its database type.
      */
-    public function getDatabaseIdentifierValue(mixed $id): mixed
+    public function getDatabaseIdentifierValue(mixed $id): array
     {
-        $idType = $this->fieldMappings[$this->identifier]['type'];
-
-        return Type::getType($idType)->convertToDatabaseValue($id);
+        return [
+            Type::getType($this->fieldMappings[$this->getHashField()]['type'])->convertToDatabaseValue($id[0]),
+            $this->getRangeField()
+                ? Type::getType($this->fieldMappings[$this->getRangeField()]['type'])->convertToDatabaseValue($id[1])
+                : $id[1],
+        ];
     }
 
     /**
@@ -543,24 +552,46 @@ final class ClassMetadata implements BaseClassMetadata
         return $this->indexes[self::INDEX_GSI] ?? [];
     }
 
-    public function getIdentifier(): mixed
+    public function getHashField(): string
+    {
+        return $this->getIdentifierFields()[IdIndex::HASH];
+    }
+
+    public function getHashKey(): string
+    {
+        return $this->getIdentifierKeys()[IdIndex::HASH];
+    }
+
+    public function getIdentifier(): array
     {
         return $this->identifier;
     }
 
-    /**
-     * Sets the mapped identifier field of this class.
-     *
-     * @internal
-     */
-    public function setIdentifier(?string $identifier): void
+    public function getIdentifierFieldNames(?string $name = null): array
     {
-        $this->identifier = $identifier;
+        if ($name) {
+            $index = $this->getIndex($name);
+
+            return [$index->getHash(), $index->getRange()];
+        }
+
+        return [$this->getHashField(), $this->getRangeField()];
     }
 
-    public function getIdentifierFieldNames(): array
+    public function getIdentifierFields(): array
     {
-        return [$this->identifier];
+        return [
+            IdIndex::HASH  => $this->identifier[IdIndex::HASH][self::ID_FIELD],
+            IdIndex::RANGE => $this->identifier[IdIndex::RANGE][self::ID_FIELD],
+        ];
+    }
+
+    public function getIdentifierKeys(): array
+    {
+        return [
+            IdIndex::HASH  => $this->identifier[IdIndex::HASH][self::ID_KEY],
+            IdIndex::RANGE => $this->identifier[IdIndex::RANGE][self::ID_KEY],
+        ];
     }
 
     /**
@@ -571,12 +602,27 @@ final class ClassMetadata implements BaseClassMetadata
         return $this->getDatabaseIdentifierValue($this->getIdentifierValue($document));
     }
 
+    public function getIdentifierStrategies(): array
+    {
+        return [
+            IdIndex::HASH  => $this->identifier[IdIndex::HASH][self::ID_STRATEGY],
+            IdIndex::RANGE => $this->identifier[IdIndex::RANGE][self::ID_STRATEGY],
+        ];
+    }
+
     /**
      * Gets the document identifier as a PHP type.
      */
-    public function getIdentifierValue(object $document): mixed
+    public function getIdentifierValue(object $document): array
     {
-        return $this->reflFields[$this->identifier]->getValue($document);
+        return [
+            $this->reflFields[$this->getHashField()]->getValue($document),
+            $this->getRangeField()
+                ? $this->reflFields[$this->getRangeField()]->getValue($document)
+                : $this->getPrimaryIndex()->strategy->getRange(
+                $document instanceof GhostObjectInterface ? $this->getName() : $document
+            ),
+        ];
     }
 
     /**
@@ -589,12 +635,37 @@ final class ClassMetadata implements BaseClassMetadata
         return $this->getIdentifierValue($object);
     }
 
-    /**
-     * Returns the array of indexes for this Document.
-     */
-    public function getIndexes(): array
+    public function getIndex(?string $name = null): Index
     {
-        return $this->indexes;
+        if (!$name) {
+            return $this->getPrimaryIndex();
+        }
+
+        foreach ($this->getGlobalSecondaryIndexes() as $globalSecondaryIndex) {
+            if ($globalSecondaryIndex->name === $name) {
+                return $globalSecondaryIndex;
+            }
+        }
+
+        foreach ($this->getLocalSecondaryIndexes() as $localSecondaryIndex) {
+            if ($localSecondaryIndex->name === $name) {
+                return $localSecondaryIndex;
+            }
+        }
+
+        throw new LogicException(sprintf('Index with name "%s" not found.', $name));
+    }
+
+    public function getIndexData(Index $index, object|string $document, array $attributes = []): array
+    {
+        $data[$index->hash] = $index->strategy->getHash($document, $attributes);
+        $data[$index->range] = $index->strategy->getRange($document, $attributes);
+
+        if (empty($data[$index->range]) || (is_string($document) && count($attributes) < 2)) {
+            unset($data[$index->range]);
+        }
+
+        return $data;
     }
 
     public function getIndexesData(object $document, array $attributes = []): array
@@ -608,7 +679,7 @@ final class ClassMetadata implements BaseClassMetadata
 
     public function getIndexesNames(): array
     {
-        $keys = static function (Index $index): array {
+        $keys = static function (IdIndex $index): array {
             $ret = [
                 $index->hash,
             ];
@@ -684,11 +755,14 @@ final class ClassMetadata implements BaseClassMetadata
     /**
      * Casts the identifier to its portable PHP type.
      */
-    public function getPHPIdentifierValue(mixed $id): mixed
+    public function getPHPIdentifierValue(mixed $id): array
     {
-        $idType = $this->fieldMappings[$this->identifier]['type'];
-
-        return Type::getType($idType)->convertToPHPValue($id);
+        return [
+            Type::getType($this->fieldMappings[$this->getHashField()]['type'])->convertToPHPValue($id[0]),
+            $this->getRangeField()
+                ? Type::getType($this->fieldMappings[$this->getRangeField()]['type'])->convertToPHPValue($id[1])
+                : $id[1],
+        ];
     }
 
     public function getPrimaryIndex(): ?Index
@@ -698,14 +772,11 @@ final class ClassMetadata implements BaseClassMetadata
 
     public function getPrimaryIndexData(object|string $document, array $attributes = []): array
     {
-        $data = [];
-
-        if ($primaryIndex = $this->getPrimaryIndex()) {
-            $data[$primaryIndex->hash] = $primaryIndex->strategy->getHash($document, $attributes);
-            $data[$primaryIndex->range] = $primaryIndex->strategy->getRange($document, $attributes);
+        if (!$this->getPrimaryIndex()) {
+            return [];
         }
 
-        return $data;
+        return $this->getIndexData($this->getPrimaryIndex(), $document, $attributes);
     }
 
     /**
@@ -726,6 +797,16 @@ final class ClassMetadata implements BaseClassMetadata
         $reflectionProperty->setAccessible($oldAccessibility);
 
         return $ret;
+    }
+
+    public function getRangeField(): ?string
+    {
+        return $this->getIdentifierFields()[IdIndex::RANGE];
+    }
+
+    public function getRangeKey(): string
+    {
+        return $this->getIdentifierKeys()[IdIndex::RANGE];
     }
 
     public function getReflectionClass(): ReflectionClass
@@ -1006,9 +1087,18 @@ final class ClassMetadata implements BaseClassMetadata
         $mapping['isCascadeMerge'] = in_array('merge', $cascades, true);
         $mapping['isCascadeDetach'] = in_array('detach', $cascades, true);
 
-        if (isset($mapping['id']) && $mapping['id'] === true) {
-            $mapping['type'] = Type::STRING;
-            $this->identifier = $mapping['fieldName'];
+        if (isset($mapping['keyType'])) {
+            $mapping['type'] = $mapping['type'] ?? Type::STRING;
+
+            if (isset($this->identifier[$mapping['keyType']])) {
+                throw new LogicException(sprintf('Identifier "%s" already exist.', $mapping['keyType']));
+            }
+
+            $this->identifier[$mapping['keyType']] = [
+                self::ID_KEY      => $mapping['keyField'],
+                self::ID_FIELD    => $mapping['fieldName'],
+                self::ID_STRATEGY => $mapping['strategy'],
+            ];
 
             unset($this->generatorOptions['type']);
         }
@@ -1278,7 +1368,11 @@ final class ClassMetadata implements BaseClassMetadata
     public function setIdentifierValue(object $document, mixed $id): void
     {
         $id = $this->getPHPIdentifierValue($id);
-        $this->reflFields[$this->identifier]->setValue($document, $id);
+        $this->reflFields[$this->getHashField()]->setValue($document, $id[0]);
+
+        if ($this->getRangeField()) {
+            $this->reflFields[$this->getRangeField()]->setValue($document, $id[1]);
+        }
     }
 
     /**

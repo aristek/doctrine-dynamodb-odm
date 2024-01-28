@@ -618,7 +618,10 @@ final class UnitOfWork implements PropertyChangedListener
      */
     public function getDocumentIdentifier(object $document): mixed
     {
-        return $this->documentIdentifiers[spl_object_hash($document)] ?? null;
+        $class = $this->dm->getClassMetadata($document::class);
+        $id = $this->documentIdentifiers[spl_object_hash($document)] ?? null;
+
+        return $id ?: $class->getIdentifierValue($document);
     }
 
     /**
@@ -729,7 +732,10 @@ final class UnitOfWork implements PropertyChangedListener
             return $document;
         }
 
-        $id = $class->getDatabaseIdentifierValue($data[$class->getIdentifier()]);
+        $id = $class->getDatabaseIdentifierValue([
+            $data[$class->getHashField()],
+            $data[$class->getRangeField() ?: $class->getRangeKey()],
+        ]);
         $serializedId = serialize($id);
         $isManagedObject = isset($this->identityMap[$class->name][$serializedId]);
 
@@ -763,7 +769,6 @@ final class UnitOfWork implements PropertyChangedListener
             $this->identityMap[$class->name][$serializedId] = $document;
 
             $data = $this->hydratorFactory->hydrate($document, $data, $hints);
-
             $this->originalDocumentData[$oid] = $data;
         }
 
@@ -2410,6 +2415,7 @@ final class UnitOfWork implements PropertyChangedListener
         $class = $this->dm->getClassMetadata($document::class);
 
         $documentState = $this->getDocumentState($document, self::STATE_NEW);
+
         switch ($documentState) {
             case self::STATE_MANAGED:
                 // Nothing to do, except if policy is "deferred explicit"
@@ -2742,7 +2748,7 @@ final class UnitOfWork implements PropertyChangedListener
 
         if ($class->identifier) {
             $idValue = $class->getIdentifierValue($document);
-            $upsert = !$class->isEmbeddedDocument && $idValue !== null;
+            $upsert = !$class->isEmbeddedDocument && $idValue[0] !== null;
 
             if ($class->generatorType === ClassMetadata::GENERATOR_TYPE_NONE && !$idValue) {
                 throw new InvalidArgumentException(
@@ -2754,11 +2760,10 @@ final class UnitOfWork implements PropertyChangedListener
             }
 
             if ($class->generatorType !== ClassMetadata::GENERATOR_TYPE_NONE
-                && $idValue === null
+                && $idValue[0] === null
                 && $class->idGenerator !== null
             ) {
-                $idValue = $class->idGenerator->generate($this->dm, $document);
-                $idValue = $class->getPHPIdentifierValue($class->getDatabaseIdentifierValue($idValue));
+                $idValue[0] = $class->idGenerator->generate($this->dm, $document);
                 $class->setIdentifierValue($document, $idValue);
             }
 
