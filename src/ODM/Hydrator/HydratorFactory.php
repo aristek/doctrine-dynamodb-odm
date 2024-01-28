@@ -20,6 +20,7 @@ use function array_key_exists;
 use function chmod;
 use function class_exists;
 use function dirname;
+use function dump;
 use function file_exists;
 use function file_put_contents;
 use function is_dir;
@@ -226,7 +227,7 @@ final class HydratorFactory
         }
 
         $this->evm->dispatchEvent(Events::postLoad, new LifecycleEventArgs($document, $this->dm));
-
+dump($data);
         return $data;
     }
 

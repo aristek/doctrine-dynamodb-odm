@@ -81,7 +81,7 @@ class DocumentRepository implements ObjectRepositoryInterface, Selectable
             [$pk => $id->getHash(), $sk => $id->getRange()]
         );
 
-        return $this->getDocumentPersister()->load($criteria);
+        return $this->getDocumentPersister()->load(criteria: $criteria, indexName: $id->getName());
     }
 
     /**
@@ -98,14 +98,17 @@ class DocumentRepository implements ObjectRepositoryInterface, Selectable
 
         [$pk, $sk] = $class->getIdentifierFieldNames($criteria->getName());
 
+        $attributes = [$pk => $criteria->getHash()];
+
+        if ($criteria->getRange()) {
+            $attributes[$sk] = $criteria->getRange();
+        }
+
         return $this->getDocumentPersister()->loadAll(
-            $class->getPrimaryIndexData(
-                $this->getClassName(),
-                [$pk => $criteria->getHash(), $sk => $criteria->getRange()]
-            ),
+            $class->getIndexData( $class->getIndex($criteria->getName()), $this->getClassName(), $attributes),
+            $criteria->getName(),
             $orderBy,
             $limit,
-            $offset,
             $after
         )->toArray();
     }

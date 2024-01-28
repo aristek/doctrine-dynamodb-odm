@@ -619,7 +619,9 @@ final class ClassMetadata implements BaseClassMetadata
             $this->reflFields[$this->getHashField()]->getValue($document),
             $this->getRangeField()
                 ? $this->reflFields[$this->getRangeField()]->getValue($document)
-                : $this->getPrimaryIndex()->strategy->getRange($document),
+                : $this->getPrimaryIndex()->strategy->getRange(
+                $document instanceof GhostObjectInterface ? $this->getName() : $document
+            ),
         ];
     }
 
@@ -659,7 +661,7 @@ final class ClassMetadata implements BaseClassMetadata
         $data[$index->hash] = $index->strategy->getHash($document, $attributes);
         $data[$index->range] = $index->strategy->getRange($document, $attributes);
 
-        if (empty($data[$index->range])) {
+        if (empty($data[$index->range]) || (is_string($document) && count($attributes) < 2)) {
             unset($data[$index->range]);
         }
 

@@ -139,18 +139,23 @@ final class ReadTest extends BaseTestCase
 
         $districtRepository = $this->dm->getRepository(District::class);
         $repository = $districtRepository;
-        $districts = $repository->find(new Index(hash: 'DISTRICT', range: 1, name: 'ItemTypeIndex'));
+        $query = new Index(hash: 'DISTRICT', name: 'ItemTypeIndex');
+        $districts = $repository->findBy($query);
 
         self::assertCount(3, $districts);
 
         $this->dm->clear();
 
-        $oneDistrict = $districtRepository->findBy([], limit: 1);
+        $oneDistrict = $districtRepository->findBy($query, limit: 1);
 
         self::assertCount(1, $oneDistrict);
         self::assertEquals(1, $oneDistrict[0]->getId());
 
-        $nextDistricts = $districtRepository->findBy(criteria: [], limit: 2, after: $oneDistrict[0]);
+        $nextDistricts = $districtRepository->findBy(
+            criteria: $query,
+            limit: 2,
+            after: $oneDistrict[0]
+        );
 
         self::assertCount(2, $nextDistricts);
         self::assertEqualsCanonicalizing(
@@ -172,7 +177,7 @@ final class ReadTest extends BaseTestCase
         $this->dm->clear();
 
         $repository = $this->dm->getRepository(District::class);
-        $districts = $repository->findAll();
+        $districts = $repository->findBy(new Index(hash: 'DISTRICT', name: 'ItemTypeIndex'));
 
         self::assertCount(2, $districts);
         self::assertEqualsCanonicalizing(
@@ -192,7 +197,7 @@ final class ReadTest extends BaseTestCase
 
         $districtRepository = $this->dm->getRepository(District::class);
         $repository = $districtRepository;
-        $district1 = $repository->findOneBy(['id' => '1']);
+        $district1 = $repository->find(new Index(1, 'District'));
         $district2 = $repository->find(new Index('2', 'District'));
 
         self::assertEquals('District 1', $district1->getName());
@@ -266,7 +271,7 @@ final class ReadTest extends BaseTestCase
         $this->dm->flush();
 
         $qb = $this->dm->getRepository(District::class)->createQueryBuilder();
-        $district = $qb->find(new Index('1', 'District'));
+        $district = $qb->find(['pk' => 'D#1', 'sk' => 'District']);
 
         self::assertEquals('District 1', $district->getName());
     }
@@ -282,12 +287,15 @@ final class ReadTest extends BaseTestCase
         $this->dm->clear();
 
         $repository = $this->dm->getRepository(District::class);
-        $districts = $repository->findAll();
+        $districts = $repository->findBy(new Index(hash: 'DISTRICT', name: 'ItemTypeIndex'));
 
         self::assertCount(2, $districts);
         $this->dm->clear();
 
-        $oneDistrict = $this->dm->getRepository(District::class)->findBy([], limit: 1);
+        $oneDistrict = $this->dm->getRepository(District::class)->findBy(
+            new Index(hash: 'DISTRICT', name: 'ItemTypeIndex'),
+            limit: 1
+        );
 
         self::assertCount(1, $oneDistrict);
     }
@@ -360,7 +368,7 @@ final class ReadTest extends BaseTestCase
 
         $districtRepository = $this->dm->getRepository(District::class);
         $repository = $districtRepository;
-        $districts = $repository->findBy([]);
+        $districts = $repository->findBy(new Index(hash: 'DISTRICT', name: 'ItemTypeIndex'));
 
         self::assertCount(3, $districts);
         self::assertEqualsCanonicalizing(
@@ -370,7 +378,10 @@ final class ReadTest extends BaseTestCase
 
         $this->dm->clear();
 
-        $districts = $districtRepository->findBy([], orderBy: [Criteria::DESC]);
+        $districts = $districtRepository->findBy(
+            new Index(hash: 'DISTRICT', name: 'ItemTypeIndex'),
+            orderBy: [Criteria::DESC]
+        );
 
         self::assertCount(3, $districts);
         self::assertEqualsCanonicalizing(

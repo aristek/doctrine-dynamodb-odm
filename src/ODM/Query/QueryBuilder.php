@@ -32,6 +32,7 @@ use LogicException;
 use ReflectionException;
 use function array_keys;
 use function array_map;
+use function array_merge;
 use function array_unique;
 use function call_user_func;
 use function collect;
@@ -154,14 +155,10 @@ class QueryBuilder
             return $this;
         }
 
-        $afterKey = $this->classMetadata->getPrimaryIndexData($after);
+        $afterKey = $this->classMetadata->getIndexData($this->classMetadata->getIndex($this->index), $after);
 
-        $analyzer = $this->getConditionAnalyzer();
-
-        if ($index = $analyzer->index()) {
-            foreach ($index->columns() as $column) {
-                $afterKey[$column] = $this->classMetadata->getPropertyValue($after, $column);
-            }
+        if ($this->index) {
+            $afterKey = array_merge($afterKey, $this->classMetadata->getPrimaryIndexData($after));
         }
 
         $this->lastEvaluatedKey = $this->dbManager->marshalItem($afterKey);

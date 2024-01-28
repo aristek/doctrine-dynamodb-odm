@@ -30,6 +30,7 @@ use Traversable;
 use function assert;
 use function count;
 use function current;
+use function dump;
 use function gettype;
 use function is_array;
 use function is_object;
@@ -371,7 +372,7 @@ final class DocumentPersister
     {
         if ($document !== null) {
             $hints[Query::HINT_REFRESH] = true;
-            $id = $this->class->getPHPIdentifierValue($result[$this->class->getIdentifier()]);
+            $id = $this->class->getIdentifierValue($document);
             $this->uow->registerManaged($document, $id, $result);
         }
 
@@ -492,7 +493,17 @@ final class DocumentPersister
                 $embeddedDocument,
                 $collection->getHints()
             );
-            $id = $data[$embeddedMetadata->identifier] ?? null;
+
+            $id = null;
+
+            if ($embeddedMetadata->identifier) {
+                $id = [];
+                foreach ($embeddedMetadata->identifier as $item) {
+                    if (!empty($data[$item])) {
+                        $id[] = $data[$item];
+                    }
+                }
+            }
 
             if (empty($collection->getHints()[Query::HINT_READ_ONLY])) {
                 $this->uow->registerManaged($embeddedDocumentObject, $id, $data);
@@ -580,7 +591,8 @@ final class DocumentPersister
             $class = $this->dm->getClassMetadata($className);
             $queryBuilder = $this->dm->getQueryBuilder($className);
             $criteria = [];
-            [$pk, $sk] = $this->class->getIdentifierFieldNames();
+
+            [$pk, $sk] = $class->getIdentifierFieldNames();
             foreach ($ids as $id) {
                 $attributes[$pk] = $id[0];
                 if (!empty($id[1])) {
@@ -594,8 +606,8 @@ final class DocumentPersister
 
             foreach ($documents as $documentData) {
                 $document = $this->uow->getById([
-                    $documentData[$this->class->getHashField()],
-                    $documentData[$this->class->getRangeField() ?: $this->class->getRangeKey()],
+                    $documentData[$class->getHashField()],
+                    $documentData[$class->getRangeField() ?: $class->getRangeKey()],
                 ],
                     $class
                 );
