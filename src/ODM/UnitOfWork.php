@@ -769,7 +769,6 @@ final class UnitOfWork implements PropertyChangedListener
             $this->identityMap[$class->name][$serializedId] = $document;
 
             $data = $this->hydratorFactory->hydrate($document, $data, $hints);
-
             $this->originalDocumentData[$oid] = $data;
         }
 
@@ -2416,6 +2415,7 @@ final class UnitOfWork implements PropertyChangedListener
         $class = $this->dm->getClassMetadata($document::class);
 
         $documentState = $this->getDocumentState($document, self::STATE_NEW);
+
         switch ($documentState) {
             case self::STATE_MANAGED:
                 // Nothing to do, except if policy is "deferred explicit"

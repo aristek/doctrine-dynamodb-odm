@@ -30,7 +30,6 @@ use Traversable;
 use function assert;
 use function count;
 use function current;
-use function dump;
 use function gettype;
 use function is_array;
 use function is_object;

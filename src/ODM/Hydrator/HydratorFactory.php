@@ -20,7 +20,6 @@ use function array_key_exists;
 use function chmod;
 use function class_exists;
 use function dirname;
-use function dump;
 use function file_exists;
 use function file_put_contents;
 use function is_dir;
@@ -227,7 +226,7 @@ final class HydratorFactory
         }
 
         $this->evm->dispatchEvent(Events::postLoad, new LifecycleEventArgs($document, $this->dm));
-dump($data);
+
         return $data;
     }
 
@@ -416,7 +415,15 @@ EOF
                 $this->unitOfWork->setParentAssociation($return, $this->class->fieldMappings['%2$s'], $document, '%1$s');
 
                 $embeddedData = $this->dm->getHydratorFactory()->hydrate($return, $embeddedDocument, $hints);
-                $embeddedId = $embeddedMetadata->identifier && isset($embeddedData[$embeddedMetadata->identifier]) ? $embeddedData[$embeddedMetadata->identifier] : null;
+                $embeddedId = null;
+                if ($embeddedMetadata->identifier) {
+                    $embeddedId = [];
+                    foreach ($embeddedMetadata->identifier as $item) {
+                        if (!empty($embeddedData[$item])) {
+                            $id[] = $embeddedData[$item];
+                        }
+                    }
+                }
 
                 if (empty($hints[Query::HINT_READ_ONLY])) {
                     $this->unitOfWork->registerManaged($return, $embeddedId, $embeddedData);
