@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations;
 
-use Aristek\Bundle\DynamodbBundle\ODM\Id\PrimaryKey as IdIndex;
+use Aristek\Bundle\DynamodbBundle\ODM\Id\PrimaryKey;
 use Attribute;
 use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
 
@@ -19,7 +19,7 @@ final class Sk extends AbstractField
 {
     public string $keyField;
 
-    public string $keyType = IdIndex::RANGE;
+    public string $keyType = PrimaryKey::RANGE;
 
     public string $strategy;
 
@@ -31,7 +31,7 @@ final class Sk extends AbstractField
         bool $nullable = false,
         array $options = [],
     ) {
-        $this->keyField = $keyField ?: IdIndex::RANGE;
+        $this->keyField = $keyField ?: PrimaryKey::RANGE;
         $this->strategy = $strategy ?: IndexStrategy::SK_STRATEGY_FORMAT;
 
         parent::__construct($name, $type, $nullable, $options);

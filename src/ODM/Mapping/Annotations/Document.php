@@ -24,14 +24,14 @@ final class Document extends AbstractDocument
     public string $billingType = DynamoDbManager::PROVISIONED;
 
     /**
-     * @var PrimaryKey[]|array
+     * @var Index[]|array
      */
     public array $globalSecondaryIndexes = [];
 
     public IndexStrategy $indexStrategy;
 
     /**
-     * @var PrimaryKey[]|array
+     * @var Index[]|array
      */
     public array $localSecondaryIndexes = [];
 
@@ -50,7 +50,7 @@ final class Document extends AbstractDocument
         $this->indexStrategy = $indexStrategy ?: new IndexStrategy(range: IndexStrategy::SK_STRATEGY_FORMAT);
 
         foreach ($globalSecondaryIndexes as $globalSecondaryIndex) {
-            if (!$globalSecondaryIndex instanceof PrimaryKey) {
+            if (!$globalSecondaryIndex instanceof Index) {
                 MappingException::invalidDocumentIndex('globalSecondaryIndex');
             }
 
@@ -58,7 +58,7 @@ final class Document extends AbstractDocument
         }
 
         foreach ($localSecondaryIndexes as $localSecondaryIndex) {
-            if (!$localSecondaryIndex instanceof PrimaryKey) {
+            if (!$localSecondaryIndex instanceof Index) {
                 MappingException::invalidDocumentIndex('localSecondaryIndex');
             }
 

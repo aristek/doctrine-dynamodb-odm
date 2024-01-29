@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Aristek\Bundle\DynamodbBundle\ODM\Mapping;
 
 use Aristek\Bundle\DynamodbBundle\ODM\Id\IdGenerator;
-use Aristek\Bundle\DynamodbBundle\ODM\Id\PrimaryKey as IdIndex;
-use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\PrimaryKey;
+use Aristek\Bundle\DynamodbBundle\ODM\Id\PrimaryKey;
+use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Index;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\IndexStrategy;
 use Aristek\Bundle\DynamodbBundle\ODM\Types\Type;
 use BadMethodCallException;
@@ -173,7 +173,7 @@ final class ClassMetadata implements BaseClassMetadata
     /**
      * READ-ONLY: The array of indexes for the document collection.
      *
-     * @var array<string, array<PrimaryKey>>|array<string, PrimaryKey>
+     * @var array<string, array<Index>>|array<string, Index>
      */
     public array $indexes = [];
 
@@ -350,7 +350,7 @@ final class ClassMetadata implements BaseClassMetadata
     /**
      * Add a index for this Document.
      */
-    public function addIndex(IdIndex $index, string $type = null): void
+    public function addIndex(PrimaryKey $index, string $type = null): void
     {
         if (!$type) {
             $this->indexes[self::INDEX_PRIMARY] = $index;
@@ -521,7 +521,7 @@ final class ClassMetadata implements BaseClassMetadata
         return $this->reflFields[$field]->getValue($document);
     }
 
-    public function getGlobalSecondaryIndex(string $name): ?PrimaryKey
+    public function getGlobalSecondaryIndex(string $name): ?Index
     {
         return $this->getGlobalSecondaryIndexes()[$name] ?? null;
     }
@@ -545,7 +545,7 @@ final class ClassMetadata implements BaseClassMetadata
     }
 
     /**
-     * @return PrimaryKey[]
+     * @return Index[]
      */
     public function getGlobalSecondaryIndexes(): array
     {
@@ -554,12 +554,12 @@ final class ClassMetadata implements BaseClassMetadata
 
     public function getHashField(): string
     {
-        return $this->getIdentifierFields()[IdIndex::HASH];
+        return $this->getIdentifierFields()[PrimaryKey::HASH];
     }
 
     public function getHashKey(): string
     {
-        return $this->getIdentifierKeys()[IdIndex::HASH];
+        return $this->getIdentifierKeys()[PrimaryKey::HASH];
     }
 
     public function getIdentifier(): array
@@ -581,16 +581,16 @@ final class ClassMetadata implements BaseClassMetadata
     public function getIdentifierFields(): array
     {
         return [
-            IdIndex::HASH  => $this->identifier[IdIndex::HASH][self::ID_FIELD],
-            IdIndex::RANGE => $this->identifier[IdIndex::RANGE][self::ID_FIELD],
+            PrimaryKey::HASH  => $this->identifier[PrimaryKey::HASH][self::ID_FIELD],
+            PrimaryKey::RANGE => $this->identifier[PrimaryKey::RANGE][self::ID_FIELD],
         ];
     }
 
     public function getIdentifierKeys(): array
     {
         return [
-            IdIndex::HASH  => $this->identifier[IdIndex::HASH][self::ID_KEY],
-            IdIndex::RANGE => $this->identifier[IdIndex::RANGE][self::ID_KEY],
+            PrimaryKey::HASH  => $this->identifier[PrimaryKey::HASH][self::ID_KEY],
+            PrimaryKey::RANGE => $this->identifier[PrimaryKey::RANGE][self::ID_KEY],
         ];
     }
 
@@ -605,8 +605,8 @@ final class ClassMetadata implements BaseClassMetadata
     public function getIdentifierStrategies(): array
     {
         return [
-            IdIndex::HASH  => $this->identifier[IdIndex::HASH][self::ID_STRATEGY],
-            IdIndex::RANGE => $this->identifier[IdIndex::RANGE][self::ID_STRATEGY],
+            PrimaryKey::HASH  => $this->identifier[PrimaryKey::HASH][self::ID_STRATEGY],
+            PrimaryKey::RANGE => $this->identifier[PrimaryKey::RANGE][self::ID_STRATEGY],
         ];
     }
 
@@ -635,7 +635,7 @@ final class ClassMetadata implements BaseClassMetadata
         return $this->getIdentifierValue($object);
     }
 
-    public function getIndex(?string $name = null): PrimaryKey
+    public function getIndex(?string $name = null): Index
     {
         if (!$name) {
             return $this->getPrimaryIndex();
@@ -656,7 +656,7 @@ final class ClassMetadata implements BaseClassMetadata
         throw new LogicException(sprintf('Index with name "%s" not found.', $name));
     }
 
-    public function getIndexData(PrimaryKey $index, object|string $document, array $attributes = []): array
+    public function getIndexData(Index $index, object|string $document, array $attributes = []): array
     {
         $data[$index->hash] = $index->strategy->getHash($document, $attributes);
         $data[$index->range] = $index->strategy->getRange($document, $attributes);
@@ -679,7 +679,7 @@ final class ClassMetadata implements BaseClassMetadata
 
     public function getIndexesNames(): array
     {
-        $keys = static function (IdIndex $index): array {
+        $keys = static function (PrimaryKey $index): array {
             $ret = [
                 $index->hash,
             ];
@@ -740,7 +740,7 @@ final class ClassMetadata implements BaseClassMetadata
     }
 
     /**
-     * @return PrimaryKey[]
+     * @return Index[]
      */
     public function getLocalSecondaryIndexes(): array
     {
@@ -765,7 +765,7 @@ final class ClassMetadata implements BaseClassMetadata
         ];
     }
 
-    public function getPrimaryIndex(): ?PrimaryKey
+    public function getPrimaryIndex(): ?Index
     {
         return $this->indexes[self::INDEX_PRIMARY] ?? null;
     }
@@ -801,12 +801,12 @@ final class ClassMetadata implements BaseClassMetadata
 
     public function getRangeField(): ?string
     {
-        return $this->getIdentifierFields()[IdIndex::RANGE];
+        return $this->getIdentifierFields()[PrimaryKey::RANGE];
     }
 
     public function getRangeKey(): string
     {
-        return $this->getIdentifierKeys()[IdIndex::RANGE];
+        return $this->getIdentifierKeys()[PrimaryKey::RANGE];
     }
 
     public function getReflectionClass(): ReflectionClass
@@ -1425,7 +1425,7 @@ final class ClassMetadata implements BaseClassMetadata
             $added = false;
 
             if (!$this->getGlobalSecondaryIndex($name)) {
-                $this->indexes[self::INDEX_GSI][$mapping['name']] = new PrimaryKey(
+                $this->indexes[self::INDEX_GSI][$mapping['name']] = new Index(
                     hash: $name,
                     name: $name,
                     strategy: new IndexStrategy(hash: IndexStrategy::SK_STRATEGY_FORMAT),
