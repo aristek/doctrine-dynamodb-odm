@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aristek\Bundle\DynamodbBundle\ODM\Repository;
 
 use Aristek\Bundle\DynamodbBundle\ODM\DocumentManager;
-use Aristek\Bundle\DynamodbBundle\ODM\Id\Index;
+use Aristek\Bundle\DynamodbBundle\ODM\Id\PrimaryKey;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\ClassMetadata;
 use Aristek\Bundle\DynamodbBundle\ODM\Persisters\DocumentPersister;
 use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder;
@@ -53,7 +53,7 @@ class DocumentRepository implements ObjectRepositoryInterface, Selectable
     /**
      * Finds a document matching the specified identifier. Optionally a lock mode and expected version may be specified.
      */
-    public function find(?Index $id): ?object
+    public function find(?PrimaryKey $id): ?object
     {
         if ($id === null) {
             return null;
@@ -61,7 +61,7 @@ class DocumentRepository implements ObjectRepositoryInterface, Selectable
 
         if (!$id->getRange()) {
             throw new InvalidArgumentException(
-                sprintf('Method "%s" require "%s" with hash and range.', __METHOD__, Index::class)
+                sprintf('Method "%s" require "%s" with hash and range.', __METHOD__, PrimaryKey::class)
             );
         }
 
@@ -93,7 +93,7 @@ class DocumentRepository implements ObjectRepositoryInterface, Selectable
      * Finds documents by a set of criteria.
      */
     public function findBy(
-        Index $criteria,
+        PrimaryKey $criteria,
         ?array $orderBy = null,
         ?int $limit = null,
         ?int $offset = null,
@@ -121,11 +121,11 @@ class DocumentRepository implements ObjectRepositoryInterface, Selectable
     /**
      * Finds a single document by a set of criteria.
      *
-     * @param Index $criteria
+     * @param PrimaryKey $criteria
      *
      * @return object|null
      */
-    public function findOneBy(Index $criteria): ?object
+    public function findOneBy(PrimaryKey $criteria): ?object
     {
         if ($criteria->getHash() && $criteria->getRange()) {
             return $this->find($criteria);

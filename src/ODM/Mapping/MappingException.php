@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aristek\Bundle\DynamodbBundle\ODM\Mapping;
 
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\AbstractDocument;
-use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Index;
+use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\PrimaryKey;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Persistence\Mapping\MappingException as BaseMappingException;
 use ReflectionException;
@@ -84,7 +84,7 @@ final class MappingException extends BaseMappingException
 
     public static function invalidDocumentIndex(string $property): self
     {
-        return new self(sprintf('%s must be array of %s.', $property, Index::class));
+        return new self(sprintf('%s must be array of %s.', $property, PrimaryKey::class));
     }
 
     public static function invalidRepositoryClass(

@@ -6,7 +6,7 @@ namespace Aristek\Bundle\DynamodbBundle\Tests\Documents\Reference;
 
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Document;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Field;
-use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Index;
+use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\PrimaryKey;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\IndexStrategy;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Pk;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\ReferenceMany;
@@ -16,7 +16,7 @@ use Doctrine\Common\Collections\Collection;
 
 #[Document(
     globalSecondaryIndexes: [
-        new Index(
+        new PrimaryKey(
             hash: 'itemTypePk',
             name: 'ItemTypeIndex',
             strategy: new IndexStrategy(hash: 'DISTRICT', range: '{CLASS}#{id}'),

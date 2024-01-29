@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\Tests\Doctrine\ODM\DynamoDb\Annotation;
 
-use Aristek\Bundle\DynamodbBundle\ODM\Id\Index;
+use Aristek\Bundle\DynamodbBundle\ODM\Id\PrimaryKey;
 use Aristek\Bundle\DynamodbBundle\Tests\Doctrine\ODM\DynamoDb\BaseTestCase;
 use Aristek\Bundle\DynamodbBundle\Tests\Documents\Annotation\Product;
 
@@ -37,7 +37,7 @@ final class AlsoLoadTest extends BaseTestCase
         $this->dm->clear();
 
         /** @var Product $product */
-        $product = $this->dm->getRepository(Product::class)->find(new Index($productId, 'Product'));
+        $product = $this->dm->getRepository(Product::class)->find(new PrimaryKey($productId, 'Product'));
 
         return $product;
     }

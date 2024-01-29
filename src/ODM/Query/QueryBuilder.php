@@ -7,7 +7,7 @@ namespace Aristek\Bundle\DynamodbBundle\ODM\Query;
 use Aristek\Bundle\DynamodbBundle\ODM\DocumentManager;
 use Aristek\Bundle\DynamodbBundle\ODM\Hydrator\HydratorException;
 use Aristek\Bundle\DynamodbBundle\ODM\Iterator\UnmarshalIterator;
-use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Index;
+use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\PrimaryKey;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\ClassMetadata;
 use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\ConditionAnalyzer\Analyzer;
 use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\DynamoDb\AwsWrappers\DynamoDbTable;
@@ -824,7 +824,7 @@ class QueryBuilder
     {
         $index = $this->classMetadata->getPrimaryIndex();
 
-        $unmarshal = static function (array &$data, Index $index) {
+        $unmarshal = static function (array &$data, PrimaryKey $index) {
             if (isset($data[$index->getHash()])) {
                 $unmarshalValue = $index->strategy->getHashValue();
                 $data[$index->getHash()] = $unmarshalValue ?: $data[$index->getHash()];

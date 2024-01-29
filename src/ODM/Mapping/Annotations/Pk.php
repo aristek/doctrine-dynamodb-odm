@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations;
 
-use Aristek\Bundle\DynamodbBundle\ODM\Id\Index as IdIndex;
+use Aristek\Bundle\DynamodbBundle\ODM\Id\PrimaryKey as IdIndex;
 use Attribute;
 use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
 

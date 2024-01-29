@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\Tests\Doctrine\ODM\DynamoDb\Annotation;
 
-use Aristek\Bundle\DynamodbBundle\ODM\Id\Index;
+use Aristek\Bundle\DynamodbBundle\ODM\Id\PrimaryKey;
 use Aristek\Bundle\DynamodbBundle\Tests\Doctrine\ODM\DynamoDb\BaseTestCase;
 use Aristek\Bundle\DynamodbBundle\Tests\Documents\Reference\District;
 use Aristek\Bundle\DynamodbBundle\Tests\Documents\Reference\School;
@@ -29,11 +29,11 @@ final class ReferenceTest extends BaseTestCase
         $this->dm->clear();
 
         /** @var School $school1 */
-        $school1 = $this->dm->getRepository(School::class)->find(new Index($school1Id, 'School'));
+        $school1 = $this->dm->getRepository(School::class)->find(new PrimaryKey($school1Id, 'School'));
         /** @var School $school2 */
-        $school2 = $this->dm->getRepository(School::class)->find(new Index($school2Id, 'School'));
+        $school2 = $this->dm->getRepository(School::class)->find(new PrimaryKey($school2Id, 'School'));
         /** @var District $district */
-        $district = $this->dm->getRepository(District::class)->find(new Index($districtId, 'District'));
+        $district = $this->dm->getRepository(District::class)->find(new PrimaryKey($districtId, 'District'));
 
         self::assertEquals('School 1', $school1->getName());
         self::assertEquals('School 2', $school2->getName());
@@ -56,9 +56,9 @@ final class ReferenceTest extends BaseTestCase
         $this->dm->clear();
 
         /** @var School $school */
-        $school = $this->dm->getRepository(School::class)->find(new Index($schoolId, 'School'));
+        $school = $this->dm->getRepository(School::class)->find(new PrimaryKey($schoolId, 'School'));
         /** @var District $district */
-        $district = $this->dm->getRepository(District::class)->find(new Index($districtId, 'District'));
+        $district = $this->dm->getRepository(District::class)->find(new PrimaryKey($districtId, 'District'));
 
         self::assertEquals('School', $school->getName());
         self::assertEquals('District', $district->getName());
@@ -82,11 +82,11 @@ final class ReferenceTest extends BaseTestCase
         $this->dm->clear();
 
         /** @var District $district */
-        $district = $this->dm->getRepository(District::class)->find(new Index($districtId, 'District'));
+        $district = $this->dm->getRepository(District::class)->find(new PrimaryKey($districtId, 'District'));
         /** @var School $school */
-        $school1 = $this->dm->getRepository(School::class)->find(new Index($school1Id, 'School'));
+        $school1 = $this->dm->getRepository(School::class)->find(new PrimaryKey($school1Id, 'School'));
         /** @var School $school */
-        $school2 = $this->dm->getRepository(School::class)->find(new Index($school2Id, 'School'));
+        $school2 = $this->dm->getRepository(School::class)->find(new PrimaryKey($school2Id, 'School'));
 
         self::assertNotNull($district);
         self::assertCount(2, $district->getSchoolWithOrphanRemoves());
@@ -98,11 +98,11 @@ final class ReferenceTest extends BaseTestCase
         $this->dm->flush();
 
         /** @var District $district */
-        $district = $this->dm->getRepository(District::class)->find(new Index($districtId, 'District'));
+        $district = $this->dm->getRepository(District::class)->find(new PrimaryKey($districtId, 'District'));
         /** @var School $school */
-        $school1 = $this->dm->getRepository(School::class)->find(new Index($school1Id, 'School'));
+        $school1 = $this->dm->getRepository(School::class)->find(new PrimaryKey($school1Id, 'School'));
         /** @var School $school */
-        $school2 = $this->dm->getRepository(School::class)->find(new Index($school2Id, 'School'));
+        $school2 = $this->dm->getRepository(School::class)->find(new PrimaryKey($school2Id, 'School'));
 
         self::assertNotNull($district);
         self::assertCount(0, $district->getSchoolWithOrphanRemoves());
@@ -125,9 +125,9 @@ final class ReferenceTest extends BaseTestCase
         $this->dm->clear();
 
         /** @var District $district */
-        $district = $this->dm->getRepository(District::class)->find(new Index($districtId, 'District'));
+        $district = $this->dm->getRepository(District::class)->find(new PrimaryKey($districtId, 'District'));
         /** @var School $school */
-        $school = $this->dm->getRepository(School::class)->find(new Index($schoolId, 'School'));
+        $school = $this->dm->getRepository(School::class)->find(new PrimaryKey($schoolId, 'School'));
 
         self::assertNotNull($district);
         self::assertNotNull($school);
@@ -137,9 +137,9 @@ final class ReferenceTest extends BaseTestCase
         $this->dm->flush();
 
         /** @var District $district */
-        $district = $this->dm->getRepository(District::class)->find(new Index($districtId, 'District'));
+        $district = $this->dm->getRepository(District::class)->find(new PrimaryKey($districtId, 'District'));
         /** @var School $school */
-        $school = $this->dm->getRepository(School::class)->find(new Index($schoolId, 'School'));
+        $school = $this->dm->getRepository(School::class)->find(new PrimaryKey($schoolId, 'School'));
 
         self::assertNotNull($district);
         /** @todo Fix */
@@ -158,7 +158,7 @@ final class ReferenceTest extends BaseTestCase
         $this->dm->clear();
 
         /** @var School $school */
-        $school = $this->dm->getRepository(School::class)->find(new Index($schoolId, 'School'));
+        $school = $this->dm->getRepository(School::class)->find(new PrimaryKey($schoolId, 'School'));
 
         self::assertEquals('School', $school->getName());
         self::assertEquals('private', $school->getType()->value);
@@ -188,9 +188,9 @@ final class ReferenceTest extends BaseTestCase
         $this->dm->clear();
 
         /** @var School $school */
-        $school = $this->dm->getRepository(School::class)->find(new Index($schoolId, 'School'));
+        $school = $this->dm->getRepository(School::class)->find(new PrimaryKey($schoolId, 'School'));
         /** @var District $district */
-        $district = $this->dm->getRepository(District::class)->find(new Index($districtId, 'District'));
+        $district = $this->dm->getRepository(District::class)->find(new PrimaryKey($districtId, 'District'));
 
         self::assertEquals('School', $school->getName());
         self::assertEquals('District', $district->getName());

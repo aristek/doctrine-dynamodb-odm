@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\Tests\Doctrine\ODM\DynamoDb\Action;
 
-use Aristek\Bundle\DynamodbBundle\ODM\Id\Index;
+use Aristek\Bundle\DynamodbBundle\ODM\Id\PrimaryKey;
 use Aristek\Bundle\DynamodbBundle\Tests\Doctrine\ODM\DynamoDb\BaseTestCase;
 use Aristek\Bundle\DynamodbBundle\Tests\Documents\Annotation\Product;
 use Aristek\Bundle\DynamodbBundle\Tests\Documents\Reference\District;
@@ -30,16 +30,16 @@ final class CreateTest extends BaseTestCase
 
         $this->dm->clear();
 
-        $district = $this->dm->find(District::class, new Index(1, 'District'));
-        $school1 = $this->dm->find(School::class, new Index($school1Id, 'School'));
-        $school2 = $this->dm->find(School::class, new Index($school2Id, 'School'));
+        $district = $this->dm->find(District::class, new PrimaryKey(1, 'District'));
+        $school1 = $this->dm->find(School::class, new PrimaryKey($school1Id, 'School'));
+        $school2 = $this->dm->find(School::class, new PrimaryKey($school2Id, 'School'));
 
         $district->addSchool($school1)->addSchool($school2);
         $this->dm->persist($district);
         $this->dm->flush();
         $this->dm->clear();
 
-        $district = $this->dm->find(District::class, new Index(1, 'District'));
+        $district = $this->dm->find(District::class, new PrimaryKey(1, 'District'));
 
         $district->getSchools()->count();
 
@@ -61,12 +61,12 @@ final class CreateTest extends BaseTestCase
 
         $this->dm->clear();
 
-        $district = $this->dm->find(District::class, new Index(1, 'District'));
+        $district = $this->dm->find(District::class, new PrimaryKey(1, 'District'));
 
         self::assertCount(1, $district->getSchools());
         self::assertEquals('School 1', $district->getSchools()->first()->getName());
 
-        $school2 = $this->dm->find(School::class, new Index($school2Id, 'School'));
+        $school2 = $this->dm->find(School::class, new PrimaryKey($school2Id, 'School'));
 
         $district->addSchool($school2);
 
@@ -74,7 +74,7 @@ final class CreateTest extends BaseTestCase
         $this->dm->flush();
         $this->dm->clear();
 
-        $district = $this->dm->find(District::class, new Index(1, 'District'));
+        $district = $this->dm->find(District::class, new PrimaryKey(1, 'District'));
 
         self::assertCount(2, $district->getSchools());
         self::assertEquals('School 2', $district->getSchools()->last()->getName());
@@ -99,7 +99,7 @@ final class CreateTest extends BaseTestCase
 
         $this->dm->clear();
 
-        $district = $this->dm->find(District::class, new Index(1, 'District'));
+        $district = $this->dm->find(District::class, new PrimaryKey(1, 'District'));
 
         self::assertCount(2, $district->getSchools());
         self::assertEqualsCanonicalizing(
@@ -115,7 +115,7 @@ final class CreateTest extends BaseTestCase
         $this->dm->flush();
         $this->dm->clear();
 
-        $district = $this->dm->find(District::class, new Index(1, 'District'));
+        $district = $this->dm->find(District::class, new PrimaryKey(1, 'District'));
 
         self::assertCount(0, $district->getSchools());
     }
@@ -135,7 +135,7 @@ final class CreateTest extends BaseTestCase
         $this->dm->clear();
 
         /** @var District $district */
-        $district = $this->dm->find(District::class, new Index(1, 'District'));
+        $district = $this->dm->find(District::class, new PrimaryKey(1, 'District'));
 
         self::assertCount(2, $district->getSchools());
         self::assertEqualsCanonicalizing(
@@ -150,7 +150,7 @@ final class CreateTest extends BaseTestCase
         $this->dm->clear();
 
         /** @var District $district */
-        $district = $this->dm->find(District::class, new Index(1, 'District'));
+        $district = $this->dm->find(District::class, new PrimaryKey(1, 'District'));
         self::assertCount(0, $district->getSchools());
     }
 
@@ -168,8 +168,8 @@ final class CreateTest extends BaseTestCase
         $schoolId = $district->getSchools()->first()->getId();
 
         $this->dm->clear();
-        $district = $this->dm->find(District::class, new Index($districtId, 'District'));
-        $school = $this->dm->find(School::class, new Index($schoolId, 'School'));
+        $district = $this->dm->find(District::class, new PrimaryKey($districtId, 'District'));
+        $school = $this->dm->find(School::class, new PrimaryKey($schoolId, 'School'));
 
         self::assertEquals($districtId, $district->getId());
         self::assertCount(1, $district->getSchools());
@@ -188,7 +188,7 @@ final class CreateTest extends BaseTestCase
 
         $this->dm->clear();
 
-        $district = $this->dm->find(District::class, new Index($districtId, 'District'));
+        $district = $this->dm->find(District::class, new PrimaryKey($districtId, 'District'));
 
         self::assertEquals($districtId, $district->getId());
         self::assertEquals('District', $district->getName());
@@ -208,8 +208,8 @@ final class CreateTest extends BaseTestCase
 
         $this->dm->clear();
 
-        $district = $this->dm->find(District::class, new Index($districtId, 'District'));
-        $product = $this->dm->find(Product::class, new Index($productId, 'Product'));
+        $district = $this->dm->find(District::class, new PrimaryKey($districtId, 'District'));
+        $product = $this->dm->find(Product::class, new PrimaryKey($productId, 'Product'));
 
         self::assertEquals($districtId, $district->getId());
         self::assertEquals('District', $district->getName());
@@ -239,7 +239,7 @@ final class CreateTest extends BaseTestCase
         $this->dm->clear();
 
         /** @var District $district */
-        $district = $this->dm->find(District::class, new Index(1, 'District'));
+        $district = $this->dm->find(District::class, new PrimaryKey(1, 'District'));
 
         self::assertCount(2, $district->getSchools());
         self::assertEqualsCanonicalizing(
@@ -259,7 +259,7 @@ final class CreateTest extends BaseTestCase
         $this->dm->flush();
         $this->dm->clear();
 
-        $district = $this->dm->find(District::class, new Index(1, 'District'));
+        $district = $this->dm->find(District::class, new PrimaryKey(1, 'District'));
 
         self::assertCount(2, $district->getSchools());
         self::assertEqualsCanonicalizing(
@@ -287,7 +287,7 @@ final class CreateTest extends BaseTestCase
 
         $this->dm->clear();
 
-        $district = $this->dm->find(District::class, new Index(1, 'District'));
+        $district = $this->dm->find(District::class, new PrimaryKey(1, 'District'));
 
         self::assertCount(2, $district->getSchools());
         self::assertEqualsCanonicalizing(
@@ -295,14 +295,14 @@ final class CreateTest extends BaseTestCase
             array_map(static fn(School $school): string => $school->getId(), $district->getSchools()->toArray())
         );
 
-        $school1 = $this->dm->find(School::class, new Index($school1Id, 'School'));
+        $school1 = $this->dm->find(School::class, new PrimaryKey($school1Id, 'School'));
 
         $district->removeSchool($school1);
         $this->dm->persist($district);
         $this->dm->flush();
         $this->dm->clear();
 
-        $district = $this->dm->find(District::class, new Index(1, 'District'));
+        $district = $this->dm->find(District::class, new PrimaryKey(1, 'District'));
 
         self::assertCount(1, $district->getSchools());
         self::assertEquals($school2Id, $district->getSchools()->first()->getId());
@@ -316,7 +316,7 @@ final class CreateTest extends BaseTestCase
         $this->dm->flush();
         $this->dm->clear();
 
-        $district = $this->dm->find(District::class, new Index(1, 'District'));
+        $district = $this->dm->find(District::class, new PrimaryKey(1, 'District'));
 
         self::assertEquals(1, $district->getId());
         self::assertEquals('District', $district->getName());

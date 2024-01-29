@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations;
 
-use Aristek\Bundle\DynamodbBundle\ODM\Id\Index as IdIndex;
+use Aristek\Bundle\DynamodbBundle\ODM\Id\PrimaryKey as IdIndex;
 
-class Index extends IdIndex
+class PrimaryKey extends IdIndex
 {
     public const TYPE_ALL = 'ALL';
     public const TYPE_INCLUDE = 'INCLUDE';

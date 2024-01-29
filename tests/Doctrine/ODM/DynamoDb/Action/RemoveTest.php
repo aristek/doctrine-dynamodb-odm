@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\Tests\Doctrine\ODM\DynamoDb\Action;
 
-use Aristek\Bundle\DynamodbBundle\ODM\Id\Index;
+use Aristek\Bundle\DynamodbBundle\ODM\Id\PrimaryKey;
 use Aristek\Bundle\DynamodbBundle\Tests\Doctrine\ODM\DynamoDb\BaseTestCase;
 use Aristek\Bundle\DynamodbBundle\Tests\Documents\Reference\District;
 use Aristek\Bundle\DynamodbBundle\Tests\Documents\Reference\School;
@@ -29,9 +29,9 @@ final class RemoveTest extends BaseTestCase
 
         $this->dm->clear();
 
-        $district = $this->dm->find(District::class, new Index($districtId, 'District'));
-        $school1 = $this->dm->find(School::class, new Index($school1Id, 'School'));
-        $school2 = $this->dm->find(School::class, new Index($school2Id, 'School'));
+        $district = $this->dm->find(District::class, new PrimaryKey($districtId, 'District'));
+        $school1 = $this->dm->find(School::class, new PrimaryKey($school1Id, 'School'));
+        $school2 = $this->dm->find(School::class, new PrimaryKey($school2Id, 'School'));
 
         self::assertNotNull($district);
         self::assertNotNull($school1);
@@ -42,9 +42,9 @@ final class RemoveTest extends BaseTestCase
         $this->dm->flush();
         $this->dm->clear();
 
-        $district = $this->dm->find(District::class, new Index($districtId, 'District'));
-        $school1 = $this->dm->find(School::class, new Index($school1Id, 'School'));
-        $school2 = $this->dm->find(School::class, new Index($school2Id, 'School'));
+        $district = $this->dm->find(District::class, new PrimaryKey($districtId, 'District'));
+        $school1 = $this->dm->find(School::class, new PrimaryKey($school1Id, 'School'));
+        $school2 = $this->dm->find(School::class, new PrimaryKey($school2Id, 'School'));
 
         self::assertNull($district);
         self::assertNull($school1);
@@ -61,7 +61,7 @@ final class RemoveTest extends BaseTestCase
 
         $this->dm->clear();
 
-        $district = $this->dm->find(District::class, new Index($districtId, 'District'));
+        $district = $this->dm->find(District::class, new PrimaryKey($districtId, 'District'));
 
         self::assertEquals('District', $district->getName());
 
@@ -69,7 +69,7 @@ final class RemoveTest extends BaseTestCase
         $this->dm->flush();
         $this->dm->clear();
 
-        $district = $this->dm->find(District::class, new Index($districtId, 'District'));
+        $district = $this->dm->find(District::class, new PrimaryKey($districtId, 'District'));
 
         self::assertNull($district);
     }

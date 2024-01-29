@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Aristek\Bundle\DynamodbBundle\ODM\Mapping\Driver;
 
 use Aristek\Bundle\DynamodbBundle\ODM\Events;
-use Aristek\Bundle\DynamodbBundle\ODM\Id\Index as IdIndex;
+use Aristek\Bundle\DynamodbBundle\ODM\Id\PrimaryKey as IdIndex;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations as ODM;
-use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Index;
+use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\PrimaryKey;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\ClassMetadata;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\MappingException;
 use Doctrine\Common\Annotations\AnnotationReader;
@@ -169,7 +169,7 @@ class AnnotationDriver extends CompatibilityAnnotationDriver
             $primaryIndexKeys = $metadata->getIdentifierKeys();
             $primaryIndexStrategies = $metadata->getIdentifierStrategies();
             $metadata->addIndex(
-                new Index(
+                new PrimaryKey(
                     hash: $primaryIndexKeys[IdIndex::HASH],
                     name: '',
                     strategy: new ODM\IndexStrategy(

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Aristek\Bundle\DynamodbBundle\ODM\Mapping;
 
 use Aristek\Bundle\DynamodbBundle\ODM\Id\IdGenerator;
-use Aristek\Bundle\DynamodbBundle\ODM\Id\Index as IdIndex;
-use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Index;
+use Aristek\Bundle\DynamodbBundle\ODM\Id\PrimaryKey as IdIndex;
+use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\PrimaryKey;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\IndexStrategy;
 use Aristek\Bundle\DynamodbBundle\ODM\Types\Type;
 use BadMethodCallException;
@@ -173,7 +173,7 @@ final class ClassMetadata implements BaseClassMetadata
     /**
      * READ-ONLY: The array of indexes for the document collection.
      *
-     * @var array<string, array<Index>>|array<string, Index>
+     * @var array<string, array<PrimaryKey>>|array<string, PrimaryKey>
      */
     public array $indexes = [];
 
@@ -521,7 +521,7 @@ final class ClassMetadata implements BaseClassMetadata
         return $this->reflFields[$field]->getValue($document);
     }
 
-    public function getGlobalSecondaryIndex(string $name): ?Index
+    public function getGlobalSecondaryIndex(string $name): ?PrimaryKey
     {
         return $this->getGlobalSecondaryIndexes()[$name] ?? null;
     }
@@ -545,7 +545,7 @@ final class ClassMetadata implements BaseClassMetadata
     }
 
     /**
-     * @return Index[]
+     * @return PrimaryKey[]
      */
     public function getGlobalSecondaryIndexes(): array
     {
@@ -635,7 +635,7 @@ final class ClassMetadata implements BaseClassMetadata
         return $this->getIdentifierValue($object);
     }
 
-    public function getIndex(?string $name = null): Index
+    public function getIndex(?string $name = null): PrimaryKey
     {
         if (!$name) {
             return $this->getPrimaryIndex();
@@ -656,7 +656,7 @@ final class ClassMetadata implements BaseClassMetadata
         throw new LogicException(sprintf('Index with name "%s" not found.', $name));
     }
 
-    public function getIndexData(Index $index, object|string $document, array $attributes = []): array
+    public function getIndexData(PrimaryKey $index, object|string $document, array $attributes = []): array
     {
         $data[$index->hash] = $index->strategy->getHash($document, $attributes);
         $data[$index->range] = $index->strategy->getRange($document, $attributes);
@@ -740,7 +740,7 @@ final class ClassMetadata implements BaseClassMetadata
     }
 
     /**
-     * @return Index[]
+     * @return PrimaryKey[]
      */
     public function getLocalSecondaryIndexes(): array
     {
@@ -765,7 +765,7 @@ final class ClassMetadata implements BaseClassMetadata
         ];
     }
 
-    public function getPrimaryIndex(): ?Index
+    public function getPrimaryIndex(): ?PrimaryKey
     {
         return $this->indexes[self::INDEX_PRIMARY] ?? null;
     }
@@ -1425,7 +1425,7 @@ final class ClassMetadata implements BaseClassMetadata
             $added = false;
 
             if (!$this->getGlobalSecondaryIndex($name)) {
-                $this->indexes[self::INDEX_GSI][$mapping['name']] = new Index(
+                $this->indexes[self::INDEX_GSI][$mapping['name']] = new PrimaryKey(
                     hash: $name,
                     name: $name,
                     strategy: new IndexStrategy(hash: IndexStrategy::SK_STRATEGY_FORMAT),
