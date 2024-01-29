@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations;
 
-use Aristek\Bundle\DynamodbBundle\ODM\Id\Index as IdIndex;
+use Aristek\Bundle\DynamodbBundle\ODM\Id\PrimaryKey;
 use Attribute;
 use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
 
@@ -19,7 +19,7 @@ final class Pk extends AbstractField
 {
     public string $keyField;
 
-    public string $keyType = IdIndex::HASH;
+    public string $keyType = PrimaryKey::HASH;
 
     public string $strategy;
 
@@ -31,7 +31,7 @@ final class Pk extends AbstractField
         bool $nullable = false,
         array $options = [],
     ) {
-        $this->keyField = $keyField ?: IdIndex::HASH;
+        $this->keyField = $keyField ?: PrimaryKey::HASH;
         $this->strategy = $strategy ?: IndexStrategy::PK_STRATEGY_FORMAT;
 
         parent::__construct($name, $type, $nullable, $options);

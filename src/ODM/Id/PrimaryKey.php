@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\ODM\Id;
 
-class Index
+class PrimaryKey
 {
     public const HASH = 'pk';
     public const RANGE = 'sk';

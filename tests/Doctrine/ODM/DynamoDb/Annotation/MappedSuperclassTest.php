@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\Tests\Doctrine\ODM\DynamoDb\Annotation;
 
-use Aristek\Bundle\DynamodbBundle\ODM\Id\Index;
+use Aristek\Bundle\DynamodbBundle\ODM\Id\PrimaryKey;
 use Aristek\Bundle\DynamodbBundle\Tests\Doctrine\ODM\DynamoDb\BaseTestCase;
 use Aristek\Bundle\DynamodbBundle\Tests\Documents\MappedSuperclass\Client;
 
@@ -25,7 +25,7 @@ final class MappedSuperclassTest extends BaseTestCase
 
         $this->dm->clear();
 
-        $client = $this->dm->find(Client::class, new Index($clientId, 'Client'));
+        $client = $this->dm->find(Client::class, new PrimaryKey($clientId, 'Client'));
 
         self::assertEquals('John', $client->getFirstName());
         self::assertEquals('Dow', $client->getLastName());

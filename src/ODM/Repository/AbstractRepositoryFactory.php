@@ -51,8 +51,10 @@ abstract class AbstractRepositoryFactory implements RepositoryFactory
      * @throws ReflectionException
      * @throws \Doctrine\Persistence\Mapping\MappingException
      */
-    protected function createRepository(DocumentManager $documentManager, string $documentName): ObjectRepositoryInterface
-    {
+    protected function createRepository(
+        DocumentManager $documentManager,
+        string $documentName
+    ): ObjectRepositoryInterface {
         $metadata = $documentManager->getClassMetadata($documentName);
 
         $repositoryClassName = $documentManager->getConfiguration()->getDefaultDocumentRepositoryClassName();

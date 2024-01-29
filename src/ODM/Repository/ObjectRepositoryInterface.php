@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\ODM\Repository;
 
-use Aristek\Bundle\DynamodbBundle\ODM\Id\Index;
+use Aristek\Bundle\DynamodbBundle\ODM\Id\PrimaryKey;
 use UnexpectedValueException;
 
 /**
@@ -17,12 +17,12 @@ interface ObjectRepositoryInterface
     /**
      * Finds an object by its primary key / identifier.
      *
-     * @param Index|null $id The identifier.
+     * @param PrimaryKey|null $id The identifier.
      *
      * @return object|null The object.
      * @psalm-return T|null
      */
-    public function find(?Index $id);
+    public function find(?PrimaryKey $id);
 
     /**
      * Finds objects by a set of criteria.
@@ -31,7 +31,7 @@ interface ObjectRepositoryInterface
      * an UnexpectedValueException if certain values of the sorting or limiting details are
      * not supported.
      *
-     * @param Index                      $criteria
+     * @param PrimaryKey                 $criteria
      * @param array<string, string>|null $orderBy
      * @param int|null                   $limit
      * @param int|null                   $offset
@@ -40,7 +40,7 @@ interface ObjectRepositoryInterface
      * @throws UnexpectedValueException
      */
     public function findBy(
-        Index $criteria,
+        PrimaryKey $criteria,
         ?array $orderBy = null,
         ?int $limit = null,
         ?int $offset = null
@@ -49,12 +49,12 @@ interface ObjectRepositoryInterface
     /**
      * Finds a single object by a set of criteria.
      *
-     * @param Index $criteria The criteria.
+     * @param PrimaryKey $criteria The criteria.
      *
      * @return object|null The object.
      * @psalm-return T|null
      */
-    public function findOneBy(Index $criteria);
+    public function findOneBy(PrimaryKey $criteria);
 
     /**
      * Returns the class name of the object managed by the repository.

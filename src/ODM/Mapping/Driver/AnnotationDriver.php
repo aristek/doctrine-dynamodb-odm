@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aristek\Bundle\DynamodbBundle\ODM\Mapping\Driver;
 
 use Aristek\Bundle\DynamodbBundle\ODM\Events;
-use Aristek\Bundle\DynamodbBundle\ODM\Id\Index as IdIndex;
+use Aristek\Bundle\DynamodbBundle\ODM\Id\PrimaryKey;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations as ODM;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Index;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\ClassMetadata;
@@ -154,9 +154,9 @@ class AnnotationDriver extends CompatibilityAnnotationDriver
         }
 
         if ($documentAnnot instanceof ODM\Document) {
-            if (!isset($metadata->identifier[IdIndex::RANGE])) {
-                $metadata->identifier[IdIndex::RANGE] = [
-                    $metadata::ID_KEY      => IdIndex::RANGE,
+            if (!isset($metadata->identifier[PrimaryKey::RANGE])) {
+                $metadata->identifier[PrimaryKey::RANGE] = [
+                    $metadata::ID_KEY      => PrimaryKey::RANGE,
                     $metadata::ID_FIELD    => null,
                     $metadata::ID_STRATEGY => null,
                 ];
@@ -170,13 +170,13 @@ class AnnotationDriver extends CompatibilityAnnotationDriver
             $primaryIndexStrategies = $metadata->getIdentifierStrategies();
             $metadata->addIndex(
                 new Index(
-                    hash: $primaryIndexKeys[IdIndex::HASH],
+                    hash: $primaryIndexKeys[PrimaryKey::HASH],
                     name: '',
                     strategy: new ODM\IndexStrategy(
-                        hash: $primaryIndexStrategies[IdIndex::HASH] ?? $documentAnnot->indexStrategy->hash,
-                        range: $primaryIndexStrategies[IdIndex::RANGE] ?? $documentAnnot->indexStrategy->range
+                        hash: $primaryIndexStrategies[PrimaryKey::HASH] ?? $documentAnnot->indexStrategy->hash,
+                        range: $primaryIndexStrategies[PrimaryKey::RANGE] ?? $documentAnnot->indexStrategy->range
                     ),
-                    range: $primaryIndexKeys[IdIndex::RANGE]
+                    range: $primaryIndexKeys[PrimaryKey::RANGE]
                 )
             );
 

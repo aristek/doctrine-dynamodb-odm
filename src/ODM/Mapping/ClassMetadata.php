@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aristek\Bundle\DynamodbBundle\ODM\Mapping;
 
 use Aristek\Bundle\DynamodbBundle\ODM\Id\IdGenerator;
-use Aristek\Bundle\DynamodbBundle\ODM\Id\Index as IdIndex;
+use Aristek\Bundle\DynamodbBundle\ODM\Id\PrimaryKey;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Index;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\IndexStrategy;
 use Aristek\Bundle\DynamodbBundle\ODM\Types\Type;
@@ -350,7 +350,7 @@ final class ClassMetadata implements BaseClassMetadata
     /**
      * Add a index for this Document.
      */
-    public function addIndex(IdIndex $index, string $type = null): void
+    public function addIndex(PrimaryKey $index, string $type = null): void
     {
         if (!$type) {
             $this->indexes[self::INDEX_PRIMARY] = $index;
@@ -554,12 +554,12 @@ final class ClassMetadata implements BaseClassMetadata
 
     public function getHashField(): string
     {
-        return $this->getIdentifierFields()[IdIndex::HASH];
+        return $this->getIdentifierFields()[PrimaryKey::HASH];
     }
 
     public function getHashKey(): string
     {
-        return $this->getIdentifierKeys()[IdIndex::HASH];
+        return $this->getIdentifierKeys()[PrimaryKey::HASH];
     }
 
     public function getIdentifier(): array
@@ -581,16 +581,16 @@ final class ClassMetadata implements BaseClassMetadata
     public function getIdentifierFields(): array
     {
         return [
-            IdIndex::HASH  => $this->identifier[IdIndex::HASH][self::ID_FIELD],
-            IdIndex::RANGE => $this->identifier[IdIndex::RANGE][self::ID_FIELD],
+            PrimaryKey::HASH  => $this->identifier[PrimaryKey::HASH][self::ID_FIELD],
+            PrimaryKey::RANGE => $this->identifier[PrimaryKey::RANGE][self::ID_FIELD],
         ];
     }
 
     public function getIdentifierKeys(): array
     {
         return [
-            IdIndex::HASH  => $this->identifier[IdIndex::HASH][self::ID_KEY],
-            IdIndex::RANGE => $this->identifier[IdIndex::RANGE][self::ID_KEY],
+            PrimaryKey::HASH  => $this->identifier[PrimaryKey::HASH][self::ID_KEY],
+            PrimaryKey::RANGE => $this->identifier[PrimaryKey::RANGE][self::ID_KEY],
         ];
     }
 
@@ -605,8 +605,8 @@ final class ClassMetadata implements BaseClassMetadata
     public function getIdentifierStrategies(): array
     {
         return [
-            IdIndex::HASH  => $this->identifier[IdIndex::HASH][self::ID_STRATEGY],
-            IdIndex::RANGE => $this->identifier[IdIndex::RANGE][self::ID_STRATEGY],
+            PrimaryKey::HASH  => $this->identifier[PrimaryKey::HASH][self::ID_STRATEGY],
+            PrimaryKey::RANGE => $this->identifier[PrimaryKey::RANGE][self::ID_STRATEGY],
         ];
     }
 
@@ -679,7 +679,7 @@ final class ClassMetadata implements BaseClassMetadata
 
     public function getIndexesNames(): array
     {
-        $keys = static function (IdIndex $index): array {
+        $keys = static function (PrimaryKey $index): array {
             $ret = [
                 $index->hash,
             ];
@@ -801,12 +801,12 @@ final class ClassMetadata implements BaseClassMetadata
 
     public function getRangeField(): ?string
     {
-        return $this->getIdentifierFields()[IdIndex::RANGE];
+        return $this->getIdentifierFields()[PrimaryKey::RANGE];
     }
 
     public function getRangeKey(): string
     {
-        return $this->getIdentifierKeys()[IdIndex::RANGE];
+        return $this->getIdentifierKeys()[PrimaryKey::RANGE];
     }
 
     public function getReflectionClass(): ReflectionClass

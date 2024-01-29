@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\Command;
 
-use Aristek\Bundle\DynamodbBundle\ODM\Id\Index;
+use Aristek\Bundle\DynamodbBundle\ODM\Id\PrimaryKey;
 use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\DynamoDb\AwsWrappers\DynamoDbIndex;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Finder\Finder;
@@ -14,7 +14,7 @@ use function str_replace;
 
 abstract class AbstractSchemaCommand extends Command
 {
-    protected function getDynamodbIndex(Index $index): DynamoDbIndex
+    protected function getDynamodbIndex(PrimaryKey $index): DynamoDbIndex
     {
         $idx = new DynamoDbIndex(hashKey: $index->hash, rangeKey: $index->range);
         if ($index->name) {

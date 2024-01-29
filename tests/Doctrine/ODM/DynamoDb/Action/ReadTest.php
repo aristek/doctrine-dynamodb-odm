@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\Tests\Doctrine\ODM\DynamoDb\Action;
 
-use Aristek\Bundle\DynamodbBundle\ODM\Id\Index;
+use Aristek\Bundle\DynamodbBundle\ODM\Id\PrimaryKey;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\MappingException;
 use Aristek\Bundle\DynamodbBundle\Tests\Doctrine\ODM\DynamoDb\BaseTestCase;
 use Aristek\Bundle\DynamodbBundle\Tests\Documents\CustomRepository\Game;
@@ -36,7 +36,7 @@ final class ReadTest extends BaseTestCase
 
         $districtRepository = $this->dm->getRepository(District::class);
         $repository = $districtRepository;
-        $district = $repository->findOneBy(new Index(1));
+        $district = $repository->findOneBy(new PrimaryKey(1));
 
         self::assertEquals('District 1', $district->getName());
     }
@@ -51,7 +51,7 @@ final class ReadTest extends BaseTestCase
         $districtRepository = $this->dm->getRepository(District::class);
         $repository = $districtRepository;
 
-        $district = $repository->find(new Index('1', 'District'));
+        $district = $repository->find(new PrimaryKey('1', 'District'));
 
         self::assertEquals('District 1', $district->getName());
     }
@@ -84,7 +84,7 @@ final class ReadTest extends BaseTestCase
 
         $repository = $this->dm->getRepository(Team::class);
 
-        $teams = $repository->findBy(new Index('1'));
+        $teams = $repository->findBy(new PrimaryKey('1'));
 
         self::assertCount(1, $teams);
         self::assertEquals($team->getName(), $teams[0]->getName());
@@ -103,7 +103,7 @@ final class ReadTest extends BaseTestCase
 
         $repository = $this->dm->getRepository(Team::class);
 
-        $actual = $repository->find(new Index('1', '123'));
+        $actual = $repository->find(new PrimaryKey('1', '123'));
 
         self::assertEquals($expect->getId(), $actual->getId());
         self::assertEquals($expect->getName(), $actual->getName());
@@ -139,7 +139,7 @@ final class ReadTest extends BaseTestCase
 
         $districtRepository = $this->dm->getRepository(District::class);
         $repository = $districtRepository;
-        $query = new Index(hash: 'DISTRICT', name: 'ItemTypeIndex');
+        $query = new PrimaryKey(hash: 'DISTRICT', name: 'ItemTypeIndex');
         $districts = $repository->findBy($query);
 
         self::assertCount(3, $districts);
@@ -177,7 +177,7 @@ final class ReadTest extends BaseTestCase
         $this->dm->clear();
 
         $repository = $this->dm->getRepository(District::class);
-        $districts = $repository->findBy(new Index(hash: 'DISTRICT', name: 'ItemTypeIndex'));
+        $districts = $repository->findBy(new PrimaryKey(hash: 'DISTRICT', name: 'ItemTypeIndex'));
 
         self::assertCount(2, $districts);
         self::assertEqualsCanonicalizing(
@@ -197,8 +197,8 @@ final class ReadTest extends BaseTestCase
 
         $districtRepository = $this->dm->getRepository(District::class);
         $repository = $districtRepository;
-        $district1 = $repository->find(new Index(1, 'District'));
-        $district2 = $repository->find(new Index('2', 'District'));
+        $district1 = $repository->find(new PrimaryKey(1, 'District'));
+        $district2 = $repository->find(new PrimaryKey('2', 'District'));
 
         self::assertEquals('District 1', $district1->getName());
         self::assertEquals('District 2', $district2->getName());
@@ -214,7 +214,7 @@ final class ReadTest extends BaseTestCase
 
         $repository = $this->dm->getRepository(Game::class);
 
-        $game = $repository->find(new Index('1', 'District'));
+        $game = $repository->find(new PrimaryKey('1', 'District'));
 
         self::assertInstanceOf(GameRepository::class, $repository);
         self::assertEquals('Name Set on Custom Repository', $game->getName());
@@ -238,7 +238,7 @@ final class ReadTest extends BaseTestCase
 
         $repository = $this->dm->getRepository(Game::class);
 
-        $game = $repository->find(new Index('1', 'District'));
+        $game = $repository->find(new PrimaryKey('1', 'District'));
 
         self::assertCount(3, $game->getUsers());
         self::assertCount(1, $game->getAdminUsers());
@@ -287,13 +287,13 @@ final class ReadTest extends BaseTestCase
         $this->dm->clear();
 
         $repository = $this->dm->getRepository(District::class);
-        $districts = $repository->findBy(new Index(hash: 'DISTRICT', name: 'ItemTypeIndex'));
+        $districts = $repository->findBy(new PrimaryKey(hash: 'DISTRICT', name: 'ItemTypeIndex'));
 
         self::assertCount(2, $districts);
         $this->dm->clear();
 
         $oneDistrict = $this->dm->getRepository(District::class)->findBy(
-            new Index(hash: 'DISTRICT', name: 'ItemTypeIndex'),
+            new PrimaryKey(hash: 'DISTRICT', name: 'ItemTypeIndex'),
             limit: 1
         );
 
@@ -311,7 +311,7 @@ final class ReadTest extends BaseTestCase
 
         $this->dm->clear();
 
-        $district = $this->dm->find(District::class, new Index($districtId, 'District'));
+        $district = $this->dm->find(District::class, new PrimaryKey($districtId, 'District'));
 
         self::assertEquals($districtId, $district->getId());
         self::assertEquals('District', $district->getName());
@@ -331,8 +331,8 @@ final class ReadTest extends BaseTestCase
         $this->dm->flush();
         $this->dm->clear();
 
-        $organization = $this->dm->getRepository(Organization::class)->find(new Index('1', 'Organization'));
-        $affiliate1 = $this->dm->getRepository(Affiliate::class)->find(new Index('1', 'Affiliate'));
+        $organization = $this->dm->getRepository(Organization::class)->find(new PrimaryKey('1', 'Organization'));
+        $affiliate1 = $this->dm->getRepository(Affiliate::class)->find(new PrimaryKey('1', 'Affiliate'));
 
         self::assertNotNull($organization);
         self::assertCount(2, $organization->getAffiliates());
@@ -368,7 +368,7 @@ final class ReadTest extends BaseTestCase
 
         $districtRepository = $this->dm->getRepository(District::class);
         $repository = $districtRepository;
-        $districts = $repository->findBy(new Index(hash: 'DISTRICT', name: 'ItemTypeIndex'));
+        $districts = $repository->findBy(new PrimaryKey(hash: 'DISTRICT', name: 'ItemTypeIndex'));
 
         self::assertCount(3, $districts);
         self::assertEqualsCanonicalizing(
@@ -379,7 +379,7 @@ final class ReadTest extends BaseTestCase
         $this->dm->clear();
 
         $districts = $districtRepository->findBy(
-            new Index(hash: 'DISTRICT', name: 'ItemTypeIndex'),
+            new PrimaryKey(hash: 'DISTRICT', name: 'ItemTypeIndex'),
             orderBy: [Criteria::DESC]
         );
 

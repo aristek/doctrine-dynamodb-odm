@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\Tests\Doctrine\ODM\DynamoDb\Annotation;
 
-use Aristek\Bundle\DynamodbBundle\ODM\Id\Index;
+use Aristek\Bundle\DynamodbBundle\ODM\Id\PrimaryKey;
 use Aristek\Bundle\DynamodbBundle\Tests\Doctrine\ODM\DynamoDb\BaseTestCase;
 use Aristek\Bundle\DynamodbBundle\Tests\Documents\Embedded\Bar;
 use Aristek\Bundle\DynamodbBundle\Tests\Documents\Embedded\Coordinate;
@@ -32,7 +32,7 @@ final class EmbedTest extends BaseTestCase
         $this->dm->clear();
 
         /** @var Bar $bar */
-        $bar = $this->dm->getRepository(Bar::class)->find(new Index($barId, 'Bar'));
+        $bar = $this->dm->getRepository(Bar::class)->find(new PrimaryKey($barId, 'Bar'));
 
         self::assertCount(2, $bar->getLocations());
 
@@ -49,7 +49,7 @@ final class EmbedTest extends BaseTestCase
         $this->dm->clear();
 
         /** @var Bar $bar */
-        $bar = $this->dm->getRepository(Bar::class)->find(new Index($barId, 'Bar'));
+        $bar = $this->dm->getRepository(Bar::class)->find(new PrimaryKey($barId, 'Bar'));
 
         self::assertCount(0, $bar->getLocations());
     }
@@ -72,7 +72,7 @@ final class EmbedTest extends BaseTestCase
         $this->dm->clear();
 
         /** @var Bar $bar */
-        $bar = $this->dm->getRepository(Bar::class)->find(new Index($barId, 'Bar'));
+        $bar = $this->dm->getRepository(Bar::class)->find(new PrimaryKey($barId, 'Bar'));
 
         self::assertCount(2, $bar->getLocations());
         self::assertEquals('Location 1', $bar->getLocations()->first()->getName());
@@ -96,7 +96,7 @@ final class EmbedTest extends BaseTestCase
         $this->dm->clear();
 
         /** @var Bar $bar */
-        $bar = $this->dm->getRepository(Bar::class)->find(new Index($barId, 'Bar'));
+        $bar = $this->dm->getRepository(Bar::class)->find(new PrimaryKey($barId, 'Bar'));
 
         self::assertCount(0, $bar->getLocations());
         self::assertEquals('Location', $bar->getSingleLocation()->getName());
@@ -128,7 +128,7 @@ final class EmbedTest extends BaseTestCase
         $this->dm->clear();
 
         /** @var Bar $bar */
-        $bar = $this->dm->getRepository(Bar::class)->find(new Index($barId, 'Bar'));
+        $bar = $this->dm->getRepository(Bar::class)->find(new PrimaryKey($barId, 'Bar'));
 
         self::assertNotNull($bar);
         self::assertCount(3, $bar->getLocations());
@@ -182,7 +182,7 @@ final class EmbedTest extends BaseTestCase
         $this->dm->clear();
 
         /** @var Bar $bar */
-        $bar = $this->dm->getRepository(Bar::class)->find(new Index($barId, 'Bar'));
+        $bar = $this->dm->getRepository(Bar::class)->find(new PrimaryKey($barId, 'Bar'));
 
         self::assertNotNull($bar);
 
@@ -215,7 +215,7 @@ final class EmbedTest extends BaseTestCase
         $this->dm->clear();
 
         /** @var Bar $bar */
-        $bar = $this->dm->getRepository(Bar::class)->find(new Index($barId, 'Bar'));
+        $bar = $this->dm->getRepository(Bar::class)->find(new PrimaryKey($barId, 'Bar'));
 
         self::assertCount(2, $bar->getLocations());
 
@@ -232,7 +232,7 @@ final class EmbedTest extends BaseTestCase
         $this->dm->clear();
 
         /** @var Bar $bar */
-        $bar = $this->dm->getRepository(Bar::class)->find(new Index($barId, 'Bar'));
+        $bar = $this->dm->getRepository(Bar::class)->find(new PrimaryKey($barId, 'Bar'));
 
         self::assertCount(1, $bar->getLocations());
         self::assertEquals('Location 2', $bar->getLocations()->first()->getName());
@@ -255,7 +255,7 @@ final class EmbedTest extends BaseTestCase
         $this->dm->clear();
 
         /** @var Bar $bar */
-        $bar = $this->dm->getRepository(Bar::class)->find(new Index($barId, 'Bar'));
+        $bar = $this->dm->getRepository(Bar::class)->find(new PrimaryKey($barId, 'Bar'));
 
         self::assertCount(0, $bar->getLocations());
         self::assertEquals('Location', $bar->getSingleLocation()->getName());
@@ -269,7 +269,7 @@ final class EmbedTest extends BaseTestCase
         $this->dm->clear();
 
         /** @var Bar $bar */
-        $bar = $this->dm->getRepository(Bar::class)->find(new Index($barId, 'Bar'));
+        $bar = $this->dm->getRepository(Bar::class)->find(new PrimaryKey($barId, 'Bar'));
         self::assertEquals('New Location', $bar->getSingleLocation()->getName());
     }
 
@@ -291,7 +291,7 @@ final class EmbedTest extends BaseTestCase
         $this->dm->clear();
 
         /** @var Bar $bar */
-        $bar = $this->dm->getRepository(Bar::class)->find(new Index($barId, 'Bar'));
+        $bar = $this->dm->getRepository(Bar::class)->find(new PrimaryKey($barId, 'Bar'));
 
         self::assertCount(2, $bar->getLocations());
 
@@ -309,7 +309,7 @@ final class EmbedTest extends BaseTestCase
         $this->dm->clear();
 
         /** @var Bar $bar */
-        $bar = $this->dm->getRepository(Bar::class)->find(new Index($barId, 'Bar'));
+        $bar = $this->dm->getRepository(Bar::class)->find(new PrimaryKey($barId, 'Bar'));
 
         self::assertCount(2, $bar->getLocations());
         self::assertEquals('New Location First', $bar->getLocations()->first()->getName());
@@ -330,7 +330,7 @@ final class EmbedTest extends BaseTestCase
         $this->dm->clear();
 
         /** @var Bar $bar */
-        $bar = $this->dm->getRepository(Bar::class)->find(new Index($barId, 'Bar'));
+        $bar = $this->dm->getRepository(Bar::class)->find(new PrimaryKey($barId, 'Bar'));
 
         self::assertNotNull($bar);
 
@@ -378,7 +378,7 @@ final class EmbedTest extends BaseTestCase
         $this->dm->clear();
 
         /** @var Bar $bar */
-        $bar = $this->dm->getRepository(Bar::class)->find(new Index($bar->getId(), 'Bar'));
+        $bar = $this->dm->getRepository(Bar::class)->find(new PrimaryKey($bar->getId(), 'Bar'));
 
         self::assertEquals('Location 1', $bar->getSingleLocation()->getName());
     }
