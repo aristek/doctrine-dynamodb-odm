@@ -10,16 +10,18 @@ use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Pk;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Sk;
 
 #[Document]
-class Team
+class Content
 {
-    #[Pk]
+    public const SK = 'CONTENT';
+
+    #[Pk(keyField: 'PartitionKey')]
     private ?string $id = null;
 
     #[Field]
     private string $name;
 
-    #[Sk(strategy: '{projectId}')]
-    private ?string $projectId = null;
+    #[Sk(keyField: 'SortKey', strategy: '{sk}')]
+    private string $sk = self::SK;
 
     public function getId(): ?string
     {
@@ -41,18 +43,6 @@ class Team
     public function setName(string $name): self
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    public function getProjectId(): ?string
-    {
-        return $this->projectId;
-    }
-
-    public function setProjectId(?string $projectId): self
-    {
-        $this->projectId = $projectId;
 
         return $this;
     }

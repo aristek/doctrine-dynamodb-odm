@@ -6,7 +6,6 @@ namespace Aristek\Bundle\DynamodbBundle\Tests\Documents\Reference\WithMapping;
 
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Document;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Field;
-use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Id;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Pk;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\ReferenceOne;
 

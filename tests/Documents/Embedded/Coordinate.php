@@ -7,7 +7,6 @@ namespace Aristek\Bundle\DynamodbBundle\Tests\Documents\Embedded;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Document;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\EmbedOne;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Field;
-use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Id;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Pk;
 
 #[Document]
