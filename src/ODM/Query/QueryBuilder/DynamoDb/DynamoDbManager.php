@@ -35,6 +35,8 @@ final class DynamoDbManager
 
     public function deleteOne(array $criteria, string $table): bool
     {
+        $this->resetExpressions();
+
         $result = $this
             ->table($table)
             ->setKey($this->marshalItem($criteria))
@@ -53,6 +55,8 @@ final class DynamoDbManager
 
     public function insertOne(array $insert, string $table): void
     {
+        $this->resetExpressions();
+
         $this
             ->table($table)
             ->setItem($this->marshalItem($insert))
@@ -92,6 +96,8 @@ final class DynamoDbManager
 
     public function updateOne(array $id, array $attributes, string $table): bool
     {
+        $this->resetExpressions();
+
         $result = $this
             ->table($table)
             ->setKey($this->marshalItem($id))

@@ -1,3 +1,7 @@
+### v0.1.3
+##### Fix:
+- Added clearing Dynamodb query expressions.
+
 ### v0.1.2
 ##### Features:
 - Added [FixturesTrait.php](src/ODM/Test/Helper/FixturesTrait.php).
