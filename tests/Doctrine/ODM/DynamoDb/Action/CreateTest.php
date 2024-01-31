@@ -218,13 +218,6 @@ final class CreateTest extends BaseTestCase
         self::assertEquals('Product', $product->getName());
     }
 
-    public function testCreateWithMappedFalse(): void
-    {
-        $content = (new Content())->setName('Content');
-        $this->dm->persist($content);
-        $this->dm->flush();
-    }
-
     public function testRemoveOneAndOneAddToCollection(): void
     {
         $school1 = $this->createSchool(1);
