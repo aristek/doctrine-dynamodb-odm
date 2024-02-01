@@ -5,19 +5,21 @@ declare(strict_types=1);
 namespace Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\DynamoDb;
 
 use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\DynamoDbClientInterface;
-use Aristek\Bundle\DynamodbBundle\ODM\Trait\LoggerTrait;
 use Aws\DynamoDb\BinaryValue;
 use Aws\DynamoDb\DynamoDbClient;
 use Aws\DynamoDb\Marshaler;
 use Aws\DynamoDb\NumberValue;
 use Aws\DynamoDb\SetValue;
 use Exception;
+use RuntimeException;
 use stdClass;
+use function json_encode;
+use function sprintf;
+use const JSON_THROW_ON_ERROR;
 
 final class DynamoDbManager
 {
     use HasParsers;
-    use LoggerTrait;
 
     private Marshaler $marshaler;
 
@@ -53,9 +55,13 @@ final class DynamoDbManager
 
             $result = $query->deleteItem();
         } catch (Exception $exception) {
-            $this->logQuery($exception->getMessage(), $query?->query ?: []);
-
-            throw $exception;
+            throw new RuntimeException(
+                sprintf(
+                    '%s, query: %s',
+                    $exception->getMessage(),
+                    json_encode($query?->query ?: [], JSON_THROW_ON_ERROR)
+                )
+            );
         }
 
         return $result->toArray()['@metadata.statusCode'] ?? null === 200;
@@ -84,9 +90,13 @@ final class DynamoDbManager
 
             $result = $query->putItem();
         } catch (Exception $exception) {
-            $this->logQuery($exception->getMessage(), $query?->query ?: []);
-
-            throw $exception;
+            throw new RuntimeException(
+                sprintf(
+                    '%s, query: %s',
+                    $exception->getMessage(),
+                    json_encode($query?->query ?: [], JSON_THROW_ON_ERROR)
+                )
+            );
         }
 
         return $result->toArray()['@metadata.statusCode'] ?? null === 200;
@@ -142,9 +152,13 @@ final class DynamoDbManager
 
             $result = $query->updateItem();
         } catch (Exception $exception) {
-            $this->logQuery($exception->getMessage(), $query?->query ?: []);
-
-            throw $exception;
+            throw new RuntimeException(
+                sprintf(
+                    '%s, query: %s',
+                    $exception->getMessage(),
+                    json_encode($query?->query ?: [], JSON_THROW_ON_ERROR)
+                )
+            );
         }
 
         return $result->toArray()['@metadata.statusCode'] ?? null === 200;
