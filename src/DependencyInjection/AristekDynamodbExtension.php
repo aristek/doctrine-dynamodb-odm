@@ -12,11 +12,17 @@ use Exception;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use Symfony\Component\Yaml\Yaml;
+use function current;
 
-final class AristekDynamodbExtension extends Extension
+final class AristekDynamodbExtension extends Extension implements PrependExtensionInterface
 {
+    private const CONFIG_DIRECTORY = __DIR__.'/../../config';
+    private const EXTENSION_MONOLOG = 'monolog';
+
     /**
      * @throws Exception
      */
@@ -57,5 +63,17 @@ final class AristekDynamodbExtension extends Extension
         $documentManager = $container->register(DocumentManager::class, DocumentManager::class);
         $documentManager->setFactory([DocumentManager::class, 'create']);
         $documentManager->setArguments([$odmConfig]);
+    }
+
+    public function prepend(ContainerBuilder $container): void
+    {
+        $this->prependMonologExtensionConfig($container);
+    }
+
+    private function prependMonologExtensionConfig(ContainerBuilder $container): void
+    {
+        $monologExtensionConfig = current(Yaml::parseFile(self::CONFIG_DIRECTORY.'/packages/monolog.yaml'));
+
+        $container->prependExtensionConfig(self::EXTENSION_MONOLOG, $monologExtensionConfig);
     }
 }

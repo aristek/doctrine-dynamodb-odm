@@ -5,16 +5,19 @@ declare(strict_types=1);
 namespace Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\DynamoDb;
 
 use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\DynamoDbClientInterface;
+use Aristek\Bundle\DynamodbBundle\ODM\Trait\LoggerTrait;
 use Aws\DynamoDb\BinaryValue;
 use Aws\DynamoDb\DynamoDbClient;
 use Aws\DynamoDb\Marshaler;
 use Aws\DynamoDb\NumberValue;
 use Aws\DynamoDb\SetValue;
+use Exception;
 use stdClass;
 
 final class DynamoDbManager
 {
     use HasParsers;
+    use LoggerTrait;
 
     private Marshaler $marshaler;
 
@@ -33,15 +36,27 @@ final class DynamoDbManager
         return $this->service->getClient();
     }
 
+    /**
+     * @throws Exception
+     */
     public function deleteOne(array $criteria, string $table): bool
     {
         $this->resetExpressions();
 
-        $result = $this
-            ->table($table)
-            ->setKey($this->marshalItem($criteria))
-            ->prepare($this->client())
-            ->deleteItem();
+        $query = null;
+
+        try {
+            $query = $this
+                ->table($table)
+                ->setKey($this->marshalItem($criteria))
+                ->prepare($this->client());
+
+            $result = $query->deleteItem();
+        } catch (Exception $exception) {
+            $this->logQuery($exception->getMessage(), $query?->query ?: []);
+
+            throw $exception;
+        }
 
         return $result->toArray()['@metadata.statusCode'] ?? null === 200;
     }
@@ -53,15 +68,28 @@ final class DynamoDbManager
         }
     }
 
-    public function insertOne(array $insert, string $table): void
+    /**
+     * @throws Exception
+     */
+    public function insertOne(array $insert, string $table): bool
     {
         $this->resetExpressions();
 
-        $this
-            ->table($table)
-            ->setItem($this->marshalItem($insert))
-            ->prepare($this->client())
-            ->putItem();
+        $query = null;
+        try {
+            $query = $this
+                ->table($table)
+                ->setItem($this->marshalItem($insert))
+                ->prepare($this->client());
+
+            $result = $query->putItem();
+        } catch (Exception $exception) {
+            $this->logQuery($exception->getMessage(), $query?->query ?: []);
+
+            throw $exception;
+        }
+
+        return $result->toArray()['@metadata.statusCode'] ?? null === 200;
     }
 
     public function marshalItem($item): array
@@ -94,19 +122,30 @@ final class DynamoDbManager
         return $this->marshaler->unmarshalValue($value);
     }
 
+    /**
+     * @throws Exception
+     */
     public function updateOne(array $id, array $attributes, string $table): bool
     {
         $this->resetExpressions();
 
-        $result = $this
-            ->table($table)
-            ->setKey($this->marshalItem($id))
-            ->setUpdateExpression($this->updateExpression->update($attributes))
-            ->setExpressionAttributeNames($this->expressionAttributeNames->all())
-            ->setExpressionAttributeValues($this->expressionAttributeValues->all())
-            ->setReturnValues('UPDATED_NEW')
-            ->prepare($this->client())
-            ->updateItem();
+        $query = null;
+        try {
+            $query = $this
+                ->table($table)
+                ->setKey($this->marshalItem($id))
+                ->setUpdateExpression($this->updateExpression->update($attributes))
+                ->setExpressionAttributeNames($this->expressionAttributeNames->all())
+                ->setExpressionAttributeValues($this->expressionAttributeValues->all())
+                ->setReturnValues('UPDATED_NEW')
+                ->prepare($this->client());
+
+            $result = $query->updateItem();
+        } catch (Exception $exception) {
+            $this->logQuery($exception->getMessage(), $query?->query ?: []);
+
+            throw $exception;
+        }
 
         return $result->toArray()['@metadata.statusCode'] ?? null === 200;
     }

@@ -1,3 +1,7 @@
+### v0.1.4
+##### Features:
+- Added logger.
+
 ### v0.1.3
 ##### Fix:
 - Added clearing Dynamodb query expressions.
