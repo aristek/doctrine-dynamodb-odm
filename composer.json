@@ -21,7 +21,8 @@
     "symfony/console": "^5.4|^6.0",
     "symfony/finder": "^5.4|^6.0",
     "symfony/validator": "^5.4|^6.0",
-    "symfony/uid": "^5.4|^6.0"
+    "symfony/uid": "^5.4|^6.0",
+    "symfony/monolog-bundle": "^3.10"
   },
   "require-dev": {
     "dealerdirect/phpcodesniffer-composer-installer": "^0.7",
