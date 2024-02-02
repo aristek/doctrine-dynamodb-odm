@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aristek\Bundle\DynamodbBundle\Tests\Documents\Annotation;
+namespace Aristek\Bundle\DynamodbBundle\Tests\Documents\Entity;
 
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\AlsoLoad;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Document;

@@ -5,19 +5,19 @@ declare(strict_types=1);
 namespace Aristek\Bundle\DynamodbBundle\Tests\Doctrine\ODM\DynamoDb\Action;
 
 use Aristek\Bundle\DynamodbBundle\ODM\Id\PrimaryKey;
-use Aristek\Bundle\DynamodbBundle\ODM\Mapping\MappingException;
 use Aristek\Bundle\DynamodbBundle\Tests\Doctrine\ODM\DynamoDb\BaseTestCase;
-use Aristek\Bundle\DynamodbBundle\Tests\Documents\CustomRepository\Game;
-use Aristek\Bundle\DynamodbBundle\Tests\Documents\CustomRepository\GameRepository;
-use Aristek\Bundle\DynamodbBundle\Tests\Documents\CustomRepository\GameWithFakeRepository;
-use Aristek\Bundle\DynamodbBundle\Tests\Documents\CustomRepository\User;
-use Aristek\Bundle\DynamodbBundle\Tests\Documents\Id\Team;
-use Aristek\Bundle\DynamodbBundle\Tests\Documents\Reference\District;
-use Aristek\Bundle\DynamodbBundle\Tests\Documents\Reference\School;
-use Aristek\Bundle\DynamodbBundle\Tests\Documents\Reference\WithMapping\Affiliate;
-use Aristek\Bundle\DynamodbBundle\Tests\Documents\Reference\WithMapping\Organization;
+use Aristek\Bundle\DynamodbBundle\Tests\Documents\Entity\Affiliate;
+use Aristek\Bundle\DynamodbBundle\Tests\Documents\Entity\District;
+use Aristek\Bundle\DynamodbBundle\Tests\Documents\Entity\Game;
+use Aristek\Bundle\DynamodbBundle\Tests\Documents\Entity\GameWithFakeRepository;
+use Aristek\Bundle\DynamodbBundle\Tests\Documents\Entity\Organization;
+use Aristek\Bundle\DynamodbBundle\Tests\Documents\Entity\School;
+use Aristek\Bundle\DynamodbBundle\Tests\Documents\Entity\Team;
+use Aristek\Bundle\DynamodbBundle\Tests\Documents\Entity\User;
+use Aristek\Bundle\DynamodbBundle\Tests\Documents\Repository\GameRepository;
 use Doctrine\Common\Collections\Criteria;
 use LogicException;
+use TypeError;
 use function array_map;
 
 final class ReadTest extends BaseTestCase
@@ -258,7 +258,7 @@ final class ReadTest extends BaseTestCase
         $this->dm->flush();
         $this->dm->clear();
 
-        $this->expectException(MappingException::class);
+        $this->expectException(TypeError::class);
 
         $this->dm->getRepository(GameWithFakeRepository::class);
     }

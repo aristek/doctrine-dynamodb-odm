@@ -6,7 +6,7 @@ namespace Aristek\Bundle\DynamodbBundle\Tests\Doctrine\ODM\DynamoDb\Annotation;
 
 use Aristek\Bundle\DynamodbBundle\ODM\Id\PrimaryKey;
 use Aristek\Bundle\DynamodbBundle\Tests\Doctrine\ODM\DynamoDb\BaseTestCase;
-use Aristek\Bundle\DynamodbBundle\Tests\Documents\MappedSuperclass\Client;
+use Aristek\Bundle\DynamodbBundle\Tests\Documents\Entity\Client;
 
 final class MappedSuperclassTest extends BaseTestCase
 {

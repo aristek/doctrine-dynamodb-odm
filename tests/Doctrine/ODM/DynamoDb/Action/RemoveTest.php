@@ -6,8 +6,8 @@ namespace Aristek\Bundle\DynamodbBundle\Tests\Doctrine\ODM\DynamoDb\Action;
 
 use Aristek\Bundle\DynamodbBundle\ODM\Id\PrimaryKey;
 use Aristek\Bundle\DynamodbBundle\Tests\Doctrine\ODM\DynamoDb\BaseTestCase;
-use Aristek\Bundle\DynamodbBundle\Tests\Documents\Reference\District;
-use Aristek\Bundle\DynamodbBundle\Tests\Documents\Reference\School;
+use Aristek\Bundle\DynamodbBundle\Tests\Documents\Entity\District;
+use Aristek\Bundle\DynamodbBundle\Tests\Documents\Entity\School;
 
 final class RemoveTest extends BaseTestCase
 {

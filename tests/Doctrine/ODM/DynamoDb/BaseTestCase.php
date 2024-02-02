@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Aristek\Bundle\DynamodbBundle\Tests\Doctrine\ODM\DynamoDb;
 
 use Aristek\Bundle\DynamodbBundle\ODM\DocumentManager;
+use Aristek\Bundle\DynamodbBundle\Tests\Documents\Entity\School;
 use Aristek\Bundle\DynamodbBundle\Tests\Documents\Enum\SchoolNonBackedEnum;
 use Aristek\Bundle\DynamodbBundle\Tests\Documents\Enum\SchoolNumberIntEnum;
 use Aristek\Bundle\DynamodbBundle\Tests\Documents\Enum\SchoolTypeEnum;
-use Aristek\Bundle\DynamodbBundle\Tests\Documents\Reference\School;
 use DateTime;
 use DateTimeImmutable;
 use Exception;

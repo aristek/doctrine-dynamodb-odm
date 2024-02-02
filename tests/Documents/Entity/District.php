@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aristek\Bundle\DynamodbBundle\Tests\Documents\Reference;
+namespace Aristek\Bundle\DynamodbBundle\Tests\Documents\Entity;
 
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Document;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Field;

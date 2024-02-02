@@ -2,9 +2,8 @@
 <module type="WEB_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" packagePrefix="Aristek\Bundle\DynamodbBundle\" />
-      <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="false" packagePrefix="Aristek\Bundle\DynamodbBundle\Tests\" />
-      <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" packagePrefix="Aristek\Bundle\DynamodbBundle" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" packagePrefix="Aristek\Bundle\DynamodbBundle\Tests" generated="true" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/aws/aws-crt-php" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/aws/aws-sdk-php" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/aws/aws-sdk-php-symfony" />
@@ -109,6 +108,10 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/yaml" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/theseer/tokenizer" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/voku/portable-ascii" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/monolog/monolog" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/doctrine-bridge" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/monolog-bridge" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/monolog-bundle" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

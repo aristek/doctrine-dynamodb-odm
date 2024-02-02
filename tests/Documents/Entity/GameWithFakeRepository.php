@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Aristek\Bundle\DynamodbBundle\Tests\Documents\CustomRepository;
+namespace Aristek\Bundle\DynamodbBundle\Tests\Documents\Entity;
 
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Document;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Field;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Pk;
+use Aristek\Bundle\DynamodbBundle\Tests\Documents\Repository\GameFakeRepository;
 
 #[Document(
     repositoryClass: GameFakeRepository::class

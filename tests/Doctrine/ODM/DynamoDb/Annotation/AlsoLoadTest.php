@@ -6,7 +6,7 @@ namespace Aristek\Bundle\DynamodbBundle\Tests\Doctrine\ODM\DynamoDb\Annotation;
 
 use Aristek\Bundle\DynamodbBundle\ODM\Id\PrimaryKey;
 use Aristek\Bundle\DynamodbBundle\Tests\Doctrine\ODM\DynamoDb\BaseTestCase;
-use Aristek\Bundle\DynamodbBundle\Tests\Documents\Annotation\Product;
+use Aristek\Bundle\DynamodbBundle\Tests\Documents\Entity\Product;
 
 final class AlsoLoadTest extends BaseTestCase
 {

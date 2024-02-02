@@ -6,11 +6,10 @@ namespace Aristek\Bundle\DynamodbBundle\Tests\Doctrine\ODM\DynamoDb\Annotation;
 
 use Aristek\Bundle\DynamodbBundle\ODM\Id\PrimaryKey;
 use Aristek\Bundle\DynamodbBundle\Tests\Doctrine\ODM\DynamoDb\BaseTestCase;
-use Aristek\Bundle\DynamodbBundle\Tests\Documents\Embedded\Bar;
-use Aristek\Bundle\DynamodbBundle\Tests\Documents\Embedded\Coordinate;
-use Aristek\Bundle\DynamodbBundle\Tests\Documents\Embedded\Location;
+use Aristek\Bundle\DynamodbBundle\Tests\Documents\Entity\Bar;
+use Aristek\Bundle\DynamodbBundle\Tests\Documents\Entity\Coordinate;
+use Aristek\Bundle\DynamodbBundle\Tests\Documents\Entity\Location;
 use function array_map;
-use function dump;
 
 final class EmbedTest extends BaseTestCase
 {

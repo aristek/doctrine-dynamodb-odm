@@ -2,13 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Aristek\Bundle\DynamodbBundle\Tests\Documents\CustomRepository;
+namespace Aristek\Bundle\DynamodbBundle\Tests\Documents\Entity;
 
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Document;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Field;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\IndexStrategy;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Pk;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\ReferenceMany;
+use Aristek\Bundle\DynamodbBundle\Tests\Documents\Repository\GameRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 

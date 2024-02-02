@@ -1,0 +1,119 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Aristek\Bundle\DynamodbBundle\ODM\Repository;
+
+use Aristek\Bundle\DynamodbBundle\DependencyInjection\Compiler\ServiceRepositoryCompilerPass;
+use Aristek\Bundle\DynamodbBundle\ODM\DocumentManager;
+use Aristek\Bundle\DynamodbBundle\ODM\Mapping\ClassMetadata;
+use Doctrine\Persistence\ObjectRepository;
+use Psr\Container\ContainerInterface;
+use RuntimeException;
+use function class_exists;
+use function is_a;
+use function spl_object_hash;
+use function sprintf;
+
+/**
+ * Fetches repositories from the container or falls back to normal creation.
+ */
+final class ContainerRepositoryFactory implements RepositoryFactory
+{
+    /** @var array<string, ObjectRepository> */
+    private array $managedRepositories = [];
+
+    /** @param ContainerInterface $container A service locator containing the repositories */
+    public function __construct(private ContainerInterface $container)
+    {
+    }
+
+    /**
+     * @psalm-param class-string<T> $documentName
+     *
+     * @psalm-return ObjectRepository<T>
+     *
+     * @template T of object
+     */
+    public function getRepository(DocumentManager $documentManager, string $documentName): ObjectRepositoryInterface
+    {
+        $metadata = $documentManager->getClassMetadata($documentName);
+        $customRepositoryName = $metadata->customRepositoryClassName;
+
+        if ($customRepositoryName !== null) {
+            // fetch from the container
+            if ($this->container->has($customRepositoryName)) {
+                /** @var ObjectRepository<T> $repository */
+                $repository = $this->container->get($customRepositoryName);
+
+                if (!$repository instanceof DocumentRepository) {
+                    throw new RuntimeException(
+                        sprintf(
+                            'The service "%s" must extend DocumentRepository (or a base class, like ServiceDocumentRepository).',
+                            $customRepositoryName
+                        )
+                    );
+                }
+
+                return $repository;
+            }
+
+            // if not in the container but the class/id implements the interface, throw an error
+            if (is_a($customRepositoryName, ServiceDocumentRepositoryInterface::class, true)) {
+                throw new RuntimeException(
+                    sprintf(
+                        'The "%s" document repository implements "%s", but its service could not be found. Make sure the service exists and is tagged with "%s".',
+                        $customRepositoryName,
+                        ServiceDocumentRepositoryInterface::class,
+                        ServiceRepositoryCompilerPass::REPOSITORY_SERVICE_TAG
+                    )
+                );
+            }
+
+            if (!class_exists($customRepositoryName)) {
+                throw new RuntimeException(
+                    sprintf(
+                        'The "%s" document has a repositoryClass set to "%s", but this is not a valid class. Check your class naming. If this is meant to be a service id, make sure this service exists and is tagged with "%s".',
+                        $metadata->name,
+                        $customRepositoryName,
+                        ServiceRepositoryCompilerPass::REPOSITORY_SERVICE_TAG
+                    )
+                );
+            }
+            // allow the repository to be created below
+        }
+
+        return $this->getOrCreateRepository($documentManager, $metadata);
+    }
+
+    /**
+     * @psalm-param ClassMetadata<T> $metadata
+     *
+     * @psalm-return ObjectRepository<T>
+     *
+     * @template T of object
+     */
+    private function getOrCreateRepository(
+        DocumentManager $documentManager,
+        ClassMetadata $metadata
+    ): DocumentRepository {
+        $repositoryHash = $metadata->getName().spl_object_hash($documentManager);
+        if (isset($this->managedRepositories[$repositoryHash])) {
+            /** @psalm-var ObjectRepository<T> */
+            return $this->managedRepositories[$repositoryHash];
+        }
+
+        if ($metadata->customRepositoryClassName) {
+            $repositoryClassName = $metadata->customRepositoryClassName;
+        } else {
+            /** @psalm-var class-string<ObjectRepository<T>> $repositoryClassName */
+            $repositoryClassName = $documentManager->getConfiguration()->getDefaultDocumentRepositoryClassName();
+        }
+
+        return $this->managedRepositories[$repositoryHash] = new $repositoryClassName(
+            $documentManager,
+            $documentManager->getUnitOfWork(),
+            $metadata
+        );
+    }
+}

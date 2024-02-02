@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aristek\Bundle\DynamodbBundle\Tests\Documents\Reference\WithMapping;
+namespace Aristek\Bundle\DynamodbBundle\Tests\Documents\Entity;
 
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Document;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Field;
@@ -12,7 +12,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
 #[Document]
-final class Organization
+class Organization
 {
     #[ReferenceMany(targetDocument: Affiliate::class, cascade: 'all', mappedBy: 'organization')]
     private Collection $affiliates;

@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Aristek\Bundle\DynamodbBundle\Tests\Documents\Id;
+namespace Aristek\Bundle\DynamodbBundle\Tests\Documents\Entity;
 
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Document;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Field;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Pk;
-use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Sk;
+use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\ReferenceOne;
 
 #[Document]
-class Team
+class Affiliate
 {
     #[Pk]
     private ?string $id = null;
@@ -18,8 +18,8 @@ class Team
     #[Field]
     private string $name;
 
-    #[Sk(strategy: '{projectId}')]
-    private ?string $projectId = null;
+    #[ReferenceOne(targetDocument: Organization::class, inversedBy: 'affiliates')]
+    private Organization $organization;
 
     public function getId(): ?string
     {
@@ -45,14 +45,14 @@ class Team
         return $this;
     }
 
-    public function getProjectId(): ?string
+    public function getOrganization(): Organization
     {
-        return $this->projectId;
+        return $this->organization;
     }
 
-    public function setProjectId(?string $projectId): self
+    public function setOrganization(Organization $organization): self
     {
-        $this->projectId = $projectId;
+        $this->organization = $organization;
 
         return $this;
     }

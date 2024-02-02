@@ -11,3 +11,27 @@ services:
     Aristek\Bundle\DynamodbBundle\Command\CreateSchemaCommand: ~
     Aristek\Bundle\DynamodbBundle\Command\DropSchemaCommand: ~
     Aristek\Bundle\DynamodbBundle\Command\UpdateSchemaCommand: ~
+
+    Aristek\Bundle\DynamodbBundle\ODM\ManagerRegistry: '@aristek_dynamodb'
+    Doctrine\Persistence\ManagerRegistry: '@aristek_dynamodb'
+
+    aristek_dynamodb:
+        class: Aristek\Bundle\DynamodbBundle\ODM\ManagerRegistry
+        arguments:
+            $connections: '%doctrine_dynamodb.odm.connections%'
+            $container: '@service_container'
+            $defaultConnection: '%doctrine_dynamodb.odm.default_connection%'
+            $defaultManager: '%doctrine_dynamodb.odm.default_document_manager%'
+            $managers: '%doctrine_mongodb.odm.document_managers%'
+            $name: 'DynamoDB'
+
+    doctrine_dynamodb.odm.connection.event_manager:
+        class: Symfony\Bridge\Doctrine\ContainerAwareEventManager
+        arguments:
+            - '@service_container'
+
+    Aristek\Bundle\DynamodbBundle\ODM\DocumentManager: '@doctrine_dynamodb.odm.document_manager'
+
+    Aristek\Bundle\DynamodbBundle\ODM\Repository\ContainerRepositoryFactory:
+        arguments:
+            - '@service_container'
