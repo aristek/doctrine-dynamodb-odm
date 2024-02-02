@@ -17,6 +17,7 @@ services:
 
     aristek_dynamodb:
         class: Aristek\Bundle\DynamodbBundle\ODM\ManagerRegistry
+        public: true
         arguments:
             $connections: '%doctrine_dynamodb.odm.connections%'
             $container: '@service_container'
@@ -27,6 +28,7 @@ services:
 
     doctrine_dynamodb.odm.connection.event_manager:
         class: Symfony\Bridge\Doctrine\ContainerAwareEventManager
+        abstract: true
         arguments:
             - '@service_container'
 
