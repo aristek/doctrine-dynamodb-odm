@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aristek\Bundle\DynamodbBundle\Tests\Documents\Reference;
+namespace Aristek\Bundle\DynamodbBundle\Tests\Documents\Entity;
 
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Document;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Field;
@@ -21,6 +21,11 @@ use Doctrine\Common\Collections\Collection;
             name: 'ItemTypeIndex',
             strategy: new IndexStrategy(hash: 'DISTRICT', range: '{CLASS}#{id}'),
             range: 'itemTypeSk'
+        ),
+        new Index(
+            hash: 'name',
+            name: 'nameIndex',
+            strategy: new IndexStrategy(hash: '{name}'),
         ),
     ],
 )]

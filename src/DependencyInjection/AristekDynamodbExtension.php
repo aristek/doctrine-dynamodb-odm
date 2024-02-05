@@ -4,24 +4,37 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\DependencyInjection;
 
+use Aristek\Bundle\DynamodbBundle\DependencyInjection\Compiler\ServiceRepositoryCompilerPass;
 use Aristek\Bundle\DynamodbBundle\ODM\Configuration as ODMConfiguration;
 use Aristek\Bundle\DynamodbBundle\ODM\DocumentManager;
 use Aristek\Bundle\DynamodbBundle\ODM\Id\UuidGenerator;
+use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\AsDocumentListener;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Driver\AttributeDriver;
+use Aristek\Bundle\DynamodbBundle\ODM\Repository\ContainerRepositoryFactory;
+use Aristek\Bundle\DynamodbBundle\ODM\Repository\ServiceDocumentRepositoryInterface;
 use Exception;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\Alias;
+use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\Yaml\Yaml;
 use function current;
+use function sprintf;
 
 final class AristekDynamodbExtension extends Extension implements PrependExtensionInterface
 {
     private const CONFIG_DIRECTORY = __DIR__.'/../../config';
     private const EXTENSION_MONOLOG = 'monolog';
+
+    public function getAlias(): string
+    {
+        return 'aristek_dynamodb';
+    }
 
     /**
      * @throws Exception
@@ -43,6 +56,42 @@ final class AristekDynamodbExtension extends Extension implements PrependExtensi
 
         $loader->load('services.yaml');
 
+        $container->setParameter('doctrine_dynamodb.odm.connections', ['default']);
+        $container->setParameter('doctrine_dynamodb.odm.default_connection', 'default');
+
+        $this->loadDocumentManager($config, $container);
+
+        $container
+            ->registerForAutoconfiguration(ServiceDocumentRepositoryInterface::class)
+            ->addTag(ServiceRepositoryCompilerPass::REPOSITORY_SERVICE_TAG);
+
+        $container->registerAttributeForAutoconfiguration(
+            AsDocumentListener::class,
+            static function (ChildDefinition $definition, AsDocumentListener $attribute): void {
+                $definition->addTag('doctrine_dynamodb.odm.event_listener', [
+                    'event'      => $attribute->event,
+                    'connection' => $attribute->connection,
+                    'priority'   => $attribute->priority,
+                ]);
+            }
+        );
+    }
+
+    public function prepend(ContainerBuilder $container): void
+    {
+        $this->prependMonologExtensionConfig($container);
+    }
+
+    /**
+     * Loads a document manager configuration.
+     */
+    protected function loadDocumentManager(array $config, ContainerBuilder $container): void
+    {
+        $configurationId = 'doctrine_dynamodb.odm.configuration';
+
+        $odmConfigDef = new Definition(ODMConfiguration::class);
+        $container->setDefinition($configurationId, $odmConfigDef);
+
         $cacheDir = $container->getParameter('kernel.cache_dir');
 
         $attributeDriver = new Definition(AttributeDriver::class);
@@ -50,24 +99,55 @@ final class AristekDynamodbExtension extends Extension implements PrependExtensi
             ->setFactory([AttributeDriver::class, 'create'])
             ->setArguments([$config['item_dir']]);
 
-        $odmConfig = new Definition(ODMConfiguration::class);
-        $odmConfig
-            ->addMethodCall('setHydratorDir', [sprintf('%s/odm/hydrators/', $cacheDir)])
-            ->addMethodCall('setProxyDir', [sprintf('%s/odm/proxies/', $cacheDir)])
-            ->addMethodCall('setHydratorNamespace', ['Hydrators'])
-            ->addMethodCall('setMetadataDriverImpl', [$attributeDriver])
-            ->addMethodCall('setDynamodbConfig', [$config['dynamodb_config']])
-            ->addMethodCall('setDatabase', [$config['table']])
-            ->addMethodCall('setUuidVersion', [UuidGenerator::UUID_4]);
+        $methods = [
+            'setDatabase'           => $config['table'],
+            'setDynamodbConfig'     => $config['dynamodb_config'],
+            'setMetadataDriverImpl' => $attributeDriver,
+            'setProxyDir'           => sprintf('%s/odm/proxies/', $cacheDir),
+            'setHydratorDir'        => sprintf('%s/odm/hydrators/', $cacheDir),
+            'setHydratorNamespace'  => 'Hydrators',
+            'setUuidVersion'        => UuidGenerator::UUID_4,
+            'setRepositoryFactory'  => new Reference(ContainerRepositoryFactory::class),
+        ];
 
-        $documentManager = $container->register(DocumentManager::class, DocumentManager::class);
-        $documentManager->setFactory([DocumentManager::class, 'create']);
-        $documentManager->setArguments([$odmConfig]);
-    }
+        foreach ($methods as $method => $arg) {
+            if ($odmConfigDef->hasMethodCall($method)) {
+                $odmConfigDef->removeMethodCall($method);
+            }
 
-    public function prepend(ContainerBuilder $container): void
-    {
-        $this->prependMonologExtensionConfig($container);
+            $odmConfigDef->addMethodCall($method, [$arg]);
+        }
+
+        $odmDmArgs = [
+            new Reference($configurationId),
+            // Document managers will share their connection's event manager
+            new Reference('doctrine_dynamodb.odm.0_connection.event_manager'),
+        ];
+        $odmDmDef = new Definition(DocumentManager::class, $odmDmArgs);
+        $odmDmDef->setFactory([DocumentManager::class, 'create']);
+        $odmDmDef->addTag('doctrine_dynamodb.odm.document_manager');
+        $odmDmDef->setPublic(true);
+
+        $container->setDefinition('doctrine_dynamodb.odm.document_manager', $odmDmDef);
+        $container->setParameter(
+            'doctrine_mongodb.odm.document_managers',
+            ['doctrine_dynamodb.odm.document_manager' => 'doctrine_dynamodb.odm.document_manager']
+        );
+
+        $container->setParameter(
+            'doctrine_dynamodb.odm.default_document_manager',
+            'doctrine_dynamodb.odm.document_manager'
+        );
+
+        $container->setDefinition(
+            'doctrine_dynamodb.odm.0_connection.event_manager',
+            new ChildDefinition('doctrine_dynamodb.odm.connection.event_manager'),
+        );
+
+        $container->setAlias(
+            'doctrine_dynamodb.odm.event_manager',
+            new Alias('doctrine_dynamodb.odm.0_connection.event_manager'),
+        );
     }
 
     private function prependMonologExtensionConfig(ContainerBuilder $container): void

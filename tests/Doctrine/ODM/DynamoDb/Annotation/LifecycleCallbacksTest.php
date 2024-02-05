@@ -6,13 +6,13 @@ namespace Aristek\Bundle\DynamodbBundle\Tests\Doctrine\ODM\DynamoDb\Annotation;
 
 use Aristek\Bundle\DynamodbBundle\ODM\Id\PrimaryKey;
 use Aristek\Bundle\DynamodbBundle\Tests\Doctrine\ODM\DynamoDb\BaseTestCase;
-use Aristek\Bundle\DynamodbBundle\Tests\Documents\LifecycleCallbacks\User;
+use Aristek\Bundle\DynamodbBundle\Tests\Documents\Entity\UserWithLifecycleCallback;
 
 final class LifecycleCallbacksTest extends BaseTestCase
 {
     public function testLifecycleCallbacks(): void
     {
-        $user = new User();
+        $user = new UserWithLifecycleCallback();
 
         self::assertNull($user->getCreatedAt());
         self::assertNull($user->getPrePersistOther());
@@ -43,7 +43,7 @@ final class LifecycleCallbacksTest extends BaseTestCase
         $userId = $user->getId();
         $this->dm->clear();
 
-        $user = $this->dm->getRepository(User::class)->find(new PrimaryKey($userId, 'User'));
+        $user = $this->dm->getRepository(UserWithLifecycleCallback::class)->find(new PrimaryKey($userId, 'User'));
         self::assertEquals('PostLoad', $user->getPostLoad());
         self::assertEquals('PreLoad', $user->getPreLoad());
 

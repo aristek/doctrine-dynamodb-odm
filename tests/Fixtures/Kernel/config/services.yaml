@@ -1,5 +1,36 @@
 services:
     _defaults:
+        public: true
         autowire: true
         autoconfigure: true
 
+    Aristek\Bundle\DynamodbBundle\Tests\Documents\EventListener\:
+        resource: '../../../Documents/EventListener/*'
+
+    Aristek\Bundle\DynamodbBundle\Tests\Documents\Repository\:
+        resource: '../../../Documents/Repository/*'
+
+    Aristek\Bundle\DynamodbBundle\ODM\ManagerRegistry: '@aristek_dynamodb'
+    Doctrine\Persistence\ManagerRegistry: '@aristek_dynamodb'
+
+    aristek_dynamodb:
+        class: Aristek\Bundle\DynamodbBundle\ODM\ManagerRegistry
+        arguments:
+            $connections: '%doctrine_dynamodb.odm.connections%'
+            $container: '@service_container'
+            $defaultConnection: '%doctrine_dynamodb.odm.default_connection%'
+            $defaultManager: '%doctrine_dynamodb.odm.default_document_manager%'
+            $managers: '%doctrine_mongodb.odm.document_managers%'
+            $name: 'DynamoDB'
+
+    doctrine_dynamodb.odm.connection.event_manager:
+        class: Symfony\Bridge\Doctrine\ContainerAwareEventManager
+        abstract: true
+        arguments:
+            - '@service_container'
+
+    Aristek\Bundle\DynamodbBundle\ODM\DocumentManager: '@doctrine_dynamodb.odm.document_manager'
+
+    Aristek\Bundle\DynamodbBundle\ODM\Repository\ContainerRepositoryFactory:
+        arguments:
+            - '@service_container'

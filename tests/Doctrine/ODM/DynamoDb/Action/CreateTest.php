@@ -6,10 +6,9 @@ namespace Aristek\Bundle\DynamodbBundle\Tests\Doctrine\ODM\DynamoDb\Action;
 
 use Aristek\Bundle\DynamodbBundle\ODM\Id\PrimaryKey;
 use Aristek\Bundle\DynamodbBundle\Tests\Doctrine\ODM\DynamoDb\BaseTestCase;
-use Aristek\Bundle\DynamodbBundle\Tests\Documents\Annotation\Product;
-use Aristek\Bundle\DynamodbBundle\Tests\Documents\Id\Content;
-use Aristek\Bundle\DynamodbBundle\Tests\Documents\Reference\District;
-use Aristek\Bundle\DynamodbBundle\Tests\Documents\Reference\School;
+use Aristek\Bundle\DynamodbBundle\Tests\Documents\Entity\District;
+use Aristek\Bundle\DynamodbBundle\Tests\Documents\Entity\Product;
+use Aristek\Bundle\DynamodbBundle\Tests\Documents\Entity\School;
 use function array_map;
 
 final class CreateTest extends BaseTestCase

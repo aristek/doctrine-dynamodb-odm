@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aristek\Bundle\DynamodbBundle\Tests\Doctrine\ODM\DynamoDb;
 
-use Aristek\Bundle\DynamodbBundle\Tests\Documents\CustomRepository\Game;
+use Aristek\Bundle\DynamodbBundle\Tests\Documents\Entity\Game;
 
 final class DocumentPersistTest extends BaseTestCase
 {

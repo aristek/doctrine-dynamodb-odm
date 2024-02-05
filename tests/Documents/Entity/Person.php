@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aristek\Bundle\DynamodbBundle\Tests\Documents\MappedSuperclass;
+namespace Aristek\Bundle\DynamodbBundle\Tests\Documents\Entity;
 
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Field;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\MappedSuperclass;

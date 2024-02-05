@@ -74,4 +74,9 @@ class DynamoDBException extends Exception
 
         return new self(sprintf('%s type requires value of type %s, %s given', $type, $expected, $gotType));
     }
+
+    public static function unknownDocumentNamespace(string $documentNamespaceAlias): self
+    {
+        return new self(sprintf("Unknown Document namespace alias '%s'.", $documentNamespaceAlias));
+    }
 }

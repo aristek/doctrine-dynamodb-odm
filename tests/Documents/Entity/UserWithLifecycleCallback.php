@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aristek\Bundle\DynamodbBundle\Tests\Documents\LifecycleCallbacks;
+namespace Aristek\Bundle\DynamodbBundle\Tests\Documents\Entity;
 
 use Aristek\Bundle\DynamodbBundle\ODM\Event\LifecycleEventArgs;
 use Aristek\Bundle\DynamodbBundle\ODM\Event\PreFlushEventArgs;
@@ -22,7 +22,7 @@ use DateTimeImmutable;
 
 #[Document]
 #[HasLifecycleCallbacks]
-class User
+class UserWithLifecycleCallback
 {
     #[Field]
     private ?DateTimeImmutable $createdAt = null;

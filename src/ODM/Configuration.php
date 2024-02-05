@@ -215,6 +215,11 @@ class Configuration
         return $this->attributes['defaultDocumentRepositoryClassName'] ?? DocumentRepository::class;
     }
 
+    public function getDocumentNamespace(string $name): string
+    {
+        return $this->getDocumentNamespaces()[$name];
+    }
+
     /**
      * Retrieves the list of registered document namespace aliases.
      *
