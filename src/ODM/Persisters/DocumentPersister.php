@@ -543,7 +543,7 @@ final class DocumentPersister
 
         $qb = $this->dm->getQueryBuilder($mapping['targetDocument']);
         $iterator = $qb
-            ->where($index->hash, $index->strategy->getHash($owner))
+            ->where($index->hash, $index->hashKey->strategy->marshal($owner))
             ->withIndex($index->name)
             ->get(hydrationMode: QueryBuilder::HYDRATE_ITERATOR);
 

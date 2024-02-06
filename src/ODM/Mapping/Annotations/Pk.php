@@ -32,7 +32,7 @@ final class Pk extends AbstractField
         array $options = [],
     ) {
         $this->keyField = $keyField ?: PrimaryKey::HASH;
-        $this->strategy = $strategy ?: IndexStrategy::PK_STRATEGY_FORMAT;
+        $this->strategy = $strategy ?: Strategy::PK_STRATEGY_FORMAT;
 
         parent::__construct($name, $type, $nullable, $options);
     }

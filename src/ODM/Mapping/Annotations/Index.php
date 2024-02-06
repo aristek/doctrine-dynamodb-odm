@@ -18,16 +18,15 @@ class Index extends PrimaryKey
     public string $projectionType = 'ALL';
 
     public function __construct(
-        string $hash,
+        public readonly Key $hashKey,
         string $name,
-        public readonly IndexStrategy $strategy,
         public readonly array $projectedAttributes = [],
         string $projectionType = self::TYPE_ALL,
-        ?string $range = null,
+        public readonly ?Key $rangeKey = null,
 
     ) {
         $this->projectionType = $projectionType;
 
-        parent::__construct($hash, $range, $name);
+        parent::__construct($this->hashKey->field, $this->rangeKey?->field, $name);
     }
 }

@@ -13,6 +13,6 @@ aristek_dynamodb:
 parameters:
     env(DYNAMODB_TABLE): 'test'
     env(AWS_REGION): us-east-2
-    env(AWS_ENDPOINT): http://localhost:8000
+    env(AWS_ENDPOINT): http://localstack:4566
     env(AWS_KEY): localstack
     env(AWS_SECRET): localstack

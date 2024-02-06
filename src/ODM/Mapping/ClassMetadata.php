@@ -6,8 +6,9 @@ namespace Aristek\Bundle\DynamodbBundle\ODM\Mapping;
 
 use Aristek\Bundle\DynamodbBundle\ODM\Id\IdGenerator;
 use Aristek\Bundle\DynamodbBundle\ODM\Id\PrimaryKey;
+use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\HashKey;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Index;
-use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\IndexStrategy;
+use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Strategy;
 use Aristek\Bundle\DynamodbBundle\ODM\Types\Type;
 use BadMethodCallException;
 use DateTime;
@@ -168,7 +169,7 @@ final class ClassMetadata implements BaseClassMetadata
      */
     public array $identifier = [];
 
-    public ?IndexStrategy $indexStrategy = null;
+    public ?Strategy $indexStrategy = null;
 
     /**
      * READ-ONLY: The array of indexes for the document collection.
@@ -534,10 +535,10 @@ final class ClassMetadata implements BaseClassMetadata
                 $document = $this->reflFields[$name]->getValue($document);
             }
 
-            $data[$index->hash] = $index->strategy->getHash($document, $attributes);
+            $data[$index->hash] = $index->hashKey->strategy->marshal($document, $attributes);
 
             if ($index->range) {
-                $data[$index->range] = $index->strategy->getRange($document, $attributes);
+                $data[$index->range] = $index->rangeKey->strategy->marshal($document, $attributes);
             }
         }
 
@@ -572,7 +573,7 @@ final class ClassMetadata implements BaseClassMetadata
         if ($name) {
             $index = $this->getIndex($name);
 
-            return [$index->getHash(), $index->getRange()];
+            return [$index->hashKey->field, $index->rangeKey?->field];
         }
 
         return [$this->getHashField(), $this->getRangeField()];
@@ -619,7 +620,7 @@ final class ClassMetadata implements BaseClassMetadata
             $this->reflFields[$this->getHashField()]->getValue($document),
             $this->getRangeField()
                 ? $this->reflFields[$this->getRangeField()]->getValue($document)
-                : $this->getPrimaryIndex()->strategy->getRange(
+                : $this->getPrimaryIndex()->rangeKey->strategy->marshal(
                 $document instanceof GhostObjectInterface ? $this->getName() : $document
             ),
         ];
@@ -658,8 +659,8 @@ final class ClassMetadata implements BaseClassMetadata
 
     public function getIndexData(Index $index, object|string $document, array $attributes = []): array
     {
-        $data[$index->hash] = $index->strategy->getHash($document, $attributes);
-        $data[$index->range] = $index->strategy->getRange($document, $attributes);
+        $data[$index->hash] = $index->hashKey->strategy->marshal($document, $attributes);
+        $data[$index->range] = $index->rangeKey?->strategy?->marshal($document, $attributes);
 
         if (empty($data[$index->range]) || (is_string($document) && count($attributes) < 2)) {
             unset($data[$index->range]);
@@ -729,10 +730,10 @@ final class ClassMetadata implements BaseClassMetadata
     {
         $data = [];
         foreach ($this->getLocalSecondaryIndexes() as $index) {
-            $data[$index->hash] = $index->strategy->getHash($document, $attributes);
+            $data[$index->hash] = $index->hashKey->strategy->marshal($document, $attributes);
 
             if ($index->range) {
-                $data[$index->range] = $index->strategy->getRange($document, $attributes);
+                $data[$index->range] = $index->rangeKey->strategy->marshal($document, $attributes);
             }
         }
 
@@ -1426,9 +1427,11 @@ final class ClassMetadata implements BaseClassMetadata
 
             if (!$this->getGlobalSecondaryIndex($name)) {
                 $this->indexes[self::INDEX_GSI][$mapping['name']] = new Index(
-                    hash: $name,
+                    hashKey: new HashKey(
+                        field: $name,
+                        strategy: Strategy::PK_STRATEGY_FORMAT
+                    ),
                     name: $name,
-                    strategy: new IndexStrategy(hash: IndexStrategy::SK_STRATEGY_FORMAT),
                 );
                 $added = true;
             }

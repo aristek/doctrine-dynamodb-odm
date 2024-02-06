@@ -7,7 +7,6 @@ namespace Aristek\Bundle\DynamodbBundle\ODM\Query;
 use Aristek\Bundle\DynamodbBundle\ODM\DocumentManager;
 use Aristek\Bundle\DynamodbBundle\ODM\Hydrator\HydratorException;
 use Aristek\Bundle\DynamodbBundle\ODM\Iterator\UnmarshalIterator;
-use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Index;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\ClassMetadata;
 use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\ConditionAnalyzer\Analyzer;
 use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\DynamoDb\AwsWrappers\DynamoDbTable;
@@ -30,6 +29,7 @@ use Illuminate\Support\Arr;
 use LimitIterator;
 use LogicException;
 use ReflectionException;
+use Traversable;
 use function array_keys;
 use function array_map;
 use function array_merge;
@@ -608,8 +608,12 @@ class QueryBuilder
             throw new NotSupportedException('Value is a Closure');
         }
 
-        if (method_exists($values, 'toArray')) {
+        if (is_object($values) && method_exists($values, 'toArray')) {
             $values = $values->toArray();
+        }
+
+        if ($values instanceof Traversable) {
+            $values = iterator_to_array($values);
         }
 
         return $this->where($column, ComparisonOperator::IN, $values, $boolean);
@@ -818,34 +822,5 @@ class QueryBuilder
         }
 
         return $raw;
-    }
-
-    private function unmarshalIndexData(array &$data): void
-    {
-        $index = $this->classMetadata->getPrimaryIndex();
-
-        $unmarshal = static function (array &$data, Index $index) {
-            if (isset($data[$index->getHash()])) {
-                $unmarshalValue = $index->strategy->getHashValue();
-                $data[$index->getHash()] = $unmarshalValue ?: $data[$index->getHash()];
-            }
-
-            if ($index->getRange() && isset($data[$index->getRange()])) {
-                $unmarshalValue = $index->strategy->getRangeValue();
-                $data[$index->getRange()] = $unmarshalValue ?: $data[$index->getRange()];
-            }
-        };
-
-        if ($index) {
-            $unmarshal($data, $index);
-        }
-
-        foreach ($this->classMetadata->getGlobalSecondaryIndexes() as $globalSecondaryIndex) {
-            $unmarshal($data, $globalSecondaryIndex);
-        }
-
-        foreach ($this->classMetadata->getLocalSecondaryIndexes() as $localSecondaryIndex) {
-            $unmarshal($data, $localSecondaryIndex);
-        }
     }
 }
