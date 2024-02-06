@@ -535,10 +535,28 @@ final class ClassMetadata implements BaseClassMetadata
                 $document = $this->reflFields[$name]->getValue($document);
             }
 
-            $data[$index->hash] = $index->hashKey->strategy->marshal($document, $attributes);
+            if ($index->hashKey->strategy) {
+                $data[$index->hash] = $index->hashKey->strategy->marshal($document, $attributes);
+            } elseif (($field = $index->hashKey->field)
+                && isset($this->fieldMappings[$field], $this->reflFields[$field])
+                && is_object($document)
+            ) {
+                $data[$index->hash] = $this->reflFields[$field]->getValue($document);
+            } else {
+                throw new LogicException('GSI Hash data is empty.');
+            }
 
             if ($index->range) {
-                $data[$index->range] = $index->rangeKey->strategy->marshal($document, $attributes);
+                if ($index->rangeKey->strategy) {
+                    $data[$index->range] = $index->rangeKey->strategy->marshal($document, $attributes);
+                } elseif (($field = $index->rangeKey->field)
+                    && isset($this->fieldMappings[$field], $this->reflFields[$field])
+                    && is_object($document)
+                ) {
+                    $data[$index->range] = $this->reflFields[$field]->getValue($document);
+                } else {
+                    throw new LogicException('GSI Range data is empty.');
+                }
             }
         }
 
@@ -1096,7 +1114,7 @@ final class ClassMetadata implements BaseClassMetadata
             }
 
             $this->identifier[$mapping['keyType']] = [
-                self::ID_KEY      => $mapping['keyField'],
+                self::ID_KEY      => $mapping['key'],
                 self::ID_FIELD    => $mapping['fieldName'],
                 self::ID_STRATEGY => $mapping['strategy'],
             ];

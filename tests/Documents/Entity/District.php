@@ -18,9 +18,13 @@ use Doctrine\Common\Collections\Collection;
 #[Document(
     globalSecondaryIndexes: [
         new Index(
-            hashKey: new HashKey(key: 'itemTypePk', strategy: 'DISTRICT'),
+            hashKey: new HashKey(key: 'ItemTypePk', strategy: 'DISTRICT'),
             name: 'ItemTypeIndex',
-            rangeKey: new RangeKey(key: 'itemTypeSk', strategy: '{CLASS}#{id}')
+            rangeKey: new RangeKey(key: 'ItemTypeSk', strategy: '{CLASS}#{id}')
+        ),
+        new Index(
+            hashKey: new HashKey(key: 'name', field: 'name'),
+            name: 'NameIndex',
         ),
     ],
 )]
