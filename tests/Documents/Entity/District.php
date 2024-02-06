@@ -6,9 +6,10 @@ namespace Aristek\Bundle\DynamodbBundle\Tests\Documents\Entity;
 
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Document;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Field;
+use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\HashKey;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Index;
-use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\IndexStrategy;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Pk;
+use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\RangeKey;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\ReferenceMany;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\ReferenceOne;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -17,15 +18,13 @@ use Doctrine\Common\Collections\Collection;
 #[Document(
     globalSecondaryIndexes: [
         new Index(
-            hash: 'itemTypePk',
+            hashKey: new HashKey(key: 'ItemTypePk', strategy: 'DISTRICT'),
             name: 'ItemTypeIndex',
-            strategy: new IndexStrategy(hash: 'DISTRICT', range: '{CLASS}#{id}'),
-            range: 'itemTypeSk'
+            rangeKey: new RangeKey(key: 'ItemTypeSk', strategy: '{CLASS}#{id}')
         ),
         new Index(
-            hash: 'name',
-            name: 'nameIndex',
-            strategy: new IndexStrategy(hash: '{name}'),
+            hashKey: new HashKey(key: 'name', field: 'name'),
+            name: 'NameIndex',
         ),
     ],
 )]

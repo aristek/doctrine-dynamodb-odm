@@ -10,15 +10,15 @@ class PrimaryKey
     public const RANGE = 'sk';
 
     public function __construct(
-        public readonly string|int $hash,
-        public readonly string|int|null $range = null,
+        public readonly mixed $hash,
+        public readonly mixed $range = null,
         public readonly ?string $name = null,
     ) {
     }
 
-    public function getHash(): string
+    public function getHash(): mixed
     {
-        return (string) $this->hash;
+        return $this->hash;
     }
 
     public function getName(): ?string
@@ -26,8 +26,8 @@ class PrimaryKey
         return $this->name;
     }
 
-    public function getRange(): ?string
+    public function getRange(): mixed
     {
-        return (string) $this->range;
+        return $this->range;
     }
 }

@@ -14,13 +14,13 @@ class Content
 {
     public const SK = 'CONTENT';
 
-    #[Pk(keyField: 'PartitionKey')]
+    #[Pk(key: 'PartitionKey')]
     private ?string $id = null;
 
     #[Field]
     private string $name;
 
-    #[Sk(keyField: 'SortKey', strategy: '{sk}')]
+    #[Sk(key: 'SortKey', strategy: '{sk}')]
     private string $sk = self::SK;
 
     public function getId(): ?string

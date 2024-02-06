@@ -9,12 +9,16 @@ use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Field;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\IndexStrategy;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Pk;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\ReferenceMany;
+use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Strategy;
 use Aristek\Bundle\DynamodbBundle\Tests\Documents\Repository\GameRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
 #[Document(
-    indexStrategy: new IndexStrategy(hash: '{CLASS}_WITH_REPO', range: '{CLASS_SHORT_NAME}#{id}'),
+    indexStrategy: new IndexStrategy(
+        hash: new Strategy('{CLASS}_WITH_REPO'),
+        range: new Strategy('{CLASS_SHORT_NAME}#{id}')
+    ),
     repositoryClass: GameRepository::class
 )]
 class Game

@@ -9,12 +9,13 @@ use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Field;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\IndexStrategy;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Pk;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\ReferenceOne;
+use Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations\Strategy;
 use Aristek\Bundle\DynamodbBundle\Tests\Documents\Repository\UserRepository;
 
 #[Document(
     indexStrategy: new IndexStrategy(
-        hash: IndexStrategy::PK_STRATEGY_FORMAT,
-        range: '{role}#{id}'
+        hash: new Strategy(Strategy::PK_STRATEGY_FORMAT),
+        range: new Strategy('{role}#{id}')
     ),
     repositoryClass: UserRepository::class
 )]

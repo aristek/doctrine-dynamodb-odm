@@ -17,7 +17,7 @@ use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
 #[Attribute(Attribute::TARGET_PROPERTY)]
 final class Sk extends AbstractField
 {
-    public string $keyField;
+    public string $key;
 
     public string $keyType = PrimaryKey::RANGE;
 
@@ -25,14 +25,14 @@ final class Sk extends AbstractField
 
     public function __construct(
         string $name = null,
-        ?string $keyField = null,
+        ?string $key = null,
         ?string $type = null,
         ?string $strategy = null,
         bool $nullable = false,
         array $options = [],
     ) {
-        $this->keyField = $keyField ?: PrimaryKey::RANGE;
-        $this->strategy = $strategy ?: IndexStrategy::SK_STRATEGY_FORMAT;
+        $this->key = $key ?: PrimaryKey::RANGE;
+        $this->strategy = $strategy ?: Strategy::SK_STRATEGY_FORMAT;
 
         parent::__construct($name, $type, $nullable, $options);
     }

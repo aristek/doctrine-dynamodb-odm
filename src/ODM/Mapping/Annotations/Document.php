@@ -47,7 +47,10 @@ final class Document extends AbstractDocument
     ) {
         $this->billingType = $billingType;
 
-        $this->indexStrategy = $indexStrategy ?: new IndexStrategy(range: IndexStrategy::SK_STRATEGY_FORMAT);
+        $this->indexStrategy = $indexStrategy ?: new IndexStrategy(
+            hash: new Strategy(Strategy::PK_STRATEGY_FORMAT),
+            range: new Strategy(Strategy::SK_STRATEGY_FORMAT)
+        );
 
         foreach ($globalSecondaryIndexes as $globalSecondaryIndex) {
             if (!$globalSecondaryIndex instanceof Index) {
