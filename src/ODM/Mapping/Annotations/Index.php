@@ -27,6 +27,6 @@ class Index extends PrimaryKey
     ) {
         $this->projectionType = $projectionType;
 
-        parent::__construct($this->hashKey->field, $this->rangeKey?->field, $name);
+        parent::__construct($this->hashKey->key, $this->rangeKey?->key, $name);
     }
 }

@@ -1428,7 +1428,7 @@ final class ClassMetadata implements BaseClassMetadata
             if (!$this->getGlobalSecondaryIndex($name)) {
                 $this->indexes[self::INDEX_GSI][$mapping['name']] = new Index(
                     hashKey: new HashKey(
-                        field: $name,
+                        key: $name,
                         strategy: Strategy::PK_STRATEGY_FORMAT
                     ),
                     name: $name,

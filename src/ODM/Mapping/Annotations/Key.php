@@ -7,9 +7,9 @@ namespace Aristek\Bundle\DynamodbBundle\ODM\Mapping\Annotations;
 abstract class Key
 {
     public function __construct(
-        public readonly string $field,
         public readonly string $key,
-        public readonly Strategy $strategy
+        public readonly ?string $field = null,
+        public readonly ?Strategy $strategy = null,
     ) {
     }
 }
