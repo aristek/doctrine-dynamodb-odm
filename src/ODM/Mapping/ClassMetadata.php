@@ -535,32 +535,10 @@ final class ClassMetadata implements BaseClassMetadata
                 $document = $this->reflFields[$name]->getValue($document);
             }
 
-            if ($index->hashKey->strategy) {
-                $data[$index->hash] = $index->hashKey->strategy->marshal($document, $attributes);
-            } elseif (($field = $index->hashKey->field)
-                && isset($this->fieldMappings[$field], $this->reflFields[$field])
-                && is_object($document)
-            ) {
-                $data[$index->hash] = $this->reflFields[$field]->getValue($document);
-            } else {
-                throw new LogicException('GSI Hash data is empty.');
-            }
-
-            if ($index->range) {
-                if ($index->rangeKey->strategy) {
-                    $data[$index->range] = $index->rangeKey->strategy->marshal($document, $attributes);
-                } elseif (($field = $index->rangeKey->field)
-                    && isset($this->fieldMappings[$field], $this->reflFields[$field])
-                    && is_object($document)
-                ) {
-                    $data[$index->range] = $this->reflFields[$field]->getValue($document);
-                } else {
-                    throw new LogicException('GSI Range data is empty.');
-                }
-            }
+            $data[] = $this->getIndexData($index, $document, $attributes);
         }
 
-        return $data;
+        return array_merge(...$data);
     }
 
     /**
@@ -677,8 +655,29 @@ final class ClassMetadata implements BaseClassMetadata
 
     public function getIndexData(Index $index, object|string $document, array $attributes = []): array
     {
-        $data[$index->hash] = $index->hashKey->strategy->marshal($document, $attributes);
-        $data[$index->range] = $index->rangeKey?->strategy?->marshal($document, $attributes);
+        if ($index->hashKey->strategy) {
+            $data[$index->hash] = $index->hashKey->strategy->marshal($document, $attributes);
+        } elseif (($field = $index->hashKey->field) && isset($this->fieldMappings[$field], $this->reflFields[$field])) {
+            $data[$index->hash] = is_object($document)
+                ? $this->reflFields[$field]->getValue($document)
+                : $attributes[$field] ?? null;
+        } else {
+            throw new LogicException('GSI Hash data is empty.');
+        }
+
+        if ($index->range) {
+            if ($index->rangeKey->strategy) {
+                $data[$index->range] = $index->rangeKey->strategy->marshal($document, $attributes);
+            } elseif (($field = $index->rangeKey->field)
+                && isset($this->fieldMappings[$field], $this->reflFields[$field])
+            ) {
+                $data[$index->range] = is_object($document)
+                    ? $this->reflFields[$field]->getValue($document)
+                    : $attributes[$field] ?? null;
+            } else {
+                throw new LogicException('GSI Range data is empty.');
+            }
+        }
 
         if (empty($data[$index->range]) || (is_string($document) && count($attributes) < 2)) {
             unset($data[$index->range]);
@@ -748,14 +747,10 @@ final class ClassMetadata implements BaseClassMetadata
     {
         $data = [];
         foreach ($this->getLocalSecondaryIndexes() as $index) {
-            $data[$index->hash] = $index->hashKey->strategy->marshal($document, $attributes);
-
-            if ($index->range) {
-                $data[$index->range] = $index->rangeKey->strategy->marshal($document, $attributes);
-            }
+            $data[] = $this->getIndexData($index, $document, $attributes);
         }
 
-        return $data;
+        return array_merge(...$data);
     }
 
     /**
