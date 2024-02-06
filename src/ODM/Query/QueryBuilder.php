@@ -20,6 +20,7 @@ use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\Helper;
 use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder\RawDynamoDbQuery;
 use ArrayIterator;
 use Aws\DynamoDb\Marshaler;
+use BackedEnum;
 use Closure;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -535,7 +536,23 @@ class QueryBuilder
         // received when the method was called and pass it into the nested where.
         if (is_array($column)) {
             foreach ($column as $key => $val) {
-                $this->where($key, '=', $val, $boolean);
+                if ($val instanceof BackedEnum) {
+                    $val = $val->value;
+                }
+
+                if (is_array($val)) {
+                    $val = array_map(
+                        static fn(mixed $item): mixed => $item instanceof BackedEnum ? $item->value : $item,
+                        $val
+                    );
+                }
+
+                $this->where(
+                    $key,
+                    is_array($val) ? ComparisonOperator::IN : ComparisonOperator::EQ,
+                    $val,
+                    $boolean
+                );
             }
 
             return $this;
@@ -578,9 +595,9 @@ class QueryBuilder
         }
 
         $this->wheres[] = [
-            'column'  => $column,
-            'type'    => ComparisonOperator::getDynamoDbOperator($operator),
-            'value'   => $value,
+            'column' => $column,
+            'type' => ComparisonOperator::getDynamoDbOperator($operator),
+            'value' => $value,
             'boolean' => $boolean,
         ];
 
