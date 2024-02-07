@@ -1,3 +1,15 @@
+### v0.1.7
+##### Features:
+- Added logging for Dynamodb query to QueryBuilder.
+
+### v0.1.6
+##### Fix:
+- Fixed global secondary index.
+
+### v0.1.5
+##### Features:
+- Added repository as service and document listener.
+
 ### v0.1.4
 ##### Features:
 - Added logger.

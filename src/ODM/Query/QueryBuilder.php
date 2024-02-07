@@ -26,10 +26,13 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Instantiator\Exception\ExceptionInterface;
 use Doctrine\Persistence\Mapping\MappingException;
+use Exception;
 use Illuminate\Support\Arr;
+use JsonException;
 use LimitIterator;
 use LogicException;
 use ReflectionException;
+use RuntimeException;
 use Traversable;
 use function array_keys;
 use function array_map;
@@ -45,10 +48,12 @@ use function is_null;
 use function is_numeric;
 use function is_object;
 use function is_string;
+use function json_encode;
 use function method_exists;
 use function sprintf;
 use function strtolower;
 use function with;
+use const JSON_THROW_ON_ERROR;
 
 class QueryBuilder
 {
@@ -233,17 +238,28 @@ class QueryBuilder
 
     /**
      * @throws NotSupportedException
+     * @throws JsonException
      */
     public function count(): int
     {
         $limit = $this->limit ?? static::MAX_LIMIT;
         $raw = $this->toDynamoDbQuery(['count(*)'], $limit);
 
-        $res = $raw->op === 'Scan'
-            ? $this->dbManager->client()->scan($raw->query)
-            : $this->dbManager->client()->query($raw->query);
+        try {
+            $res = $raw->op === 'Scan'
+                ? $this->dbManager->client()->scan($raw->query)
+                : $this->dbManager->client()->query($raw->query);
 
-        return (int) $res['Count'];
+            return (int) $res['Count'];
+        } catch (Exception $exception) {
+            throw new RuntimeException(
+                sprintf(
+                    '%s, query: %s',
+                    $exception->getMessage(),
+                    json_encode($raw->query ?: [], JSON_THROW_ON_ERROR)
+                )
+            );
+        }
     }
 
     public function decorate(Closure $closure): self
@@ -258,6 +274,7 @@ class QueryBuilder
      * @throws ExceptionInterface
      * @throws MappingException
      * @throws HydratorException
+     * @throws JsonException
      */
     public function find(
         mixed $id,
@@ -290,7 +307,18 @@ class QueryBuilder
                 ->setExpressionAttributeNames($this->expressionAttributeNames->all());
         }
 
-        $item = $query->prepare($this->dbManager->client())->getItem();
+        try {
+            $query = $query->prepare($this->dbManager->client());
+            $item = $query->getItem();
+        } catch (Exception $exception) {
+            throw new RuntimeException(
+                sprintf(
+                    '%s, query: %s',
+                    $exception->getMessage(),
+                    json_encode($query->query ?: [], JSON_THROW_ON_ERROR)
+                )
+            );
+        }
 
         $item = Arr::get($item->toArray(), 'Item');
 
@@ -312,6 +340,7 @@ class QueryBuilder
      * @throws MappingException
      * @throws ReflectionException
      * @throws HydratorException
+     * @throws JsonException
      */
     public function findMany(
         mixed $ids,
@@ -347,10 +376,21 @@ class QueryBuilder
             ->prepare($this->dbManager->client())
             ->query;
 
-        $response = $this->dbManager->newQuery()
+        $query = $this->dbManager->newQuery()
             ->setRequestItems([$table => $subQuery])
-            ->prepare($this->dbManager->client())
-            ->batchGetItem();
+            ->prepare($this->dbManager->client());
+
+        try {
+            $response = $query->batchGetItem();
+        } catch (Exception $exception) {
+            throw new RuntimeException(
+                sprintf(
+                    '%s, query: %s',
+                    $exception->getMessage(),
+                    json_encode($query?->query ?: [], JSON_THROW_ON_ERROR)
+                )
+            );
+        }
 
         foreach ($response['Responses'][$table] as $item) {
             $item = $this->dbManager->unmarshalItem($item);
@@ -595,9 +635,9 @@ class QueryBuilder
         }
 
         $this->wheres[] = [
-            'column' => $column,
-            'type' => ComparisonOperator::getDynamoDbOperator($operator),
-            'value' => $value,
+            'column'  => $column,
+            'type'    => ComparisonOperator::getDynamoDbOperator($operator),
+            'value'   => $value,
             'boolean' => $boolean,
         ];
 
@@ -682,6 +722,7 @@ class QueryBuilder
      * @throws MappingException
      * @throws NotSupportedException
      * @throws ReflectionException
+     * @throws JsonException
      */
     private function getAll(
         array $columns = [],
@@ -710,19 +751,29 @@ class QueryBuilder
 
         $raw = $this->toDynamoDbQuery($columns, $limit);
 
-        if ($useIterator) {
-            $iterator = $this->dbManager->client()->getIterator($raw->op, $raw->query);
+        try {
+            if ($useIterator) {
+                $iterator = $this->dbManager->client()->getIterator($raw->op, $raw->query);
 
-            if (isset($raw->query['Limit'])) {
-                $iterator = new LimitIterator($iterator, 0, $raw->query['Limit']);
+                if (isset($raw->query['Limit'])) {
+                    $iterator = new LimitIterator($iterator, 0, $raw->query['Limit']);
+                }
+            } else {
+                $res = $raw->op === 'Scan'
+                    ? $this->dbManager->client()->scan($raw->query)
+                    : $this->dbManager->client()->query($raw->query);
+
+                $this->lastEvaluatedKey = Arr::get($res, 'LastEvaluatedKey');
+                $iterator = $res['Items'];
             }
-        } else {
-            $res = $raw->op === 'Scan'
-                ? $this->dbManager->client()->scan($raw->query)
-                : $this->dbManager->client()->query($raw->query);
-
-            $this->lastEvaluatedKey = Arr::get($res, 'LastEvaluatedKey');
-            $iterator = $res['Items'];
+        } catch (Exception $exception) {
+            throw new RuntimeException(
+                sprintf(
+                    '%s, query: %s',
+                    $exception->getMessage(),
+                    json_encode($raw->query ?: [], JSON_THROW_ON_ERROR)
+                )
+            );
         }
 
         if ($hydrationMode === self::HYDRATE_ITERATOR) {
