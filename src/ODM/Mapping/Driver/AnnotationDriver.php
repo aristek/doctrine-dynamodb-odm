@@ -167,18 +167,19 @@ class AnnotationDriver extends CompatibilityAnnotationDriver
             }
 
             $primaryIndexKeys = $metadata->getIdentifierKeys();
+            $primaryIndexFields = $metadata->getIdentifierFields();
             $primaryIndexStrategies = $metadata->getIdentifierStrategies();
             $metadata->addIndex(
                 new Index(
                     hashKey: new ODM\HashKey(
-                        field: $primaryIndexKeys[PrimaryKey::HASH],
-                        key: PrimaryKey::HASH,
+                        key: $primaryIndexKeys[PrimaryKey::HASH],
+                        field: $primaryIndexFields[PrimaryKey::HASH],
                         strategy: $primaryIndexStrategies[PrimaryKey::HASH] ?? $documentAnnot->indexStrategy->hash->mask
                     ),
                     name: '',
                     rangeKey: new ODM\RangeKey(
-                        field: $primaryIndexKeys[PrimaryKey::RANGE],
-                        key: PrimaryKey::RANGE,
+                        key: $primaryIndexKeys[PrimaryKey::RANGE],
+                        field: $primaryIndexFields[PrimaryKey::RANGE],
                         strategy: $primaryIndexStrategies[PrimaryKey::RANGE] ?? $documentAnnot->indexStrategy->range->mask
                     )
                 )
