@@ -16,7 +16,7 @@ abstract class AbstractSchemaCommand extends Command
 {
     protected function getDynamodbIndex(PrimaryKey $index): DynamoDbIndex
     {
-        $idx = new DynamoDbIndex(hashKey: $index->hash, rangeKey: $index->range);
+        $idx = new DynamoDbIndex(hashKey: $index->hashKey->key, rangeKey: $index->rangeKey?->key);
         if ($index->name) {
             $idx->setName($index->name);
         }

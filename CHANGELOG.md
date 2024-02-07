@@ -1,3 +1,7 @@
+### v0.1.8
+##### Fix:
+- Fixed functionality with custom partition key names.
+
 ### v0.1.7
 ##### Features:
 - Added logging for Dynamodb query to QueryBuilder.
