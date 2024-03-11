@@ -125,12 +125,13 @@ final class AristekDynamodbExtension extends Extension implements PrependExtensi
         ];
         $odmDmDef = new Definition(DocumentManager::class, $odmDmArgs);
         $odmDmDef->setFactory([DocumentManager::class, 'create']);
+        $odmDmDef->setLazy(true);
         $odmDmDef->addTag('doctrine_dynamodb.odm.document_manager');
         $odmDmDef->setPublic(true);
 
         $container->setDefinition('doctrine_dynamodb.odm.document_manager', $odmDmDef);
         $container->setParameter(
-            'doctrine_mongodb.odm.document_managers',
+            'doctrine_dynamodb.odm.document_managers',
             ['doctrine_dynamodb.odm.document_manager' => 'doctrine_dynamodb.odm.document_manager']
         );
 

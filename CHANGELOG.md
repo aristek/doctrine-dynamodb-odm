@@ -1,3 +1,8 @@
+### v0.1.9
+##### Fix:
+- Fixed library naming;
+- Initialization [ManagerRegistry](src/ODM/ManagerRegistry.php) as lazy.
+
 ### v0.1.8
 ##### Fix:
 - Fixed functionality with custom partition key names.
