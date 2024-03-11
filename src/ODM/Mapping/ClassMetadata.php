@@ -622,11 +622,6 @@ final class ClassMetadata implements BaseClassMetadata
         ];
     }
 
-    /**
-     * Since MongoDB only allows exactly one identifier field this is a proxy
-     * to {@see getIdentifierValue()} and returns an array with the identifier
-     * field as a key.
-     */
     public function getIdentifierValues(object $object): mixed
     {
         return $this->getIdentifierValue($object);
