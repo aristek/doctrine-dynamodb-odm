@@ -28,8 +28,6 @@ final class ManagerRegistryTest extends WebTestCase
         $managerRegistry = self::getContainer()->get(ManagerRegistry::class);
         $managerRegistry->resetManager();
 
-        $dm->getUnitOfWork();
-
         self::assertCount(0, $dm->getUnitOfWork()->getScheduledDocumentUpserts());
     }
 }
