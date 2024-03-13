@@ -1,3 +1,7 @@
+### v0.1.10
+##### Fix:
+- Fixed clear [UnitOfWork](src/ODM/UnitOfWork.php) on [ManagerRegistry::resetManager](src/ODM/ManagerRegistry.php).
+
 ### v0.1.9
 ##### Fix:
 - Fixed library naming;

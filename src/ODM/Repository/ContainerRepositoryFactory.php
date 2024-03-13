@@ -110,10 +110,6 @@ final class ContainerRepositoryFactory implements RepositoryFactory
             $repositoryClassName = $documentManager->getConfiguration()->getDefaultDocumentRepositoryClassName();
         }
 
-        return $this->managedRepositories[$repositoryHash] = new $repositoryClassName(
-            $documentManager,
-            $documentManager->getUnitOfWork(),
-            $metadata
-        );
+        return $this->managedRepositories[$repositoryHash] = new $repositoryClassName($documentManager, $metadata);
     }
 }
