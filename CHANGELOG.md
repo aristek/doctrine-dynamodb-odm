@@ -1,3 +1,7 @@
+### v0.1.11
+##### Fix:
+- Added implement `Symfony\Contracts\Service\ResetInterface` for clear [UnitOfWork](src/ODM/UnitOfWork.php) between http requests.
+
 ### v0.1.10
 ##### Fix:
 - Fixed clear [UnitOfWork](src/ODM/UnitOfWork.php) on [ManagerRegistry::resetManager](src/ODM/ManagerRegistry.php).
