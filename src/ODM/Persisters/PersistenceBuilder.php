@@ -79,7 +79,7 @@ final class PersistenceBuilder
     }
 
     /**
-     * Returns the embedded document to be stored in MongoDB.
+     * Returns the embedded document to be stored in DynamoDb.
      *
      * The return value will usually be an associative array with string keys
      * corresponding to field names on the embedded document. An object may be
@@ -168,7 +168,7 @@ final class PersistenceBuilder
     }
 
     /**
-     * Prepares the array that is ready to be inserted to mongodb for a given object document.
+     * Prepares the array that is ready to be inserted to dynamoDb for a given object document.
      *
      * @return array<string, mixed> $insertData
      *
@@ -224,7 +224,7 @@ final class PersistenceBuilder
     }
 
     /**
-     * Returns the reference representation to be stored in MongoDB.
+     * Returns the reference representation to be stored in DynamoDb.
      *
      * If the document does not have an identifier and the mapping calls for a
      * simple reference, null may be returned.
@@ -244,7 +244,7 @@ final class PersistenceBuilder
     }
 
     /**
-     * Prepares the update query to update a given document object in mongodb.
+     * Prepares the update query to update a given document object in dynamoDb.
      *
      * @return array<string, mixed> $updateData
      *
@@ -326,7 +326,7 @@ final class PersistenceBuilder
     }
 
     /**
-     * Prepares the update query to upsert a given document object in mongodb.
+     * Prepares the update query to upsert a given document object in dynamoDb.
      *
      * @return array<string, mixed> $updateData
      *

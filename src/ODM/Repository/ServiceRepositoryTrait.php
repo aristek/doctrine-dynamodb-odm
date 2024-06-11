@@ -33,6 +33,6 @@ trait ServiceRepositoryTrait
             );
         }
 
-        parent::__construct($manager, $manager->getUnitOfWork(), $manager->getClassMetadata($documentClass));
+        parent::__construct($manager, $manager->getClassMetadata($documentClass));
     }
 }

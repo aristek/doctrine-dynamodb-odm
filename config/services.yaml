@@ -18,12 +18,13 @@ services:
     aristek_dynamodb:
         class: Aristek\Bundle\DynamodbBundle\ODM\ManagerRegistry
         public: true
+        lazy: true
         arguments:
             $connections: '%doctrine_dynamodb.odm.connections%'
             $container: '@service_container'
             $defaultConnection: '%doctrine_dynamodb.odm.default_connection%'
             $defaultManager: '%doctrine_dynamodb.odm.default_document_manager%'
-            $managers: '%doctrine_mongodb.odm.document_managers%'
+            $managers: '%doctrine_dynamodb.odm.document_managers%'
             $name: 'DynamoDB'
 
     doctrine_dynamodb.odm.connection.event_manager:

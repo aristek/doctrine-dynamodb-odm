@@ -9,7 +9,6 @@ use Aristek\Bundle\DynamodbBundle\ODM\Id\PrimaryKey;
 use Aristek\Bundle\DynamodbBundle\ODM\Mapping\ClassMetadata;
 use Aristek\Bundle\DynamodbBundle\ODM\Persisters\DocumentPersister;
 use Aristek\Bundle\DynamodbBundle\ODM\Query\QueryBuilder;
-use Aristek\Bundle\DynamodbBundle\ODM\UnitOfWork;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Selectable;
@@ -32,16 +31,13 @@ class DocumentRepository implements ObjectRepositoryInterface, Selectable
 
     protected string $documentName;
 
-    protected UnitOfWork $uow;
-
     /**
      * Initializes this instance with the specified document manager, unit of work and class metadata.
      */
-    public function __construct(DocumentManager $dm, UnitOfWork $uow, ClassMetadata $classMetadata)
+    public function __construct(DocumentManager $dm, ClassMetadata $classMetadata)
     {
         $this->documentName = $classMetadata->name;
         $this->dm = $dm;
-        $this->uow = $uow;
         $this->class = $classMetadata;
     }
 
@@ -67,7 +63,7 @@ class DocumentRepository implements ObjectRepositoryInterface, Selectable
 
         $class = $this->getClassMetadata();
 
-        $document = $this->uow->tryGetById([$id->getHash(), $id->getRange()], $class);
+        $document = $this->dm->getUnitOfWork()->tryGetById([$id->getHash(), $id->getRange()], $class);
 
         if ($document) {
             return $document;
@@ -166,6 +162,6 @@ class DocumentRepository implements ObjectRepositoryInterface, Selectable
 
     protected function getDocumentPersister(): DocumentPersister
     {
-        return $this->uow->getDocumentPersister($this->documentName);
+        return $this->dm->getUnitOfWork()->getDocumentPersister($this->documentName);
     }
 }
