@@ -1,3 +1,20 @@
+### v0.1.11
+##### Fix:
+- Added implement `Symfony\Contracts\Service\ResetInterface` for clear [UnitOfWork](src/ODM/UnitOfWork.php) between http requests.
+
+### v0.1.10
+##### Fix:
+- Fixed clear [UnitOfWork](src/ODM/UnitOfWork.php) on [ManagerRegistry::resetManager](src/ODM/ManagerRegistry.php).
+
+### v0.1.9
+##### Fix:
+- Fixed library naming;
+- Initialization [ManagerRegistry](src/ODM/ManagerRegistry.php) as lazy.
+
+### v0.1.8
+##### Fix:
+- Fixed functionality with custom partition key names.
+
 ### v0.1.7
 ##### Features:
 - Added logging for Dynamodb query to QueryBuilder.

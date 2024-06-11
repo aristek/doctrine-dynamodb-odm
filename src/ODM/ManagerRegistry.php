@@ -7,9 +7,10 @@ namespace Aristek\Bundle\DynamodbBundle\ODM;
 use ProxyManager\Proxy\GhostObjectInterface;
 use Psr\Container\ContainerInterface;
 use Symfony\Bridge\Doctrine\ManagerRegistry as BaseManagerRegistry;
+use Symfony\Contracts\Service\ResetInterface;
 use function array_keys;
 
-class ManagerRegistry extends BaseManagerRegistry
+class ManagerRegistry extends BaseManagerRegistry implements ResetInterface
 {
     public function __construct(
         string $name,
@@ -50,5 +51,10 @@ class ManagerRegistry extends BaseManagerRegistry
         }
 
         throw DynamoDBException::unknownDocumentNamespace($alias);
+    }
+
+    public function reset(): void
+    {
+        $this->resetManager();
     }
 }
