@@ -361,44 +361,46 @@ class QueryBuilder
 
         $table = $this->dbTable->getTableName();
 
-        $keys = collect($ids)->map(function ($id) {
-            if (!is_array($id)) {
-                $id = [$this->classMetadata->getPrimaryIndex()->hash => $id];
+        foreach (array_chunk($ids, 100) as $chunk) {
+            $keys = collect($chunk)->map(function ($id) {
+                if (!is_array($id)) {
+                    $id = [$this->classMetadata->getPrimaryIndex()->hash => $id];
+                }
+
+                return $this->dbManager->marshalItem($id);
+            });
+
+            $subQuery = $this->dbManager->newQuery()
+                ->setKeys($keys->toArray())
+                ->setProjectionExpression($this->projectionExpression->parse($columns))
+                ->setExpressionAttributeNames($this->expressionAttributeNames->all())
+                ->prepare($this->dbManager->client())
+                ->query;
+
+            $query = $this->dbManager->newQuery()
+                ->setRequestItems([$table => $subQuery])
+                ->prepare($this->dbManager->client());
+
+            try {
+                $response = $query->batchGetItem();
+            } catch (Exception $exception) {
+                throw new RuntimeException(
+                    sprintf(
+                        '%s, query: %s',
+                        $exception->getMessage(),
+                        json_encode($query?->query ?: [], JSON_THROW_ON_ERROR)
+                    )
+                );
             }
 
-            return $this->dbManager->marshalItem($id);
-        });
+            foreach ($response['Responses'][$table] as $item) {
+                $item = $this->dbManager->unmarshalItem($item);
 
-        $subQuery = $this->dbManager->newQuery()
-            ->setKeys($keys->toArray())
-            ->setProjectionExpression($this->projectionExpression->parse($columns))
-            ->setExpressionAttributeNames($this->expressionAttributeNames->all())
-            ->prepare($this->dbManager->client())
-            ->query;
-
-        $query = $this->dbManager->newQuery()
-            ->setRequestItems([$table => $subQuery])
-            ->prepare($this->dbManager->client());
-
-        try {
-            $response = $query->batchGetItem();
-        } catch (Exception $exception) {
-            throw new RuntimeException(
-                sprintf(
-                    '%s, query: %s',
-                    $exception->getMessage(),
-                    json_encode($query?->query ?: [], JSON_THROW_ON_ERROR)
-                )
-            );
-        }
-
-        foreach ($response['Responses'][$table] as $item) {
-            $item = $this->dbManager->unmarshalItem($item);
-
-            if ($hydrationMode === self::HYDRATE_OBJECT) {
-                $result->add($this->documentManager->getUnitOfWork()->getOrCreateDocument($this->className, $item));
-            } else {
-                $result[] = $item;
+                if ($hydrationMode === self::HYDRATE_OBJECT) {
+                    $result->add($this->documentManager->getUnitOfWork()->getOrCreateDocument($this->className, $item));
+                } else {
+                    $result[] = $item;
+                }
             }
         }
 
