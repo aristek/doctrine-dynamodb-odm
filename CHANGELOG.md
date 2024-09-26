@@ -1,3 +1,7 @@
+### v0.1.13
+##### Features:
+- Added constant `MAX_WHERE_IN_AMOUNT` to [DocumentRepository](src/ODM/Repository/DocumentRepository.php).
+
 ### v0.1.11
 ##### Fix:
 - Added implement `Symfony\Contracts\Service\ResetInterface` for clear [UnitOfWork](src/ODM/UnitOfWork.php) between http requests.
