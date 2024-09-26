@@ -25,6 +25,8 @@ use function sprintf;
  */
 class DocumentRepository implements ObjectRepositoryInterface, Selectable
 {
+    protected const MAX_WHERE_IN_AMOUNT = 100;
+
     protected ClassMetadata $class;
 
     protected DocumentManager $dm;
