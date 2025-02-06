@@ -386,6 +386,14 @@ class DocumentManager implements ObjectManager
     }
 
     /**
+     * Checks if a value is an uninitialized document.
+     */
+    public function isUninitializedObject(mixed $value): bool
+    {
+        return $this->unitOfWork->isUninitializedObject($value);
+    }
+
+    /**
      * Merges the state of a detached document into the persistence context
      * of this DocumentManager and returns the managed copy of the document.
      * The document passed to merge will not become associated/managed with this DocumentManager.

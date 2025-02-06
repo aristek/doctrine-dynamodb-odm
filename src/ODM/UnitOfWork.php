@@ -1077,6 +1077,20 @@ final class UnitOfWork implements PropertyChangedListener
     }
 
     /**
+     * Checks if a value is an uninitialized document.
+     *
+     * @internal
+     */
+    public function isUninitializedObject(mixed $value): bool
+    {
+        return match (true) {
+            $value instanceof GhostObjectInterface => !$value->isProxyInitialized(),
+            $value instanceof PersistentCollectionInterface => !$value->isInitialized(),
+            default => false
+        };
+    }
+
+    /**
      * Initializes (loads) an uninitialized persistent collection of a document.
      *
      * @throws PersistentCollectionException
