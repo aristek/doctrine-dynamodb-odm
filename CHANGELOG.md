@@ -1,5 +1,5 @@
 ### v0.1.14
-##### Fixes:
+##### Features:
 - Added method `isUninitializedObject` to [DocumentManager](src/ODM/DocumentManager.php) for compatibility with doctrine 4.
 
 ### v0.1.13
