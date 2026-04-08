@@ -1,3 +1,7 @@
+### v0.1.15
+##### Features:
+- Removed `composer.lock`.
+
 ### v0.1.14
 ##### Features:
 - Added method `isUninitializedObject` to [DocumentManager](src/ODM/DocumentManager.php) for compatibility with doctrine 4.
